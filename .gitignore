@@ -1,0 +1,51 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# vercel
+.vercel
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env files
+.env*.local
+.env.python
+services/*/.env
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# monorepo / tooling
+/apps/web/node_modules
+node_modules
+__pycache__
+.venv
+
+# Victim data (cases, scan results) is stored here at runtime; never commit it
+.data/
+**/.data/

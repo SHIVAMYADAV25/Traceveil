@@ -1,0 +1,2 @@
+pytest>=8.0
+scikit-image>=0.24.0
