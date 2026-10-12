@@ -202,7 +202,9 @@ python tests/calibration.py
 
 # Part 2: Video feature, workflow and architecture (design only)
 
-> Nothing below is implemented. It describes how the video feature should be built **on top of the fixed image feature**, so that the same safeguards, the same honest reporting and the same matcher apply.
+> **Update:** this design has since been built. See `VIDEO_FEATURE.md` for what was actually implemented, how it was verified, and where the build differs from this design (one video scan at a time; a separate `engine/matching.py`; verification statuses `verified`, `partial`, `no_frame_match`, `not_verified`, `not_attempted`; thumbnails on listing pages are not searched for a video URL). The text below is the original design.
+>
+> It describes how the video feature should be built **on top of the fixed image feature**, so that the same safeguards, the same honest reporting and the same matcher apply.
 
 ## 8. Goal and principles
 

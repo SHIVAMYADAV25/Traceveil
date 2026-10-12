@@ -9,6 +9,23 @@ const LOGO_KEY = process.env.NEXT_PUBLIC_LOGO_DEV_KEY ?? "pk_FRWLyzqbRcmEUk2DRou
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+const CATEGORY_LABELS: Record<string, { label: string; chip: string }> = {
+  verified: { label: "Video verified", chip: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+  strong: { label: "Strong match", chip: "border-orange-200 bg-orange-50 text-orange-700" },
+  possible: { label: "Possible match", chip: "border-indigo-200 bg-indigo-50 text-indigo-700" },
+};
+
+const VIDEO_TYPE_LABELS: Record<string, string> = {
+  direct: "Video file",
+  stream: "Stream playlist",
+  embed: "Embedded player",
+};
+
+function formatTime(seconds: number): string {
+  const total = Math.max(0, Math.round(seconds));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+}
+
 const MATCH_LABELS: Record<string, string> = {
   exact: "Exact visual match",
   near_duplicate: "Near-duplicate",
@@ -153,6 +170,7 @@ export function ContentTrace({ caseId }: Props) {
           <Stat value={String(trace.pages_scanned)} label="Pages crawled" />
           <Stat value={String(trace.candidates_evaluated)} label="Images compared" />
           <Stat value={String(trace.domains_with_matches ?? 0)} label="Sites with a match so far" />
+          {trace.input_type === "video" && <Stat value={String(trace.reference_frames ?? 0)} label="Key frames from your video" />}
         </div>
         <p className="text-[12px] text-[#6b7280] leading-relaxed">
           {trace.current_domain ? `Currently checking ${trace.current_domain}. ` : ""}
@@ -362,7 +380,7 @@ function MatchCard({ match }: { match: DiscoveryResult["direct_matches"][number]
     <div className={`rounded-xl border ${accentBorder} ${accentBg} overflow-hidden transition-all hover:shadow-[0_4px_20px_-8px_rgba(15,23,42,0.1)]`}>
 
       {/* Status strip */}
-      {isExact && (
+      {isExact && match.category !== "verified" && (
         <div className="flex items-center gap-2 px-5 py-2 bg-red-100/60 border-b border-red-100">
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
@@ -394,6 +412,11 @@ function MatchCard({ match }: { match: DiscoveryResult["direct_matches"][number]
                 {MATCH_LABELS[match.match_type] ?? match.match_type}
                 {match.matched_variant && VARIANT_LABELS[match.matched_variant] ? ` · ${VARIANT_LABELS[match.matched_variant]}` : ""}
               </span>
+              {match.category && CATEGORY_LABELS[match.category] && (
+                <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-mono font-semibold ${CATEGORY_LABELS[match.category].chip}`}>
+                  {CATEGORY_LABELS[match.category].label}
+                </span>
+              )}
               {match.alt_image_urls && match.alt_image_urls.length > 0 && (
                 <span className="text-[10px] text-[#6b7280]">+{match.alt_image_urls.length} more matching image{match.alt_image_urls.length > 1 ? "s" : ""} on this page</span>
               )}
@@ -402,6 +425,8 @@ function MatchCard({ match }: { match: DiscoveryResult["direct_matches"][number]
 
           <ConfidenceGauge confidence={match.confidence} />
         </div>
+
+        {match.category && <VideoEvidence match={match} />}
 
         {/* Bottom: metrics + actions */}
         <div className="flex items-end justify-between gap-4 pt-4 border-t border-[#e8e4de]/60">
@@ -513,6 +538,60 @@ function NoticeCard({ title, message, tone }: { title: string; message: string; 
     <div className={`rounded-xl border px-6 py-5 ${palette}`}>
       <p className="text-[13px] font-semibold mb-1">{title}</p>
       <p className="text-[12px] leading-relaxed opacity-90">{message}</p>
+    </div>
+  );
+}
+
+/* ── Video evidence ────────────────────────────────────────────────────── */
+
+const VERIFICATION_TEXT: Record<string, string> = {
+  verified: "Frames of this video match yours in the same order.",
+  partial: "Some frames matched, but not enough in the right order to verify.",
+  no_frame_match: "No frames of this video matched yours in the part we could check.",
+  not_verified: "We could not check the video file itself.",
+  not_attempted: "The video file was not checked.",
+};
+
+function VideoEvidence({ match }: { match: DiscoveryResult["direct_matches"][number] }) {
+  const ev = match.evidence;
+  const status = ev?.verification ?? "not_attempted";
+  const detail = status === "verified" && match.matched_segment
+    ? `${ev?.ordered_frames ?? 0} frames in order, covering about ${formatTime(match.matched_segment.start)} to ${formatTime(match.matched_segment.end)} of your video.`
+    : ev?.verification_reason;
+
+  return (
+    <div className="mb-4 space-y-2.5 rounded-lg border border-[#e8e4de]/70 bg-white/70 px-4 py-3">
+      <div>
+        <p className="font-mono text-[8.5px] uppercase tracking-[0.2em] text-[#9ca3af] mb-0.5">Where the video is</p>
+        {match.video_url ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md border border-[#e8e4de] bg-white px-1.5 py-0.5 text-[9.5px] font-mono text-[#6b7280] uppercase tracking-wider">
+              {VIDEO_TYPE_LABELS[match.video_url_type ?? "direct"] ?? "Video"}
+            </span>
+            <a href={match.video_url} target="_blank" rel="noreferrer" className="min-w-0 max-w-full truncate font-mono text-[11px] text-[#0a0a0a] underline decoration-[#d4cfc9] underline-offset-2 hover:decoration-[#0a0a0a]">
+              {match.video_url}
+            </a>
+          </div>
+        ) : (
+          <p className="text-[12px] text-[#6b7280] leading-relaxed">
+            No video address was found on this page. Some sites build the player with JavaScript, so the page itself is the best lead.
+          </p>
+        )}
+        {match.video_url_type === "stream" && (
+          <p className="mt-1 text-[11px] text-[#9ca3af]">This is a streaming playlist, not a single file, so it was not downloaded.</p>
+        )}
+      </div>
+
+      {typeof match.matched_frame_time === "number" && (
+        <p className="text-[12px] text-[#374151]">
+          The thumbnail resembles about <span className="font-mono font-semibold">{formatTime(match.matched_frame_time)}</span> of your video.
+        </p>
+      )}
+
+      <div>
+        <p className="text-[12px] font-medium text-[#0a0a0a]">{VERIFICATION_TEXT[status] ?? VERIFICATION_TEXT.not_attempted}</p>
+        {detail && <p className="mt-0.5 text-[11.5px] text-[#6b7280] leading-relaxed">{detail}</p>}
+      </div>
     </div>
   );
 }

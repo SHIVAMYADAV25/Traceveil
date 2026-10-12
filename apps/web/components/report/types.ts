@@ -27,6 +27,27 @@ export interface DiscoveryMatch {
   matched_variant?: string | null;
   alt_image_urls?: string[];
   page_specific?: boolean;
+  /* video scans only */
+  video_url?: string | null;
+  video_url_type?: "direct" | "stream" | "embed" | null;
+  category?: "possible" | "strong" | "verified" | null;
+  matched_frame_time?: number | null;
+  frames_matched?: number;
+  matched_segment?: { start: number; end: number } | null;
+  evidence?: VideoEvidenceData | null;
+}
+
+export interface VideoEvidenceData {
+  thumbnail_match: boolean;
+  frames_matched: number;
+  video_url_found: boolean;
+  video_url_type?: string | null;
+  verification: "verified" | "partial" | "no_frame_match" | "not_verified" | "not_attempted";
+  verification_reason?: string | null;
+  frames_checked?: number;
+  matched_frames?: number;
+  ordered_frames?: number | null;
+  seconds_checked?: number | null;
 }
 
 export interface DiscoveryRelatedDomain {
@@ -63,6 +84,9 @@ export interface DiscoveryResult {
   domains_with_matches?: number;
   domain_status?: Record<string, "checked" | "no_images" | "blocked" | "unreachable" | "skipped">;
   coverage?: { checked?: number; no_images?: number; blocked?: number; unreachable?: number; skipped?: number };
+  input_type?: "image" | "video";
+  reference_frames?: number;
+  video_info?: { duration_seconds: number; width: number; height: number; keyframe_times: number[] } | null;
   truncated?: boolean;
   truncation_reason?: string | null;
   evidence?: { sha256: string; size_bytes: number; ela_flagged?: boolean } | null;

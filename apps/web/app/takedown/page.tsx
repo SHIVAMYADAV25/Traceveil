@@ -74,6 +74,7 @@ interface DiscoveryTraceResult {
     domain: string;
     page_url: string;
     network?: string | null;
+    video_url?: string | null;
   }>;
 }
 
@@ -81,6 +82,7 @@ interface BulkTarget {
   domain: string;
   network?: string | null;
   pageUrls: string[];
+  videoUrls: string[];
 }
 
 interface BulkGuidanceEntry {
@@ -135,12 +137,14 @@ function buildBulkTargets(trace: DiscoveryTraceResult | null): BulkTarget[] {
         domain: match.domain,
         network: match.network,
         pageUrls: match.page_url ? [match.page_url] : [],
+        videoUrls: match.video_url ? [match.video_url] : [],
       });
       continue;
     }
 
     existing.network = existing.network ?? match.network;
     pushUnique(existing.pageUrls, match.page_url);
+    pushUnique(existing.videoUrls, match.video_url);
   }
 
   return Array.from(grouped.values()).sort((a, b) => a.domain.localeCompare(b.domain));
@@ -647,6 +651,10 @@ function TakedownPageInner() {
       if (target.pageUrls.length > 0) {
         lines.push("   Matched URLs:");
         target.pageUrls.forEach((url) => lines.push(`   - ${url}`));
+      }
+      if (target.videoUrls.length > 0) {
+        lines.push("   Video file / stream URLs:");
+        target.videoUrls.forEach((url) => lines.push(`   - ${url}`));
       }
     });
 

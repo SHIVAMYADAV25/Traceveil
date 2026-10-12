@@ -2,25 +2,38 @@ from __future__ import annotations
 
 import asyncio
 import csv
-import io
 import json
 import os
 import re
 import time
 from dataclasses import dataclass, field
+from functools import partial
 from pathlib import Path
 from typing import Callable, Iterable, Optional
 from urllib.parse import urljoin, urlparse
 
 import httpx
-import imagehash
-import numpy as np
 from bs4 import BeautifulSoup
-from PIL import Image, ImageOps
 
-from . import geometry, netguard
-from .keypoints import compute_match_rate
+from . import netguard
+from .matching import (  # noqa: F401  (re-exported: tests and routers import these from here)
+    Reference,
+    VideoReference,
+    _compute_hashes,
+    _open_rgb,
+    build_reference,
+    build_video_reference,
+    match_candidate,
+    match_candidate_video,
+)
 from .models import DiscoveryMatch, DiscoveryRelatedDomain, DiscoveryResult
+from .verify import (
+    VERIFY_ENABLED,
+    VERIFY_MAX_CANDIDATES,
+    Verification,
+    apply_evidence,
+    verify_video_url,
+)
 
 DATASET_PATH = Path(__file__).resolve().parents[2] / "intelligence" / "data" / "dataset.csv"
 HEADERS = {
@@ -78,17 +91,9 @@ SCAN_TIMEOUT_SECONDS = _env_int("SNIFFER_SCAN_TIMEOUT_SECONDS", 600)
 MAX_IMAGE_BYTES = 3 * 1024 * 1024
 MAX_HTML_BYTES = 3 * 1024 * 1024
 MAX_SITEMAP_BYTES = 2 * 1024 * 1024
-MAX_IMAGE_PIXELS = 40_000_000
-MIN_IMAGE_SIDE = 48
 HTTP_TIMEOUT = 12
 MAX_CONCURRENT = 12
 CPU_WORKERS = 4
-
-# ── Matching thresholds ───────────────────────────────────────────────────
-HASH_MAX_AVG_DISTANCE = 4          # tier 1: average pHash/dHash/aHash Hamming distance
-GEO_STRUCTURAL_INLIERS = 15        # tier 2: RANSAC inliers for a confident structural match
-GEO_PROBABLE_INLIERS = 10          # tier 3: lower bound for a probable match
-GEO_MIN_INLIER_RATIO = 0.30        # inliers / ratio-test survivors (rejects scattered matches)
 
 # Demo mode is now opt-in per request (run_discovery_scan(demo=True)).
 # SNIFFER_DEMO_MODE=1 forces it process-wide for local demos only.
@@ -159,11 +164,14 @@ def run_discovery_scan(
     origin_domain: Optional[str] = None,
     progress_cb: Optional[Callable[[dict], None]] = None,
     demo: bool = False,
+    video_ref: Optional[VideoReference] = None,
 ) -> DiscoveryResult:
+    """Scan the monitored sites for copies of an image (suspicious_bytes) or, when
+    video_ref is given, of a video (its keyframes). Demo mode never applies to video."""
     started_at = time.time()
     rows = _load_dataset_rows()
 
-    if demo or DEMO_DISCOVERY_MODE:
+    if (demo or DEMO_DISCOVERY_MODE) and video_ref is None:
         return _build_demo_discovery_result(
             case_id=case_id,
             started_at=started_at,
@@ -179,6 +187,7 @@ def run_discovery_scan(
                 origin_domain=origin_domain,
                 rows=rows,
                 progress_cb=progress_cb,
+                video_ref=video_ref,
             )
         )
     except Exception as exc:
@@ -190,6 +199,7 @@ def run_discovery_scan(
             direct_matches=[],
             related_domains=[],
             error=str(exc),
+            input_type="video" if video_ref is not None else "image",
         )
 
 
@@ -199,6 +209,7 @@ async def _async_discovery_scan(
     origin_domain: Optional[str],
     rows: list[dict[str, str]],
     progress_cb: Optional[Callable[[dict], None]],
+    video_ref: Optional[VideoReference] = None,
 ) -> DiscoveryResult:
     started_at = time.time()
     prioritized_network = _find_network(origin_domain, rows) if origin_domain else None
@@ -207,9 +218,13 @@ async def _async_discovery_scan(
         # Same-network sites first: they get scanned first and survive a truncated scan.
         domains = sorted(domains, key=lambda r: r.get("network") != prioritized_network)
 
-    reference = build_reference(suspicious_bytes)
+    if video_ref is not None:
+        matcher = partial(match_candidate_video, video_ref)   # one thumbnail vs all keyframes
+    else:
+        matcher = partial(match_candidate, build_reference(suspicious_bytes))
     budget = ScanBudget(MAX_TOTAL_CANDIDATES, SCAN_TIMEOUT_SECONDS)
     all_matches: list[DiscoveryMatch] = []
+    top_matches: list[DiscoveryMatch] = []
     events: list[dict] = []
     # domain -> counters used to derive a final, honest status
     stats: dict[str, dict[str, int]] = {
@@ -281,7 +296,7 @@ async def _async_discovery_scan(
             processed = start + len(chunk)
             results = await asyncio.gather(
                 *[
-                    _scan_page(sem, cpu_sem, client, page_url, row, reference, budget, prefetched)
+                    _scan_page(sem, cpu_sem, client, page_url, row, matcher, budget, prefetched)
                     for row, page_url, prefetched in chunk
                 ],
                 return_exceptions=True,
@@ -316,6 +331,11 @@ async def _async_discovery_scan(
                     "domains_with_matches": len({m.domain for m in all_matches}),
                 })
 
+        # Video only. Stage 2: find the video file on each matched page. Stage 3: verify against it.
+        top_matches = _consolidate_matches(all_matches)[:12]
+        if video_ref is not None and top_matches:
+            await _video_stages(sem, cpu_sem, client, video_ref, top_matches, budget, emit_event)
+
     for row, _page, _html in work[processed:]:   # pages never reached because a budget ran out
         stats[row["domain"]]["skipped"] += 1
 
@@ -324,7 +344,6 @@ async def _async_discovery_scan(
     for status in domain_status.values():
         coverage[status] += 1
 
-    top_matches = _consolidate_matches(all_matches)[:12]
     related_domains = _expand_related_domains(top_matches, rows)
     truncated = budget.reason is not None
     emit_event(
@@ -352,7 +371,21 @@ async def _async_discovery_scan(
         direct_matches=[m.model_dump() for m in top_matches],
         related_domains=[item.model_dump() for item in related_domains[:12]],
         recent_events=events[-60:],
+        input_type="video" if video_ref is not None else "image",
+        reference_frames=len(video_ref.frames) if video_ref is not None else 0,
+        video_info=_video_info(video_ref),
     )
+
+
+def _video_info(video_ref: Optional[VideoReference]) -> Optional[dict]:
+    if video_ref is None:
+        return None
+    return {
+        "duration_seconds": video_ref.duration,
+        "width": video_ref.width,
+        "height": video_ref.height,
+        "keyframe_times": [frame.time for frame in video_ref.frames],
+    }
 
 
 def _final_status(s: dict[str, int]) -> str:
@@ -582,7 +615,7 @@ async def _scan_page(
     client: httpx.AsyncClient,
     page_url: str,
     row: dict[str, str],
-    reference: "Reference",
+    matcher: Callable[..., Optional[DiscoveryMatch]],
     budget: ScanBudget,
     prefetched_html: Optional[str] = None,
 ) -> PageScan:
@@ -618,8 +651,8 @@ async def _scan_page(
         asset_url, asset_type, content_page = asset
         async with cpu_sem:  # hashing / SIFT are CPU-bound: keep them off the event loop
             match = await asyncio.to_thread(
-                match_candidate,
-                reference, image_bytes, domain, network, provider_type,
+                matcher,
+                image_bytes, domain, network, provider_type,
                 content_page or page_url, asset_url, asset_type,
             )
         if match is not None:
@@ -636,177 +669,135 @@ async def _scan_page(
     return PageScan(status="ok", candidates=len(assets), matches=matches)
 
 
-# ── Matching ──────────────────────────────────────────────────────────────
+# ── Video: stage 2 (find the video file) and stage 3 (verify) ──────────────
 
-@dataclass
-class Reference:
-    """The user's image prepared once: perceptual hashes for several variants
-    (original, mirrored, standard centre crops) and SIFT features for the original
-    and mirrored versions."""
-    original_bytes: bytes
-    variants: dict  # name -> (PIL image, {"phash","dhash","ahash"})
-    features: dict  # "original" | "mirrored" -> geometry.Features | None
+VIDEO_DIRECT_EXTS = (".mp4", ".webm", ".mov", ".m4v")
+VIDEO_STREAM_EXTS = (".m3u8", ".mpd")
+LISTING_SEGMENTS = {"videos", "video", "tag", "tags", "category", "categories", "page", "search", "latest", "popular"}
+_VIDEO_URL_RE = re.compile(r"https?://[^\s\"'<>\\]+?\.(?:mp4|webm|m3u8|mpd|mov|m4v)(?:\?[^\s\"'<>\\]*)?", re.I)
+_KIND_ORDER = {"direct": 0, "stream": 1, "embed": 2}
 
 
-def _open_rgb(data: bytes) -> Image.Image:
-    image = Image.open(io.BytesIO(data))
-    if image.width * image.height > MAX_IMAGE_PIXELS:  # header-only check; avoids decompression bombs
-        raise ValueError("image too large")
-    return ImageOps.exif_transpose(image).convert("RGB")
-
-
-def _hashes_of(image: Image.Image) -> dict[str, imagehash.ImageHash]:
-    return {
-        "phash": imagehash.phash(image),
-        "dhash": imagehash.dhash(image),
-        "ahash": imagehash.average_hash(image),
-    }
-
-
-def _compute_hashes(image_bytes: bytes) -> dict[str, imagehash.ImageHash]:
-    return _hashes_of(_open_rgb(image_bytes))
-
-
-def _center_crop(image: Image.Image, ratio: float) -> Image.Image:
-    w, h = image.size
-    if w / h > ratio:
-        new_w = int(h * ratio)
-        left = (w - new_w) // 2
-        return image.crop((left, 0, left + new_w, h))
-    new_h = int(w / ratio)
-    top = (h - new_h) // 2
-    return image.crop((0, top, w, top + new_h))
-
-
-def build_reference(image_bytes: bytes) -> Reference:
-    base = _open_rgb(image_bytes)
-    images: dict[str, Image.Image] = {"original": base, "mirrored": ImageOps.mirror(base)}
-    aspect = base.width / base.height
-    for name, ratio in (("crop_16x9", 16 / 9), ("crop_4x3", 4 / 3), ("crop_1x1", 1.0), ("crop_9x16", 9 / 16)):
-        if abs(aspect - ratio) / ratio > 0.05:  # skip crops that would equal the original
-            images[name] = _center_crop(base, ratio)
-    variants = {name: (img, _hashes_of(img)) for name, img in images.items()}
-    features = {
-        "original": geometry.extract(np.array(images["original"].convert("L"))),
-        "mirrored": geometry.extract(np.array(images["mirrored"].convert("L"))),
-    }
-    return Reference(original_bytes=image_bytes, variants=variants, features=features)
-
-
-def _ssim(a: Image.Image, b: Image.Image) -> float:
-    try:
-        from skimage.metrics import structural_similarity
-
-        arr_a = np.array(a.convert("L").resize((128, 128)))
-        arr_b = np.array(b.convert("L").resize((128, 128)))
-        return round(float(structural_similarity(arr_a, arr_b, data_range=255)), 4)
-    except Exception:
-        return 0.0
-
-
-def _histogram_correlation(img1_bytes: bytes, img2_bytes: bytes) -> float:
-    try:
-        h1 = np.array(_open_rgb(img1_bytes).resize((256, 256)).histogram(), dtype=np.float64)
-        h2 = np.array(_open_rgb(img2_bytes).resize((256, 256)).histogram(), dtype=np.float64)
-        h1, h2 = h1 / h1.sum(), h2 / h2.sum()
-        num = ((h1 - h1.mean()) * (h2 - h2.mean())).sum()
-        den = np.sqrt(((h1 - h1.mean()) ** 2).sum() * ((h2 - h2.mean()) ** 2).sum())
-        return 0.0 if den == 0 else max(0.0, round(float(num / den), 4))
-    except Exception:
-        return 0.0
-
-
-def match_candidate(
-    reference: Reference,
-    candidate_bytes: bytes,
-    domain: str,
-    network: Optional[str],
-    provider_type: Optional[str],
-    page_url: str,
-    image_url: str,
-    asset_type: str,
-) -> Optional[DiscoveryMatch]:
-    try:
-        candidate = _open_rgb(candidate_bytes)
-    except Exception:
-        return None
-    if min(candidate.size) < MIN_IMAGE_SIDE:  # icons, spacers, tracking pixels
-        return None
-
-    cand_hashes = _hashes_of(candidate)
-
-    # Best variant of the reference by average hash distance.
-    best_name, best_avg, best_dists = "original", 99.0, (64, 64, 64)
-    for name, (_, variant_hashes) in reference.variants.items():
-        dists = tuple(int(variant_hashes[k] - cand_hashes[k]) for k in ("phash", "dhash", "ahash"))
-        avg = sum(dists) / 3
-        if avg < best_avg:
-            best_name, best_avg, best_dists = name, avg, dists
-
-    common = dict(
-        domain=domain, network=network, provider_type=provider_type,
-        page_url=page_url, image_url=image_url, asset_type=asset_type,
-        phash_distance=best_dists[0], dhash_distance=best_dists[1], ahash_distance=best_dists[2],
-    )
-
-    # ── Tier 1: perceptual hashes (instant; resize / recompress / crop / mirror variants) ──
-    if best_avg <= HASH_MAX_AVG_DISTANCE:
-        confidence = min(round(max(0.0, 1.0 - best_avg / 16.0) * 100, 1), 99.0)
-        return DiscoveryMatch(
-            **common,
-            confidence=confidence,
-            match_type="exact" if best_name == "original" else "near_duplicate",
-            ssim_score=_ssim(reference.variants[best_name][0], candidate),
-            match_method="hash",
-            matched_variant=best_name,
-        )
-
-    # ── Tier 2/3: geometric verification (SIFT + ratio test + RANSAC) ──
-    if geometry.available():
-        cand_features = geometry.extract(np.array(candidate.convert("L")))
-        results = {
-            name: geometry.match(reference.features.get(name), cand_features)
-            for name in ("original", "mirrored")
-        }
-        variant = max(results, key=lambda n: results[n].inliers)
-        geo = results[variant]
-        if geo.inliers >= GEO_PROBABLE_INLIERS and geo.inlier_ratio >= GEO_MIN_INLIER_RATIO:
-            ssim = _ssim(reference.variants[variant][0], candidate)
-            extra = dict(
-                keypoint_matches=geo.inliers,
-                keypoint_match_rate=geo.inlier_ratio,
-                ssim_score=ssim,
-                match_method="geometric",
-                matched_variant=variant,
-            )
-            if geo.inliers >= GEO_STRUCTURAL_INLIERS:
-                confidence = round(70.0 + min(geo.inliers, 80) / 80.0 * 25.0, 1)
-                return DiscoveryMatch(**common, confidence=min(confidence, 95.0), match_type="structural", **extra)
-            hist = _histogram_correlation(reference.original_bytes, candidate_bytes)
-            confidence = round(40.0 + geo.inliers * 2.0 + hist * 10.0, 1)
-            return DiscoveryMatch(
-                **common, confidence=min(confidence, 85.0), match_type="probable",
-                hist_correlation=round(hist, 4), **extra,
-            )
-        return None
-
-    # ── Fallback when SIFT is unavailable: the previous ORB ratio rule ──
-    kp_matches, kp_rate = compute_match_rate(reference.original_bytes, candidate_bytes)
-    if kp_rate >= 0.35:
-        return DiscoveryMatch(
-            **common, confidence=min(round(65.0 + min(kp_rate, 1.0) * 25.0, 1), 95.0),
-            match_type="structural", keypoint_matches=kp_matches, keypoint_match_rate=round(kp_rate, 4),
-            ssim_score=_ssim(reference.variants["original"][0], candidate), match_method="orb_fallback",
-        )
-    if kp_rate >= 0.20:
-        hist = _histogram_correlation(reference.original_bytes, candidate_bytes)
-        return DiscoveryMatch(
-            **common, confidence=min(round(40.0 + kp_rate * 30.0 + hist * 15.0, 1), 85.0),
-            match_type="probable", keypoint_matches=kp_matches, keypoint_match_rate=round(kp_rate, 4),
-            hist_correlation=round(hist, 4), ssim_score=_ssim(reference.variants["original"][0], candidate),
-            match_method="orb_fallback",
-        )
+def _classify_video_url(url: str) -> Optional[str]:
+    path = urlparse(url).path.lower()
+    if path.endswith(VIDEO_DIRECT_EXTS):
+        return "direct"
+    if path.endswith(VIDEO_STREAM_EXTS):
+        return "stream"
     return None
+
+
+def _extract_video_urls(html: str, page_url: str) -> list[tuple[str, str]]:
+    """Video addresses found on a page, best first: [(url, kind)] with kind
+    direct (a file), stream (an .m3u8/.mpd playlist, never treated as a file) or embed
+    (a player page). Nothing is guessed: if the page does not expose one, the list is empty."""
+    html = html.replace("\\/", "/")  # unescape JSON-style slashes
+    soup = BeautifulSoup(html, "html.parser")
+    found: list[tuple[str, str]] = []
+    seen: set[str] = set()
+
+    def add(raw: Optional[str], default: Optional[str]) -> None:
+        if not raw:
+            return
+        absolute = urljoin(page_url, raw.strip())
+        if urlparse(absolute).scheme not in {"http", "https"} or absolute in seen:
+            return
+        kind = _classify_video_url(absolute) or default
+        if kind:
+            seen.add(absolute)
+            found.append((absolute, kind))
+
+    for tag in soup.find_all("meta"):
+        prop = (tag.get("property") or tag.get("name") or "").lower()
+        if prop in {"og:video", "og:video:url", "og:video:secure_url", "twitter:player:stream"}:
+            add(tag.get("content"), "embed")
+        elif prop == "twitter:player":
+            add(tag.get("content"), "embed")
+
+    for video in soup.find_all("video"):
+        add(video.get("src"), "direct")
+        for source in video.find_all("source"):
+            kind = "stream" if "mpegurl" in (source.get("type") or "").lower() else "direct"
+            add(source.get("src"), kind)
+
+    for script in soup.find_all("script", type="application/ld+json")[:5]:
+        try:
+            data = json.loads(script.string or "")
+        except (ValueError, TypeError):
+            continue
+        for node in (data if isinstance(data, list) else [data]):
+            if isinstance(node, dict):
+                content, embed = node.get("contentUrl"), node.get("embedUrl")
+                if isinstance(content, str):
+                    add(content, "direct")
+                if isinstance(embed, str):
+                    add(embed, "embed")
+
+    for match in _VIDEO_URL_RE.findall(html)[:20]:
+        add(match, None)
+    for frame in soup.find_all("iframe", src=True)[:3]:
+        add(frame.get("src"), "embed")
+
+    found.sort(key=lambda item: _KIND_ORDER[item[1]])  # stable: keeps page order within a kind
+    return found[:5]
+
+
+def _likely_video_page(match: DiscoveryMatch) -> bool:
+    """A thumbnail on a listing page says nothing about which video file belongs to it,
+    so only pages that look like one video's own page are searched for a video URL."""
+    if match.page_specific:
+        return True
+    first = urlparse(match.page_url).path.strip("/").split("/")[0].lower()
+    return bool(first) and first not in LISTING_SEGMENTS
+
+
+async def _resolve_video_urls(
+    sem: asyncio.Semaphore, client: httpx.AsyncClient, matches: list[DiscoveryMatch]
+) -> None:
+    async def one(match: DiscoveryMatch) -> None:
+        if not _likely_video_page(match):
+            return
+        fetched = await _fetch_html(sem, client, match.page_url)
+        if fetched.status != "ok":
+            return
+        urls = _extract_video_urls(_decode(fetched.content), match.page_url)
+        if urls:
+            match.video_url, match.video_url_type = urls[0]
+
+    await asyncio.gather(*[one(m) for m in matches], return_exceptions=True)
+
+
+async def _video_stages(
+    sem: asyncio.Semaphore,
+    cpu_sem: asyncio.Semaphore,
+    client: httpx.AsyncClient,
+    video_ref: VideoReference,
+    matches: list[DiscoveryMatch],
+    budget: ScanBudget,
+    emit_event: Callable[..., None],
+) -> None:
+    verifications: dict[int, Verification] = {}
+    if not budget.expired():
+        emit_event("info", f"Looking for the video file on {len(matches)} matched page(s)...")
+        await _resolve_video_urls(sem, client, matches)
+
+        eligible = [m for m in matches if m.video_url_type == "direct"][:VERIFY_MAX_CANDIDATES]
+        if VERIFY_ENABLED and eligible and not budget.expired():
+            emit_event("info", f"Checking {len(eligible)} video file(s) against your video...")
+            results = await asyncio.gather(
+                *[verify_video_url(sem, cpu_sem, client, video_ref, m.video_url) for m in eligible]
+            )
+            verifications = {id(m): r for m, r in zip(eligible, results)}
+
+    for match in matches:
+        verification = verifications.get(id(match))
+        apply_evidence(match, verification)
+        if verification is not None and verification.status == "verified":
+            emit_event(
+                "match",
+                f"Video verified on {match.domain}: {verification.ordered_frames} frames in order",
+                domain=match.domain, page_url=match.page_url, match_type="verified", confidence=match.confidence,
+            )
 
 
 # ── Demo result builder (unchanged) ───────────────────────────────────────

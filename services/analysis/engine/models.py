@@ -126,6 +126,15 @@ class DiscoveryMatch(BaseModel):
     matched_variant: Optional[str] = None  # which version of the reference matched: original | mirrored | crop_16x9 ...
     alt_image_urls: List[str] = []     # other thumbnails on the same page that also matched
     page_specific: bool = False        # True when page_url is a distinct content page (not the listing page)
+    # ── video scans only (all optional; image results are unchanged) ──
+    video_url: Optional[str] = None
+    video_url_type: Optional[str] = None   # direct | stream | embed
+    category: Optional[str] = None         # possible | strong | verified
+    matched_frame_index: Optional[int] = None
+    matched_frame_time: Optional[float] = None   # seconds into the user's video
+    frames_matched: int = 0
+    matched_segment: Optional[dict] = None       # {"start": s, "end": s} in the user's video
+    evidence: Optional[dict] = None
 
 
 class DiscoveryRelatedDomain(BaseModel):
@@ -165,6 +174,9 @@ class DiscoveryResult(BaseModel):
     truncated: bool = False             # scan stopped early (time or request budget)
     truncation_reason: Optional[str] = None
     evidence: Optional[dict] = None     # optional supporting screenshot (hash + ELA)
+    input_type: str = "image"           # image | video
+    reference_frames: int = 0           # keyframes taken from an uploaded video
+    video_info: Optional[dict] = None   # duration, size and keyframe times (never the frames themselves)
     pages_scanned: int = 0
     candidates_evaluated: int = 0
     direct_matches: List[dict] = []

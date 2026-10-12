@@ -57,6 +57,7 @@ interface ActionDomain {
   confidence?: number | null;
   pageUrls: string[];
   imageUrls: string[];
+  videoUrls: string[];
   reason?: string | null;
 }
 
@@ -103,7 +104,7 @@ function buildActionDomains(trace: DiscoveryResult | null): ActionDomain[] {
   for (const match of trace.direct_matches) {
     const existing = byDomain.get(match.domain);
     if (!existing) {
-      byDomain.set(match.domain, { domain: match.domain, kind: "direct_match", network: match.network, confidence: match.confidence, pageUrls: match.page_url ? [match.page_url] : [], imageUrls: match.image_url ? [match.image_url] : [] });
+      byDomain.set(match.domain, { domain: match.domain, kind: "direct_match", network: match.network, confidence: match.confidence, pageUrls: match.page_url ? [match.page_url] : [], imageUrls: match.image_url ? [match.image_url] : [], videoUrls: match.video_url ? [match.video_url] : [] });
       continue;
     }
     existing.kind = "direct_match";
@@ -111,12 +112,13 @@ function buildActionDomains(trace: DiscoveryResult | null): ActionDomain[] {
     existing.confidence = Math.max(existing.confidence ?? 0, match.confidence ?? 0);
     pushUnique(existing.pageUrls, match.page_url);
     pushUnique(existing.imageUrls, match.image_url);
+    pushUnique(existing.videoUrls, match.video_url);
   }
 
   for (const related of trace.related_domains) {
     const existing = byDomain.get(related.domain);
     if (!existing) {
-      byDomain.set(related.domain, { domain: related.domain, kind: "related_domain", network: related.network, confidence: null, pageUrls: [], imageUrls: [], reason: related.reason });
+      byDomain.set(related.domain, { domain: related.domain, kind: "related_domain", network: related.network, confidence: null, pageUrls: [], imageUrls: [], videoUrls: [], reason: related.reason });
       continue;
     }
     existing.network = existing.network ?? related.network;
@@ -147,6 +149,8 @@ function buildLeakNoticeParts(
     `Reported domain: ${d.domain}`,
     d.pageUrls.length > 0 ? "Matched page URLs:" : null,
     ...d.pageUrls.map((u) => `  • ${u}`),
+    d.videoUrls.length > 0 ? "Video file / stream URLs:" : null,
+    ...d.videoUrls.map((u) => `  • ${u}`),
     d.imageUrls.length > 0 ? "Matched asset URLs:" : null,
     ...d.imageUrls.map((u) => `  • ${u}`),
     intel?.network ? `Network / operator: ${intel.network}` : null,

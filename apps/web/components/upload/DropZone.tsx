@@ -9,6 +9,8 @@ interface Props {
   onClear: () => void;
   label?: string;
   compact?: boolean;
+  accept?: string;
+  hint?: string;
 }
 
 export function DropZone({
@@ -18,6 +20,8 @@ export function DropZone({
   onClear,
   label = "Drag & drop your image here",
   compact = false,
+  accept = "image/jpeg,image/png,image/webp",
+  hint,
 }: Props) {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +53,7 @@ export function DropZone({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={accept}
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];
@@ -73,7 +77,7 @@ export function DropZone({
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold text-[#0a0a0a] truncate">{file.name}</p>
             <p className="text-[12px] text-[#9ca3af] mt-0.5">
-              {(file.size / 1024).toFixed(0)} KB · {file.type.split("/")[1].toUpperCase()}
+              {file.size >= 1024 * 1024 ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` : `${(file.size / 1024).toFixed(0)} KB`} · {(file.name.split(".").pop() || file.type.split("/")[1] || "FILE").toUpperCase()}
             </p>
             <button
               type="button"
@@ -124,7 +128,7 @@ export function DropZone({
             {!compact && <p className="text-[12px] text-[#9ca3af] mt-1">or click to browse files</p>}
           </div>
           <p className="text-[11px] text-[#c4bdb5] font-mono">
-            {compact ? "JPG · PNG · WEBP" : "JPG · PNG · WEBP · MAX 10 MB"}
+            {hint ?? (compact ? "JPG · PNG · WEBP" : "JPG · PNG · WEBP · MAX 10 MB")}
           </p>
         </div>
       )}

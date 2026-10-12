@@ -15,6 +15,54 @@ const SCAN_STEPS = [
   "Compiling evidence and removal contacts",
 ];
 
+const SCAN_STEPS_VIDEO = [
+  "Reading your video and choosing key frames",
+  "Scanning monitored sites",
+  "Comparing thumbnails with your key frames",
+  "Looking for the video files",
+  "Compiling evidence and removal contacts",
+];
+
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+const VIDEO_EXTENSIONS = [".mp4", ".mov", ".webm", ".mkv", ".m4v"];
+/* neutral stand-in when the browser cannot draw a poster frame for a video */
+const VIDEO_PLACEHOLDER =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' rx='12' fill='%23f0ede8'/><path d='M38 30l28 18-28 18z' fill='%239ca3af'/></svg>".replace(/%23/g, "#"),
+  );
+
+/** Draws one frame of a video file to a small JPEG data URL (used as the preview). */
+function videoPoster(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    const finish = (value: string) => { URL.revokeObjectURL(url); resolve(value); };
+    const timer = setTimeout(() => finish(VIDEO_PLACEHOLDER), 5000);
+    video.muted = true;
+    video.preload = "metadata";
+    video.playsInline = true;
+    video.onerror = () => { clearTimeout(timer); finish(VIDEO_PLACEHOLDER); };
+    video.onloadedmetadata = () => {
+      video.currentTime = Math.min(1, (video.duration || 1) * 0.1);
+    };
+    video.onseeked = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.min(video.videoWidth || 480, 480);
+        canvas.height = Math.round((canvas.width / (video.videoWidth || 480)) * (video.videoHeight || 270));
+        canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
+        clearTimeout(timer);
+        finish(canvas.toDataURL("image/jpeg", 0.75));
+      } catch {
+        clearTimeout(timer);
+        finish(VIDEO_PLACEHOLDER);
+      }
+    };
+    video.src = url;
+  });
+}
+
 /* ── Platform logos (inline brand SVGs) ── */
 
 function TelegramLogo() {
@@ -97,8 +145,37 @@ function LeakPageContent() {
   const [creatingCase, setCreatingCase] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [originDomain, setOriginDomain] = useState("");
+  const [mode, setMode] = useState<"image" | "video">("image");
+  const isVideo = mode === "video";
+  const steps = isVideo ? SCAN_STEPS_VIDEO : SCAN_STEPS;
+
+  function switchMode(next: "image" | "video") {
+    if (next === mode) return;
+    setMode(next);
+    setFile(null);
+    setPreview(null);
+    setError(null);
+  }
+
+  async function handleVideoFile(f: File) {
+    const name = f.name.toLowerCase();
+    const looksLikeVideo = f.type.startsWith("video/") || VIDEO_EXTENSIONS.some((ext) => name.endsWith(ext));
+    if (!looksLikeVideo) {
+      setError("Please upload a video file (MP4, MOV, WebM or MKV).");
+      return;
+    }
+    if (f.size > MAX_VIDEO_BYTES) {
+      setError("The video must be under 100 MB.");
+      return;
+    }
+    setError(null);
+    setFile(f);
+    setPreview(VIDEO_PLACEHOLDER);
+    setPreview(await videoPoster(f));
+  }
 
   function handleFile(f: File) {
+    if (isVideo) { void handleVideoFile(f); return; }
     if (!f.type.startsWith("image/")) {
       setError("Please upload an image file (JPG, PNG, WEBP).");
       return;
@@ -146,7 +223,7 @@ function LeakPageContent() {
         body: JSON.stringify({
           anonymous: true,
           platform_source: source,
-          issue_type: "Non-consensual image sharing",
+          issue_type: isVideo ? "Non-consensual video sharing" : "Non-consensual image sharing",
           pipeline_type: "ncii",
         }),
       });
@@ -164,7 +241,7 @@ function LeakPageContent() {
           eventType: "case_created",
           caseId: case_id,
           platformSource: source,
-          issueType: "Non-consensual image sharing",
+          issueType: isVideo ? "Non-consensual video sharing" : "Non-consensual image sharing",
           pipelineType: "ncii",
           anonymous: true,
         }),
@@ -181,7 +258,7 @@ function LeakPageContent() {
 
       const interval = setInterval(() => {
         setScanStep((s) => {
-          if (s >= SCAN_STEPS.length - 1) { clearInterval(interval); return s; }
+          if (s >= steps.length - 1) { clearInterval(interval); return s; }
           return s + 1;
         });
       }, 600); /* 600ms per step (was 900ms) */
@@ -190,14 +267,14 @@ function LeakPageContent() {
 
       /* ── Step 3: Upload image + discover ── */
       const formData = new FormData();
-      formData.append("suspicious_image", file);
+      formData.append(isVideo ? "video" : "suspicious_image", file);
       if (evidenceFile) formData.append("evidence_image", evidenceFile);
-      if (demoMode) formData.append("demo", "true");
+      if (demoMode && !isVideo) formData.append("demo", "true");
       const origin = originDomain.trim();
       if (origin) formData.append("origin_domain", origin);
 
       const [res] = await Promise.all([
-        fetch(`${API_URL}/api/analysis/${case_id}/discover`, {
+        fetch(`${API_URL}/api/analysis/${case_id}/${isVideo ? "discover-video" : "discover"}`, {
           method: "POST",
           body: formData,
         }),
@@ -205,7 +282,7 @@ function LeakPageContent() {
       ]);
 
       clearInterval(interval);
-      setScanStep(SCAN_STEPS.length - 1);
+      setScanStep(steps.length - 1);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({})) as { detail?: string };
@@ -256,7 +333,7 @@ function LeakPageContent() {
               Fingerprinting your image and comparing it with pages on monitored sites.
             </p>
             <div className="text-left space-y-2.5">
-              {SCAN_STEPS.map((label, i) => (
+              {steps.map((label, i) => (
                 <div key={label} className={`flex items-center gap-2.5 transition-opacity ${i > scanStep ? "opacity-30" : "opacity-100"}`}>
                   <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
                     i < scanStep ? "bg-rose-500 border-rose-500" : i === scanStep ? "border-rose-400 bg-rose-50" : "border-[#e8e4de]"
@@ -355,11 +432,28 @@ function LeakPageContent() {
           <div className="flex items-center gap-2 mb-4">
             <span className={`w-6 h-6 rounded-full text-[11px] font-mono font-semibold flex items-center justify-center transition-colors ${file ? "bg-[#0a0a0a] text-white" : "bg-[#e8e4de] text-[#9ca3af]"}`}>2</span>
             <label className="text-[12px] font-mono text-[#0a0a0a] uppercase tracking-widest font-medium">
-              Upload the image to trace
+              {isVideo ? "Upload the video to trace" : "Upload the image to trace"}
             </label>
           </div>
 
-          {demoMode && (
+          {/* Image / Video */}
+          <div role="group" aria-label="What are you tracing?" className="mb-4 inline-flex rounded-lg border border-[#e8e4de] bg-white p-0.5">
+            {(["image", "video"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                aria-pressed={mode === m}
+                onClick={() => switchMode(m)}
+                className={`rounded-md px-4 py-1.5 text-[12px] font-medium transition-colors ${
+                  mode === m ? "bg-[#0a0a0a] text-white" : "text-[#6b7280] hover:text-[#0a0a0a]"
+                }`}
+              >
+                {m === "image" ? "Image" : "Video"}
+              </button>
+            ))}
+          </div>
+
+          {demoMode && !isVideo && (
             <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -403,6 +497,9 @@ function LeakPageContent() {
           <DropZone
             file={file}
             preview={preview}
+            accept={isVideo ? "video/mp4,video/quicktime,video/webm,video/x-matroska,.mp4,.mov,.webm,.mkv,.m4v" : undefined}
+            label={isVideo ? "Drag & drop your video here" : undefined}
+            hint={isVideo ? "MP4 · MOV · WEBM · MKV · MAX 100 MB" : undefined}
             onFile={handleFile}
             onClear={() => { setFile(null); setPreview(null); }}
           />
