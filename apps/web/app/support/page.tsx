@@ -27,7 +27,7 @@ export default function SupportHubPage() {
         <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-ink-soft">
           <li className="inline-flex items-center gap-1.5"><CheckIcon size={12} className="text-emerald-600" /> No account needed</li>
           <li className="inline-flex items-center gap-1.5"><LockIcon size={12} className="text-emerald-600" /> We don&apos;t record what you open</li>
-          <li className="inline-flex items-center gap-1.5"><ExitIcon size={12} className="text-emerald-600" /> Leave quickly button, top right</li>
+          {/* <li className="inline-flex items-center gap-1.5"><ExitIcon size={12} className="text-emerald-600" /> Leave quickly button, top right</li> */}
         </ul>
       </PageIntro>
 

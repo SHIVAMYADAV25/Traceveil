@@ -3,7 +3,8 @@
 import { useEffect, useCallback } from "react";
 import { ExitIcon } from "./Icons";
 
-const EXIT_URL = "https://www.google.com";
+const EXIT_URL =
+  process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 /**
  * Leaves the page fast, for when someone walks in.
@@ -11,6 +12,7 @@ const EXIT_URL = "https://www.google.com";
  * - Clears image previews the report flow keeps in this tab's sessionStorage.
  * - Press Escape twice for the same effect.
  */
+
 export function QuickExit() {
   const exit = useCallback(() => {
     try {
