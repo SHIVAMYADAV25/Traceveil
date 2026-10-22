@@ -81,6 +81,7 @@ export default function CommunityPage() {
         tone="brand"
         title="Get practical help, or talk to people who understand"
         lead="Organisations can help you report and get content taken down. Talking with others is for company. They are different, so they are kept apart."
+        bgImage="/support/community-bg.png"
       />
       <SectionRule n="01" label="Choose one" />
       <SupportTabs
