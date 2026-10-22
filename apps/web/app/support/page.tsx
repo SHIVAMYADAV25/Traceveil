@@ -22,7 +22,8 @@ export default function SupportHubPage() {
       <PageIntro
         badge="Support"
         title="Getting the content taken down is one job. Looking after yourself is another."
-        lead="These are services and people we have checked, most of them free, that you can use while your case is running. Pick what helps today. The rest will still be here."
+        lead="We've gathered trusted services and people you can turn to, many of them free. Explore what feels helpful right now."
+        bgImage="/support/counsellor-bg1.png"
       >
         <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-ink-soft">
           <li className="inline-flex items-center gap-1.5"><CheckIcon size={12} className="text-emerald-600" /> No account needed</li>
