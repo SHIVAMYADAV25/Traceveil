@@ -17,6 +17,7 @@ const NAV = [
     group: "Use Cases",
     links: [
       { label: "NCII leak discovery", href: "/leak" },
+      { label: "Support and counselling", href: "/support" },
       { label: "Pricing", href: "/pricing" },
       { label: "Supported platforms", href: "/supported-platforms" },
     ],

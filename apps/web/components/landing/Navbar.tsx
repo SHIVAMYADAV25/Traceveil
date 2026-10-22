@@ -24,6 +24,7 @@ const NAV_HREFS: NavItem[] = [
   { id: "pitch", key: "pricing", href: "/pitch", label: "Pitch" },
   { id: "resources", key: "resources", href: "/resources" },
   { id: "supported-platforms", key: "supportedPlatforms", href: "/supported-platforms", label: "Platforms" },
+  { id: "support", key: "resources", href: "/support", label: "Support" },
 ];
 
 
@@ -59,7 +60,7 @@ export function Navbar() {
             className="text-[21px] font-semibold tracking-tight"
             style={{ color: "#0a0a0a" }}
           >
-            sniffer
+            Traceveil
           </span>
         </Link>
 

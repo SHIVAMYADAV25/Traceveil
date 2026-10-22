@@ -9,6 +9,22 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  /* ── Warm-stone palette ──────────────────────────────────────────────
+     Named versions of the hex values the product pages already hard-code
+     (counts from the codebase: #e8e4de ×313, #0a0a0a ×312, #9ca3af ×171,
+     #6b7280 ×131, #fafaf8 ×109, #a8a29e ×107). Same values, so adopting
+     them changes nothing visually. New pages use these names. */
+  --color-canvas: #fafaf8;       /* page background on product pages */
+  --color-paper: #ffffff;        /* cards and panels */
+  --color-sand: #f0ede8;         /* icon tiles, placeholders */
+  --color-line: #e8e4de;         /* every border */
+  --color-line-strong: #d4cfc9;  /* hover / dashed borders */
+  --color-ink: #0a0a0a;          /* headings, primary buttons */
+  --color-ink-body: #374151;     /* running text on white */
+  --color-ink-soft: #6b7280;     /* secondary text */
+  --color-ink-faint: #9ca3af;    /* captions, meta */
+  --color-ink-quiet: #a8a29e;    /* uppercase eyebrow labels */
+  --color-brand: #4f46e5;        /* logo indigo, links */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

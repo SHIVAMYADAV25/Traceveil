@@ -69,7 +69,7 @@ This takes **3-4 hours per case**. Most victims never find all copies.
 ├──────────────┼──────────────────┼───────────────────────┤
 │ Exact copies │ Cropped images   │ Brightness edits      │
 │ Resized      │ Watermarked      │ Filter changes        │
-│ Recompressed │ Rotated          │ Contrast manipulation  │
+│ Recompressed │ Rotated          │ Contrast manipulation │
 └──────────────┴──────────────────┴───────────────────────┘
 ```
 

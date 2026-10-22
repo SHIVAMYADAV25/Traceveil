@@ -601,6 +601,14 @@ function LeakPageContent() {
             )}
           </button>
         </div>
+
+        <p className="mt-8 border-t border-[#e8e4de] pt-5 text-[12.5px] leading-relaxed text-[#6b7280]">
+          Want to talk to someone first?{" "}
+          <Link href="/support" className="font-medium text-[#0a0a0a] underline underline-offset-2 decoration-[#d4cfc9] hover:decoration-[#0a0a0a]">
+            Free counsellors and support
+          </Link>
+          . You can come back to this page any time.
+        </p>
       </main>
     </div>
   );

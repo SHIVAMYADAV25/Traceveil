@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { ContentTrace } from "./ContentTrace";
 import { LeakActionConsole } from "./LeakActionConsole";
 import { ReportWellbeingLegal } from "./ReportWellbeingLegal";
+import { SupportCallout } from "@/components/support/SupportCallout";
 import type { CaseData } from "./types";
 import { buildCaseRef } from "./utils";
 import { formatDate } from "./utils";
@@ -247,6 +248,8 @@ export function NCIIReportLayout({
             </div>
           </div>
         </section>
+
+        <SupportCallout caseId={caseId} />
 
         {/* ══════════════════════════════════════════════════════════════════════
             SECTION 02 — SUBMITTED EVIDENCE
