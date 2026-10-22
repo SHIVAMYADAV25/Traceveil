@@ -9,6 +9,7 @@ import { TRACKS } from "@/content/support/music";
 import { CALM_AUDIO } from "@/content/support/calm";
 import { BOOKS } from "@/content/support/books";
 import { STORIES, BLOGS } from "@/content/support/stories";
+import { Piece } from "@/lib/support/types";
 
 export const metadata = { title: "Read, watch and listen — Support — Sniffer" };
 
@@ -16,20 +17,52 @@ const Intro = ({ children }: { children: React.ReactNode }) => (
   <p className="mb-6 max-w-xl text-[14px] leading-relaxed text-ink-soft">{children}</p>
 );
 
+const ALL_AUDIO = [
+    ...TRACKS.map((t) => ({
+    ...t,
+    type: "track" as const,
+  })),
+  ...CALM_AUDIO.map((a) => ({
+    ...a,
+    type: "calm" as const,
+  }))
+];
+
 export default function ReadAndListenPage() {
   const listen = (
-    <>
+ <>
       <Intro>
-        Links open Spotify or YouTube. None of this is treatment. It is something to put on.
+        Links open Spotify or YouTube. None of this is treatment. It is
+        something to put on.
       </Intro>
-      <h2 className="mb-1 text-[15px] font-semibold text-ink">Press play and sit</h2>
-      <ul className="mb-12">{CALM_AUDIO.map((a, i) => <CalmRow key={a.id} a={a} index={i} />)}</ul>
-      <h2 className="mb-1 text-[15px] font-semibold text-ink">Songs, by the moment you are in</h2>
-      <p className="mb-2 max-w-xl text-[13.5px] leading-relaxed text-ink-soft">
-        Half have no lyrics, because words about love or loss can hit hard on a bad day.
-      </p>
-      <ul>{TRACKS.map((t, i) => <TrackRow key={t.id} track={t} index={i} />)}</ul>
+
+      <h2 className="mb-1 text-[15px] font-semibold text-ink">
+        Press play and sit
+      </h2>
+
+      <ul className="mb-12">
+        {ALL_AUDIO.map((item, i) =>
+          item.type === "calm" ? (
+            <CalmRow
+              key={item.id}
+              a={item}
+              index={i}
+            />
+          ) : (
+            <TrackRow
+              key={item.id}
+              track={item}
+              index={i}
+            />
+          )
+        )}
+      </ul>
     </>
+  );
+
+  const pieces = (list: Piece[], g: Piece["group"]) => list.filter((p) => p.group === g);
+  const cards = (list: Piece[]) => (
+    <div className="mb-12 grid gap-4">{list.map((p) => <PieceCard key={p.id} p={p} />)}</div>
   );
 
   const stories = (
@@ -39,7 +72,13 @@ export default function ReadAndListenPage() {
         content note. Stop whenever you like. Some are from other countries, so advice about laws there may not
         apply in India.
       </Intro>
-      <div className="grid gap-4">{STORIES.map((p) => <PieceCard key={p.id} p={p} />)}</div>
+      <h2 className="mb-4 text-[15px] font-semibold text-ink">Their own stories</h2>
+      {cards(pieces(STORIES, "own"))}
+      <h2 className="mb-1 text-[15px] font-semibold text-ink">The wider picture</h2>
+      <p className="mb-4 max-w-xl text-[13.5px] leading-relaxed text-ink-soft">
+        More about campaigning and how systems work than about recovery. Come back to these when you feel steadier.
+      </p>
+      {cards(pieces(STORIES, "wider"))}
     </>
   );
 
@@ -48,20 +87,51 @@ export default function ReadAndListenPage() {
       <Intro>
         Short reading from organisations and survivors. Pick one. You don&apos;t have to read them in order.
       </Intro>
-      <div className="grid gap-4">{BLOGS.map((p) => <PieceCard key={p.id} p={p} />)}</div>
+      <h2 className="mb-4 text-[15px] font-semibold text-ink">Understanding and getting help</h2>
+      {cards(pieces(BLOGS, "understand"))}
+      <h2 className="mb-4 text-[15px] font-semibold text-ink">Writing by survivors</h2>
+      {cards(pieces(BLOGS, "voices"))}
     </>
   );
 
-  const group = (key: "any" | "write" | "teen") => BOOKS.filter((b) => b.group === key);
+  // const blogs = (
+  //   <>
+  //     <Intro>
+  //       Short reading from organisations and survivors. Pick one. You don&apos;t have to read them in order.
+  //     </Intro>
+  //     <div className="grid gap-4">{BLOGS.map((p) => <PieceCard key={p.id} p={p} />)}</div>
+  //   </>
+  // );
+
+  const group = (key: "any" | "understand" | "work" | "teen") =>
+    BOOKS.filter((b) => b.group === key);
+  const shelf = (key: "any" | "understand" | "work" | "teen") => (
+    <ul className="mb-12">
+      {group(key).map((b, i) => <BookRow key={b.id} book={b} index={i} />)}
+    </ul>
+  );
+
   const books = (
     <>
       <Intro>
         Short sections you can read in any order. Where a book has hard material, it says so.
       </Intro>
+
       <h2 className="mb-1 text-[15px] font-semibold text-ink">For any day</h2>
-      <ul className="mb-12">{group("any").map((b, i) => <BookRow key={b.id} book={b} index={i} />)}</ul>
-      <h2 className="mb-1 text-[15px] font-semibold text-ink">To write in</h2>
-      <ul className="mb-12">{group("write").map((b, i) => <BookRow key={b.id} book={b} index={i} />)}</ul>
+      {shelf("any")}
+
+      <h2 className="mb-1 text-[15px] font-semibold text-ink">To understand what trauma does</h2>
+      <p className="mb-2 max-w-xl text-[13.5px] leading-relaxed text-ink-soft">
+        Longer and more detailed. Read when you have the energy.
+      </p>
+      {shelf("understand")}
+
+      <h2 className="mb-1 text-[15px] font-semibold text-ink">Workbooks and guides</h2>
+      <p className="mb-2 max-w-xl text-[13.5px] leading-relaxed text-ink-soft">
+        Mostly about sexual trauma in general. Two are about childhood abuse or intimacy, so read the note first.
+      </p>
+      {shelf("work")}
+
       <h2 className="mb-1 text-[15px] font-semibold text-ink">For teenagers</h2>
       <p className="mb-2 text-[13.5px] text-ink-soft">
         If you are under 18, you can also call{" "}
@@ -77,7 +147,8 @@ export default function ReadAndListenPage() {
         tone="safe"
         badge="Read, watch and listen"
         title="Something to listen to, watch or read when your mind won't settle"
-        lead="Pick one. You don't have to finish it, and you don't have to feel better afterwards."
+        lead="Words to read, voices to hear, moments to yourself"
+        bgImage="/support/read-listen-bg.png"
       />
       <SectionRule n="01" label="Choose one" />
       <SupportTabs
