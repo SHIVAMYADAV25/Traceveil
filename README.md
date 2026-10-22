@@ -224,10 +224,10 @@ Copy `apps/web/.env.example` → `apps/web/.env.local` and configure:
 - **Live App:** [sniffer.impiclabs.com](https://sniffer.impiclabs.com)
 - **Pitch Page:** [sniffer.impiclabs.com/pitch](https://sniffer.impiclabs.com/pitch)
 - **Try Demo:** [sniffer.impiclabs.com/leak?demo=1](https://sniffer.impiclabs.com/leak?demo=1)
-- **GitHub:** [github.com/icancodefyi/sniffer-forensics](https://github.com/icancodefyi/sniffer-forensics)
+- **GitHub:** [github.com/SHIVAMYADAV25/Traceveil](https://github.com/SHIVAMYADAV25/Traceveil)
 
 ---
 
 <p align="center">
-  <strong>HACKVERSE 2026</strong> · Built by <a href="https://github.com/icancodefyi">Impic Labs</a>
+  <strong>HACKVERSE 2026</strong> · Built by <a href="https://github.com/SHIVAMYADAV25/Traceveil">Impic Labs</a>
 </p>
