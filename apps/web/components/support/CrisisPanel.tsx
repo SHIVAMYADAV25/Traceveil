@@ -2,7 +2,7 @@ import { PhoneIcon } from "./Icons";
 
 const ROWS = [
   {
-    when: "Thinking about ending your life, or can't cope",
+    when: "If things feel overwhelming, you can reach out for support at any time.",
     name: "Tele-MANAS",
     number: "14416",
     tel: "14416",
@@ -38,7 +38,7 @@ export function CrisisPanel({ compact = false }: { compact?: boolean }) {
       <div className="mb-4 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-rose-400" aria-hidden />
         <h2 id="crisis-heading" className="text-[15px] font-semibold text-rose-900">
-          {compact ? "In crisis right now?" : "If you need help right now"}
+          {compact ? "Need someone to talk to?" : "If you need help right now"}
         </h2>
       </div>
       <ul className={`grid gap-3 ${compact ? "" : "md:grid-cols-3"}`}>
