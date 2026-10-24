@@ -12,7 +12,9 @@
     "build": "pnpm --filter @sniffer/web build",
     "start": "concurrently --names \"web,analysis,intel,takedown\" --prefix-colors \"blue,green,yellow,magenta\" \"pnpm --filter @sniffer/web start\" \"pnpm --filter @sniffer/analysis start\" \"pnpm --filter @sniffer/intelligence start\" \"pnpm --filter @sniffer/takedown start\"",
     "lint": "pnpm --filter @sniffer/web lint",
-    "install:py": "node scripts/setup-python-venv.cjs"
+    "install:py": "node scripts/setup-python-venv.cjs",
+    "dev:community": "pnpm --filter @sniffer/community dev",
+    "test:community": "pnpm --filter @sniffer/community test"
   },
   "dependencies": {
     "shadcn": "^3.8.5",

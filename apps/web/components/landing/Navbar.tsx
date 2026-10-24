@@ -25,6 +25,7 @@ const NAV_HREFS: NavItem[] = [
   { id: "resources", key: "resources", href: "/resources" },
   { id: "supported-platforms", key: "supportedPlatforms", href: "/supported-platforms", label: "Platforms" },
   { id: "support", key: "resources", href: "/support", label: "Support" },
+  { id: "community", key: "resources", href: "/community", label: "Community" }
 ];
 
 

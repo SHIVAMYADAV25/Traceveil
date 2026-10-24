@@ -29,5 +29,29 @@ services:
       timeout: 5s
       retries: 5
 
+  # Community service database. Separate from MongoDB: no shared data, users or credentials.
+  community-db:
+    image: postgres:16
+    container_name: sniffer-community-db
+    restart: unless-stopped
+
+    ports:
+      - "5433:5432"
+
+    environment:
+      POSTGRES_USER: community
+      POSTGRES_PASSWORD: community_dev   # development only. Change it, and DATABASE_URL, before deploying.
+      POSTGRES_DB: community
+
+    volumes:
+      - community_db_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U community -d community"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   mongodb_data:
+  community_db_data:

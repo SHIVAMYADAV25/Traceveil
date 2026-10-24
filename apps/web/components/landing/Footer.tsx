@@ -28,6 +28,7 @@ const NAV = [
       { label: "Blog & guides", href: "/resources" },
       { label: "How it works", href: "/how-it-works" },
       { label: "Supported platforms", href: "/supported-platforms" },
+      { label: "Community", href: "/community" }
     ],
   },
 ];

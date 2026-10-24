@@ -1,0 +1,40 @@
+{
+  "name": "@sniffer/community",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Traceveil Community service: anonymous group rooms, reporting and moderation",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "start": "node --env-file-if-exists=.env dist/server.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "migrate": "tsx --env-file-if-exists=.env src/db/migrate.ts",
+    "seed": "tsx --env-file-if-exists=.env src/db/seed/run.ts",
+    "promote": "tsx --env-file-if-exists=.env src/scripts/promote.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.3",
+    "@fastify/cors": "^11.3.1",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/websocket": "^11.3.4",
+    "argon2": "^0.45.1",
+    "fastify": "^5.12.7",
+    "pg": "^8.23.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
+    "@types/ws": "^8.18.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7",
+    "ws": "^8.22.0"
+  }
+}
