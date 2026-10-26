@@ -1,0 +1,29 @@
+.tv-p{background:#FDFAF4;min-height:100vh;font-family:var(--font-poppins),'Poppins',system-ui,sans-serif;color:#1F2430;line-height:1.6}
+.tv-p *{box-sizing:border-box}
+.tv-w{max-width:1160px;margin:0 auto;padding:0 28px}
+.tv-sec{padding:55px 0}
+.tv-p h1,.tv-p h2,.tv-p h3,.tv-p p{margin:0}
+.tv-p h1{font-size:54px;line-height:1.15;font-weight:300}
+.tv-p h2{font-size:36px;line-height:1.2;font-weight:300}
+.tv-p h3{font-size:19px;font-weight:500}
+.tv-p b{font-weight:600}
+.tv-co{color:#B8472B}
+.tv-mu{color:#565B66;font-size:16px}
+.tv-pill{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 26px;border-radius:999px;font-size:15px;font-weight:500;text-decoration:none;border:1.5px solid #1F2430}
+.tv-dk{background:#1F2430;color:#fff}.tv-lt{background:transparent;color:#1F2430}
+.tv-chip{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#FCE9DC;color:#8A3A22}
+.tv-card{border-radius:24px;padding:28px;border:1px solid #EADFD2;background:#fff}
+.tv-g{display:grid;gap:20px}.tv-g2{grid-template-columns:repeat(2,1fr)}.tv-g3{grid-template-columns:repeat(3,1fr)}.tv-g4{grid-template-columns:repeat(4,1fr)}
+.tv-row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.tv-img{width:100%;height:auto;display:block}
+.tv-pk{background:#FBE3DD;border-color:#FBE3DD}.tv-mn{background:#E8EFE0;border-color:#E8EFE0}.tv-bl{background:#E4EAF4;border-color:#E4EAF4}.tv-or{background:#FDEBD9;border-color:#FDEBD9}
+.tv-num{width:36px;height:36px;border-radius:50%;background:#1F2430;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:500;margin-bottom:14px}
+.tv-p a.tv-lk{color:#B8472B;font-weight:500;text-decoration:none}
+.tv-p details{border:1px solid #EADFD2;border-radius:18px;background:#fff;padding:16px 22px}
+.tv-p summary{cursor:pointer;font-weight:500;list-style:none}
+.tv-p details p{margin-top:10px;color:#565B66;font-size:15px}
+.tv-tick{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.tv-tick i{flex:none;width:24px;height:24px;border-radius:50%;background:#7A9B7E;color:#fff;font-style:normal;text-align:center;line-height:24px;font-size:13px}
+.tv-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.tv-nav a.tv-l{color:#1F2430;text-decoration:none;font-size:15px;margin-right:26px}
+@media(max-width:860px){.tv-g3,.tv-g4,.tv-g2,.tv-row{grid-template-columns:1fr}.tv-p h1{font-size:38px}.tv-nav .tv-l{display:none}.tv-sec{padding:56px 0}}

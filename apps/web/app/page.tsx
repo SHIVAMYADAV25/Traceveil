@@ -1,29 +1,5 @@
-import {
-  Navbar,
-  HeroSection,
-  ProblemSection,
-  HowItWorksSection,
-  ReportPreviewSection,
-  FeaturesSection,
-  AudienceSection,
-  CTASection,
-  Footer,
-} from "@/components/landing";
+import Home from "@/components/home/Home";
 
 export default function Page() {
-  return (
-    <>
-      <Navbar />
-      <main>
-        <HeroSection />
-        <ProblemSection />
-        <HowItWorksSection />
-        <FeaturesSection />
-        <ReportPreviewSection />
-        <AudienceSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </>
-  );
+  return <Home />;
 }
