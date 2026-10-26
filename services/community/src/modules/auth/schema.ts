@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const registerBody = z.object({
-  ageConfirmed: z.literal(true, { error: "You must confirm that you are 18 or older." }),
   password: z.string().min(8, "Use at least 8 characters.").max(128).optional(),
 });
 

@@ -11,7 +11,7 @@ beforeAll(async () => {
   env = await createTestEnv();
   await env.app.listen({ port: 0, host: "127.0.0.1" });
   port = (env.app.server.address() as AddressInfo).port;
-  room = await roomId(env, "feeling-overwhelmed");
+  room = await roomId(env, "safety-and-privacy");
 });
 afterAll(async () => env.close());
 
@@ -86,7 +86,7 @@ describe("websocket", () => {
     await la.waitFor("ready");
     await subscribed(la, room);
     await subscribed(lb, room);
-    await subscribed(lc, await roomId(env, "small-wins")); // different room
+    await subscribed(lc, await roomId(env, "healing-and-small-wins")); // different room
 
     const posted = await a.post(`/rooms/${room}/messages`, { clientMsgId: uid(), body: "live hello" });
     const got = await lb.waitFor("message.created");

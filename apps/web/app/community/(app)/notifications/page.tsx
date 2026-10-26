@@ -2,7 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
-import { Eyebrow, SecondaryButton, Spinner } from "@/components/community/ui";
+import { PageHeader } from "@/components/community/shell/PageHeader";
+import { SecondaryButton, Spinner } from "@/components/community/ui";
 import { get, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatAge } from "@/lib/community/format";
@@ -14,7 +15,7 @@ function targetFor(n: AppNotification): string | null {
   const p = n.payload;
   if ((n.kind === "mention" || n.kind === "reply") && p.spaceSlug && p.roomSlug) return `/community/${String(p.spaceSlug)}/${String(p.roomSlug)}`;
   if (n.kind === "report_new" || n.kind === "report_escalated") return `/community/moderation?report=${String(p.reportId ?? "")}`;
-  if (n.kind === "appeal_new") return "/community/admin?tab=appeals";
+  if (n.kind === "appeal_new") return "/community/admin/appeals";
   if (["restriction", "appeal_decided", "mod_notice"].includes(n.kind)) return "/community/account";
   return null;
 }
@@ -49,21 +50,17 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div data-lenis-prevent className="h-full overflow-y-auto px-4 py-6 sm:px-8">
+    <>
+      <PageHeader icon={Bell} accent title={copy.notifications.title}>
+        {!!me?.unreadNotifications && <SecondaryButton size="sm" onClick={() => void markAll()}>{copy.notifications.markAll}</SecondaryButton>}
+      </PageHeader>
+    <div data-lenis-prevent className="cm-scroll min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
       <div className="mx-auto max-w-[680px]">
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <div>
-            <Eyebrow className="mb-1.5">{copy.brand}</Eyebrow>
-            <h1 className="text-[24px] font-semibold tracking-tight text-[#0a0a0a]">{copy.notifications.title}</h1>
-          </div>
-          {!!me?.unreadNotifications && <SecondaryButton size="sm" onClick={() => void markAll()}>{copy.notifications.markAll}</SecondaryButton>}
-        </div>
-
         {items === null && <Spinner />}
         {items?.length === 0 && (
-          <div className="rounded-2xl border border-[#e8e4de] bg-white p-8 text-center">
-            <Bell className="mx-auto mb-3 size-6 text-[#6b7280]" aria-hidden />
-            <p className="mx-auto max-w-sm text-[14.5px] leading-relaxed text-[#374151]">{copy.notifications.empty}</p>
+          <div className="rounded-2xl border border-[var(--cm-line)] bg-white p-8 text-center">
+            <Bell className="mx-auto mb-3 size-6 text-[var(--cm-ink-3)]" aria-hidden />
+            <p className="mx-auto max-w-sm text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]">{copy.notifications.empty}</p>
           </div>
         )}
         <ul className="space-y-2">
@@ -72,11 +69,11 @@ export default function NotificationsPage() {
             const unread = !n.readAt;
             return (
               <li key={n.id}>
-                <button type="button" onClick={() => void open(n)} className={`flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left transition-colors hover:border-[#d4cfc9] ${unread ? "border-indigo-200 bg-indigo-50/60" : "border-[#e8e4de] bg-white"}`}>
+                <button type="button" onClick={() => void open(n)} className={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-colors hover:border-[var(--cm-line-strong)] ${unread ? "border-indigo-200 bg-indigo-50/60" : "border-[var(--cm-line)] bg-white"}`}>
                   <span className={`mt-1.5 size-2 shrink-0 rounded-full ${unread ? "bg-indigo-500" : "bg-transparent"}`} aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[14.5px] leading-relaxed text-[#0a0a0a]">{text}</span>
-                    <span className="mt-0.5 block font-mono text-[11px] text-[#6b7280]">{formatAge(Math.max(0, Math.floor((now - new Date(n.createdAt).getTime()) / 60000)))}</span>
+                    <span className="block text-[14.5px] leading-relaxed text-[var(--cm-ink)]">{text}</span>
+                    <span className="mt-0.5 block text-[12px] text-[var(--cm-ink-3)]">{formatAge(Math.max(0, Math.floor((now - new Date(n.createdAt).getTime()) / 60000)))}</span>
                   </span>
                   {unread && <span className="sr-only">unread</span>}
                 </button>
@@ -86,5 +83,6 @@ export default function NotificationsPage() {
         </ul>
       </div>
     </div>
+    </>
   );
 }

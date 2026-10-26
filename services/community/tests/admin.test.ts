@@ -98,7 +98,7 @@ describe("managing spaces and rooms", () => {
 
   it("adds and removes pinned notes", async () => {
     const adm = await admin();
-    const rid = await roomId(env, "small-wins");
+    const rid = await roomId(env, "healing-and-small-wins");
     const n = await adm.post(`/admin/rooms/${rid}/notes`, { title: "What helped me", body: "Share one thing that helped." });
     expect(n.status).toBe(201);
     const m = await newMember(env);
@@ -124,7 +124,7 @@ describe("statistics", () => {
     const adm = await admin();
     const m = await newMember(env);
     await ageAccount(env, m, 24 * 30);
-    await m.post(`/rooms/${await roomId(env, "small-wins")}/messages`, { clientMsgId: uid(), body: "a very private sentence" });
+    await m.post(`/rooms/${await roomId(env, "healing-and-small-wins")}/messages`, { clientMsgId: uid(), body: "a very private sentence" });
     const s = await adm.get("/admin/stats");
     expect(s.body.accounts).toBeGreaterThan(0);
     expect(s.body.messagesLast24Hours).toBeGreaterThan(0);
@@ -137,7 +137,7 @@ describe("cleanup jobs", () => {
   it("deletes expired messages, ends expired restrictions and purges old report snapshots", async () => {
     const m = await newMember(env);
     await ageAccount(env, m, 24 * 30);
-    const rid = await roomId(env, "small-wins");
+    const rid = await roomId(env, "healing-and-small-wins");
     const old = (await m.post(`/rooms/${rid}/messages`, { clientMsgId: uid(), body: "this will expire" })).body.message;
     const fresh = (await m.post(`/rooms/${rid}/messages`, { clientMsgId: uid(), body: "this will stay" })).body.message;
     await env.db.query("UPDATE messages SET expires_at = now() - interval '1 minute' WHERE id = $1", [old.id]);
@@ -166,7 +166,7 @@ describe("cleanup jobs", () => {
     const victim = await newMember(env);
     const mod = await newMember(env);
     await setRole(env, mod, "moderator");
-    const rid = await roomId(env, "small-wins");
+    const rid = await roomId(env, "healing-and-small-wins");
     const msg = (await bad.post(`/rooms/${rid}/messages`, { clientMsgId: uid(), body: "evidence text" })).body.message;
     const rep = await victim.post(`/messages/${msg.id}/reports`, { reason: "harassment" });
     await env.db.query("UPDATE messages SET expires_at = now() - interval '1 minute' WHERE id = $1", [msg.id]);
@@ -182,13 +182,13 @@ describe("rate limiting", () => {
     const limited = await createTestEnv({ RATE_LIMIT_ENABLED: "true" });
     try {
       const results: number[] = [];
-      for (let i = 0; i < 7; i += 1) results.push((await new Client(limited).post("/auth/register", { ageConfirmed: true })).status);
+      for (let i = 0; i < 7; i += 1) results.push((await new Client(limited).post("/auth/register", {})).status);
       expect(results.slice(0, 5)).toEqual([201, 201, 201, 201, 201]);
       expect(results.slice(5)).toEqual([429, 429]);
       const tries: number[] = [];
       for (let i = 0; i < 12; i += 1) tries.push((await new Client(limited).post("/auth/login", { handle: "nobody-here-0000", secret: "x" })).status);
       expect(tries.filter((s) => s === 429).length).toBeGreaterThan(0);
-      const rl = await new Client(limited).post("/auth/register", { ageConfirmed: true });
+      const rl = await new Client(limited).post("/auth/register", {});
       expect(rl.body.error.code).toBe("rate_limited");
     } finally {
       await limited.close();

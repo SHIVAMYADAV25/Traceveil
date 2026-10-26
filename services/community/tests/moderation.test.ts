@@ -5,7 +5,7 @@ let env: TestEnv;
 let room: string;
 beforeAll(async () => {
   env = await createTestEnv();
-  room = await roomId(env, "harassment-and-doxxing");
+  room = await roomId(env, "safety-and-privacy");
 });
 afterAll(async () => env.close());
 
@@ -196,7 +196,7 @@ describe("claiming and acting", () => {
     const blocked = await bad.post(`/rooms/${room}/messages`, { clientMsgId: uid(), body: "still here" });
     expect(blocked.status).toBe(403);
     expect(blocked.body.error.code).toBe("muted_in_room");
-    const other = await roomId(env, "small-wins");
+    const other = await roomId(env, "healing-and-small-wins");
     expect((await bad.post(`/rooms/${other}/messages`, { clientMsgId: uid(), body: "I can post elsewhere" })).status).toBe(201);
     expect((await bad.get(`/rooms/${room}/messages`)).status).toBe(200); // can still read
 

@@ -1,5 +1,5 @@
-import { CommunityFrame } from "@/components/community/CommunityFrame";
+import { CommunityShell } from "@/components/community/shell/CommunityShell";
 
 export default function SignedInLayout({ children }: { children: React.ReactNode }) {
-  return <CommunityFrame>{children}</CommunityFrame>;
+  return <CommunityShell>{children}</CommunityShell>;
 }

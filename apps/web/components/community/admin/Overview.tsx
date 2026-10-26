@@ -1,36 +1,57 @@
 "use client";
-import { useEffect, useState } from "react";
-import { get } from "@/lib/community/api";
-import { Notice, Spinner } from "../ui";
+import Link from "next/link";
+import { Activity, Clock, Flag, MessageCircle, Scale, Siren, UsersRound } from "lucide-react";
+import { Notice, Spinner } from "@/components/community/ui";
+import { StatCard } from "./StatCard";
+import { useAdminStats } from "./StatsContext";
 
-interface Stats { accounts: number; activeLast7Days: number; messagesLast24Hours: number; openReports: number; urgentOpenReports: number; openAppeals: number; averageHoursToResolve: number | null }
+const SHORTCUTS = [
+  { href: "/community/moderation", title: "Review reports", body: "Urgent ones are at the top." },
+  { href: "/community/admin/appeals", title: "Decide appeals", body: "People asking for a second look." },
+  { href: "/community/admin/people", title: "Manage roles", body: "Moderators and verified helpers." },
+  { href: "/community/admin/rooms", title: "Edit channels", body: "Add, lock, archive or reorder." },
+];
 
 export function Overview() {
-  const [s, setS] = useState<Stats | null>(null);
-  useEffect(() => { get<Stats>("/admin/stats").then(setS).catch(() => setS(null)); }, []);
+  const { stats: s, failed } = useAdminStats();
+  if (failed) return <Notice tone="red" role="alert">Could not load the counts. Please refresh.</Notice>;
   if (!s) return <Spinner />;
-  const cards: Array<{ label: string; value: string | number; note?: string; alert?: boolean }> = [
-    { label: "Members", value: s.accounts },
-    { label: "Active in the last 7 days", value: s.activeLast7Days },
-    { label: "Messages in the last 24 hours", value: s.messagesLast24Hours },
-    { label: "Reports waiting", value: s.openReports },
-    { label: "Urgent reports waiting", value: s.urgentOpenReports, alert: s.urgentOpenReports > 0 },
-    { label: "Appeals waiting", value: s.openAppeals, alert: s.openAppeals > 0 },
-    { label: "Average time to resolve a report", value: s.averageHoursToResolve === null ? "No data yet" : `${s.averageHoursToResolve} h`, note: "Last 30 days" },
-  ];
+  const active = s.accounts > 0 ? s.activeLast7Days / s.accounts : 0;
   return (
-    <div className="space-y-4">
-      {s.urgentOpenReports > 0 && <Notice tone="rose" title="Urgent reports are waiting">Open the moderation console to review them first.</Notice>}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((c) => (
-          <div key={c.label} className={`rounded-2xl border p-4 ${c.alert ? "border-rose-200 bg-rose-50" : "border-[#e8e4de] bg-white"}`}>
-            <p className="font-mono text-[10.5px] uppercase tracking-widest text-[#6b7280]">{c.label}</p>
-            <p className={`mt-2 text-[28px] font-semibold tracking-tight ${c.alert ? "text-rose-700" : "text-[#0a0a0a]"}`}>{c.value}</p>
-            {c.note && <p className="text-[12.5px] text-[#6b7280]">{c.note}</p>}
-          </div>
-        ))}
+    <div className="space-y-6">
+      {(s.urgentOpenReports > 0 || s.openAppeals > 0) && (
+        <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-rose-100 bg-rose-50 px-5 py-4 text-rose-900">
+          <Siren className="size-5 shrink-0 text-rose-600" aria-hidden />
+          <p className="min-w-0 flex-1 text-[14px]">
+            {s.urgentOpenReports > 0 && <span className="font-semibold">{s.urgentOpenReports} urgent {s.urgentOpenReports === 1 ? "report" : "reports"} waiting. </span>}
+            {s.openAppeals > 0 && <span>{s.openAppeals} {s.openAppeals === 1 ? "appeal" : "appeals"} waiting for a decision.</span>}
+          </p>
+          <Link href={s.urgentOpenReports > 0 ? "/community/moderation" : "/community/admin/appeals"} className="rounded-full bg-white px-4 py-1.5 text-[13px] font-medium text-rose-800 ring-1 ring-rose-200 hover:bg-rose-100">Open now</Link>
+        </div>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <StatCard label="Members" value={s.accounts} icon={UsersRound} tone="sage" />
+        <StatCard label="Active in the last 7 days" value={s.activeLast7Days} icon={Activity} tone="blue" ring={active} note={s.accounts ? "of all members" : undefined} />
+        <StatCard label="Messages in the last 24 hours" value={s.messagesLast24Hours} icon={MessageCircle} tone="lavender" />
+        <StatCard label="Reports waiting" value={s.openReports} icon={Flag} tone="amber" />
+        <StatCard label="Urgent reports waiting" value={s.urgentOpenReports} icon={Siren} tone={s.urgentOpenReports > 0 ? "rose" : "sage"} />
+        <StatCard label="Appeals waiting" value={s.openAppeals} icon={Scale} tone="sand" />
+        <StatCard label="Average time to resolve a report" value={s.averageHoursToResolve === null ? "No data yet" : `${s.averageHoursToResolve} h`} note="Last 30 days" icon={Clock} tone="blue" />
       </div>
-      <p className="text-[13px] text-[#6b7280]">These are counts only. Nothing on this page can show what anyone wrote.</p>
+
+      <section aria-label="Shortcuts">
+        <h2 className="mb-3 text-[14px] font-semibold text-[var(--cm-ink)]">Go to</h2>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {SHORTCUTS.map((x) => (
+            <Link key={x.href} href={x.href} className="rounded-2xl border border-[var(--cm-line)] bg-white p-4 transition-colors hover:border-[var(--cat-accent)]">
+              <p className="text-[14px] font-medium text-[var(--cm-ink)]">{x.title}</p>
+              <p className="mt-0.5 text-[13px] text-[var(--cm-ink-3)]">{x.body}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+      <p className="text-[13px] text-[var(--cm-ink-3)]">These are counts only. Nothing on this page can show what anyone wrote.</p>
     </div>
   );
 }

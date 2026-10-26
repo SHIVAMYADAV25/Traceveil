@@ -1,5 +1,5 @@
 const KEY = "community:last-room";
-const DEFAULT_ROOM = "/community/start-here/welcome-and-rules";
+const DEFAULT_ROOM = "/community/start-here/welcome";
 
 /** Remember which room someone was in, so they return to where they stopped. Not personal data. */
 export function rememberRoom(path: string): void {

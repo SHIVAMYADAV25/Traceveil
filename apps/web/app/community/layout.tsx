@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { QuickExitKeys } from "@/components/community/QuickExit";
+import { QuickExitKeys } from "@/components/community/shell/QuickExit";
+import "./community.css";
 import { CommunityProvider } from "@/lib/community/session";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export default function CommunityLayout({ children }: { children: React.ReactNod
   return (
     <CommunityProvider>
       <QuickExitKeys />
-      {children}
+      <div className="cm min-h-dvh">{children}</div>
     </CommunityProvider>
   );
 }

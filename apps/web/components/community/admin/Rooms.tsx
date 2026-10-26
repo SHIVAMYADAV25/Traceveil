@@ -4,13 +4,13 @@ import { Archive, Lock, Plus } from "lucide-react";
 import { ApiError, del, get, patch, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { useCommunity } from "@/lib/community/session";
-import { Dialog, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "../ui";
+import { Dialog, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "@/components/community/ui";
 
 interface AdminRoom { id: string; slug: string; title: string; purpose: string; kind: "chat" | "announcements" | "quiet"; language: string; slowModeSeconds: number; minAccountAgeHours: number; isLocked: boolean; isArchived: boolean }
 interface AdminSpace { id: string; slug: string; title: string; description: string; isArchived: boolean; rooms: AdminRoom[] }
 interface Note { id: string; title: string; body: string }
 
-const KINDS = [{ id: "chat", label: "Conversation (everyone can write)" }, { id: "quiet", label: "Quiet room (team writes, members read and react)" }, { id: "announcements", label: "Announcements (team writes)" }];
+const KINDS = [{ id: "chat", label: "Conversation (everyone can write)" }, { id: "quiet", label: "Quiet channel (team writes, members read and react)" }, { id: "announcements", label: "Announcements (team writes)" }];
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
 
 export function Rooms() {
@@ -44,7 +44,7 @@ export function Rooms() {
     setError(null);
     try {
       await patch(`/admin/rooms/${editing.id}`, { title: draft.title, purpose: draft.purpose, kind: draft.kind, language: draft.language, slowModeSeconds: draft.slowModeSeconds, minAccountAgeHours: draft.minAccountAgeHours, isLocked: draft.isLocked, isArchived: draft.isArchived });
-      setEditing(null); showToast("Room saved"); await load(); await reloadSpaces();
+      setEditing(null); showToast("Channel saved"); await load(); await reloadSpaces();
     } catch (e) { fail(e); }
   }
   async function addNote() {
@@ -61,26 +61,26 @@ export function Rooms() {
   }
   async function createSpace() {
     setError(null);
-    try { await post("/admin/spaces", { slug: slugify(spaceTitle), title: spaceTitle.trim() }); setNewSpace(false); setSpaceTitle(""); showToast("Space created"); await load(); await reloadSpaces(); } catch (e) { fail(e); }
+    try { await post("/admin/spaces", { slug: slugify(spaceTitle), title: spaceTitle.trim() }); setNewSpace(false); setSpaceTitle(""); showToast("Group created"); await load(); await reloadSpaces(); } catch (e) { fail(e); }
   }
 
   if (!spaces) return <Spinner />;
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="max-w-xl text-[13.5px] text-[#6b7280]">Spaces group related rooms. Changes appear for members straight away. Archiving hides a room without deleting anything.</p>
-        <SecondaryButton onClick={() => { setNewSpace(true); setError(null); }}><Plus className="size-3.5" />New space</SecondaryButton>
+        <p className="max-w-xl text-[13.5px] text-[var(--cm-ink-3)]">Groups collect related channels. Changes appear for members straight away. Archiving hides a channel without deleting anything.</p>
+        <SecondaryButton onClick={() => { setNewSpace(true); setError(null); }}><Plus className="size-3.5" />New group</SecondaryButton>
       </div>
       {spaces.map((s) => (
-        <section key={s.id} className="rounded-2xl border border-[#e8e4de] bg-white">
-          <div className="flex items-center justify-between gap-3 border-b border-[#f0ede8] px-4 py-3">
-            <div><h3 className="text-[15px] font-semibold text-[#0a0a0a]">{s.title}</h3><p className="text-[12.5px] text-[#6b7280]">{s.description}</p></div>
-            <SecondaryButton size="sm" onClick={() => { setCreatingIn(s); setNewTitle(""); setError(null); }}><Plus className="size-3.5" />Add room</SecondaryButton>
+        <section key={s.id} className="rounded-2xl border border-[var(--cm-line)] bg-white">
+          <div className="flex items-center justify-between gap-3 border-b border-[var(--cm-hover)] px-4 py-3">
+            <div><h3 className="text-[15px] font-semibold text-[var(--cm-ink)]">{s.title}</h3><p className="text-[12.5px] text-[var(--cm-ink-3)]">{s.description}</p></div>
+            <SecondaryButton size="sm" onClick={() => { setCreatingIn(s); setNewTitle(""); setError(null); }}><Plus className="size-3.5" />Add channel</SecondaryButton>
           </div>
-          <ul className="divide-y divide-[#f0ede8]">
+          <ul className="divide-y divide-[var(--cm-hover)]">
             {s.rooms.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center gap-3 px-4 py-2.5">
-                <span className={`flex-1 text-[14px] ${r.isArchived ? "text-[#6b7280] line-through" : "text-[#0a0a0a]"}`}>{r.title}</span>
+                <span className={`flex-1 text-[14px] ${r.isArchived ? "text-[var(--cm-ink-3)] line-through" : "text-[var(--cm-ink)]"}`}>{r.title}</span>
                 {r.kind !== "chat" && <Pill tone="indigo">{r.kind === "quiet" ? "Quiet" : "Team only"}</Pill>}
                 {r.isLocked && <Pill tone="amber"><Lock className="size-3" />Paused</Pill>}
                 {r.isArchived && <Pill><Archive className="size-3" />Archived</Pill>}
@@ -88,7 +88,7 @@ export function Rooms() {
                 <SecondaryButton size="sm" onClick={() => void open(r)}>Edit</SecondaryButton>
               </li>
             ))}
-            {s.rooms.length === 0 && <li className="px-4 py-4 text-[13.5px] text-[#6b7280]">No rooms yet.</li>}
+            {s.rooms.length === 0 && <li className="px-4 py-4 text-[13.5px] text-[var(--cm-ink-3)]">No channels yet.</li>}
           </ul>
         </section>
       ))}
@@ -97,9 +97,9 @@ export function Rooms() {
         {draft && (
           <div className="space-y-4">
             <Field label="Name" htmlFor="r-title"><TextInput id="r-title" value={draft.title} maxLength={80} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></Field>
-            <Field label="What this room is for (one line)" htmlFor="r-purpose"><TextArea id="r-purpose" rows={2} maxLength={300} value={draft.purpose} onChange={(e) => setDraft({ ...draft, purpose: e.target.value })} /></Field>
+            <Field label="What this channel is for (one line)" htmlFor="r-purpose"><TextArea id="r-purpose" rows={2} maxLength={300} value={draft.purpose} onChange={(e) => setDraft({ ...draft, purpose: e.target.value })} /></Field>
             <Field label="Who can write" htmlFor="r-kind">
-              <select id="r-kind" value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as AdminRoom["kind"] })} className="w-full rounded-lg border border-[#e8e4de] bg-[#fafaf8] px-3.5 py-2.5 text-[14.5px] focus:border-[#0a0a0a] focus:outline-none">
+              <select id="r-kind" value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as AdminRoom["kind"] })} className="w-full rounded-lg border border-[var(--cm-line)] bg-[var(--cm-canvas)] px-3.5 py-2.5 text-[14.5px] focus:border-[var(--cat-accent)] focus:outline-none">
                 {KINDS.map((k) => <option key={k.id} value={k.id}>{k.label}</option>)}
               </select>
             </Field>
@@ -109,17 +109,17 @@ export function Rooms() {
               <Field label="Language code" htmlFor="r-lang"><TextInput id="r-lang" value={draft.language} maxLength={6} onChange={(e) => setDraft({ ...draft, language: e.target.value.toLowerCase() })} /></Field>
             </div>
             <div className="flex flex-wrap gap-5">
-              <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" checked={draft.isLocked} onChange={(e) => setDraft({ ...draft, isLocked: e.target.checked })} className="size-4 accent-[#0a0a0a]" />Pause this room (members cannot write)</label>
-              <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" checked={draft.isArchived} onChange={(e) => setDraft({ ...draft, isArchived: e.target.checked })} className="size-4 accent-[#0a0a0a]" />Archive (hide from members)</label>
+              <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" checked={draft.isLocked} onChange={(e) => setDraft({ ...draft, isLocked: e.target.checked })} className="size-4 accent-[var(--cm-ink)]" />Pause this room (members cannot write)</label>
+              <label className="flex items-center gap-2 text-[14px]"><input type="checkbox" checked={draft.isArchived} onChange={(e) => setDraft({ ...draft, isArchived: e.target.checked })} className="size-4 accent-[var(--cm-ink)]" />Archive (hide from members)</label>
             </div>
 
-            <div className="rounded-xl border border-[#e8e4de] bg-[#fafaf8] p-4">
-              <h4 className="mb-2 text-[13.5px] font-semibold text-[#0a0a0a]">Pinned notes</h4>
-              {notes.length === 0 && <p className="mb-2 text-[13px] text-[#6b7280]">No pinned notes.</p>}
+            <div className="rounded-xl border border-[var(--cm-line)] bg-[var(--cm-canvas)] p-4">
+              <h4 className="mb-2 text-[13.5px] font-semibold text-[var(--cm-ink)]">Pinned notes</h4>
+              {notes.length === 0 && <p className="mb-2 text-[13px] text-[var(--cm-ink-3)]">No pinned notes.</p>}
               <ul className="mb-3 space-y-2">
                 {notes.map((n) => (
                   <li key={n.id} className="flex items-start justify-between gap-3 rounded-lg bg-white p-3 text-[13.5px]">
-                    <div><p className="font-medium">{n.title}</p><p className="whitespace-pre-line text-[#374151]">{n.body}</p></div>
+                    <div><p className="font-medium">{n.title}</p><p className="whitespace-pre-line text-[var(--cm-ink-2)]">{n.body}</p></div>
                     <SecondaryButton size="sm" onClick={() => void removeNote(n.id)}>Remove</SecondaryButton>
                   </li>
                 ))}
@@ -136,14 +136,14 @@ export function Rooms() {
         )}
       </Dialog>
 
-      <Dialog open={creatingIn !== null} onClose={() => setCreatingIn(null)} title={`New room in ${creatingIn?.title ?? ""}`}>
+      <Dialog open={creatingIn !== null} onClose={() => setCreatingIn(null)} title={`New channel in ${creatingIn?.title ?? ""}`}>
         <Field label="Room name" htmlFor="n-room" hint={newTitle ? `Address: ${slugify(newTitle)}` : "You can change everything else afterwards."}><TextInput id="n-room" value={newTitle} maxLength={80} onChange={(e) => setNewTitle(e.target.value)} /></Field>
         {error && <div className="mt-3"><Notice tone="red" role="alert">{error}</Notice></div>}
         <div className="mt-4 flex justify-end gap-2"><SecondaryButton onClick={() => setCreatingIn(null)}>Cancel</SecondaryButton><PrimaryButton disabled={slugify(newTitle).length < 2} onClick={() => void createRoom()}>Create room</PrimaryButton></div>
       </Dialog>
 
-      <Dialog open={newSpace} onClose={() => setNewSpace(false)} title="New space">
-        <Field label="Space name" htmlFor="n-space" hint={spaceTitle ? `Address: ${slugify(spaceTitle)}` : undefined}><TextInput id="n-space" value={spaceTitle} maxLength={80} onChange={(e) => setSpaceTitle(e.target.value)} /></Field>
+      <Dialog open={newSpace} onClose={() => setNewSpace(false)} title="New group">
+        <Field label="Group name" htmlFor="n-space" hint={spaceTitle ? `Address: ${slugify(spaceTitle)}` : undefined}><TextInput id="n-space" value={spaceTitle} maxLength={80} onChange={(e) => setSpaceTitle(e.target.value)} /></Field>
         {error && <div className="mt-3"><Notice tone="red" role="alert">{error}</Notice></div>}
         <div className="mt-4 flex justify-end gap-2"><SecondaryButton onClick={() => setNewSpace(false)}>Cancel</SecondaryButton><PrimaryButton disabled={slugify(spaceTitle).length < 2} onClick={() => void createSpace()}>Create space</PrimaryButton></div>
       </Dialog>

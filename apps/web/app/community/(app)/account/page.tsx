@@ -1,9 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Lock, ShieldAlert } from "lucide-react";
-import { Avatar } from "@/components/community/Avatar";
-import { DangerButton, Eyebrow, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "@/components/community/ui";
+import { Lock, Settings, ShieldAlert } from "lucide-react";
+import { PageHeader } from "@/components/community/shell/PageHeader";
+import { Avatar } from "@/components/community/ui/Avatar";
+import { DangerButton, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "@/components/community/ui";
 import { ApiError, del, get, patch, post, put } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
@@ -14,8 +15,8 @@ interface BlockedPerson { personaId: string; displayName: string; avatarSeed: st
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-[#e8e4de] bg-white p-5 sm:p-6">
-      <h2 className="mb-4 text-[15px] font-semibold text-[#0a0a0a]">{title}</h2>
+    <section className="rounded-3xl border border-[var(--cm-line)] bg-white p-5 sm:p-6">
+      <h2 className="mb-4 text-[15px] font-semibold text-[var(--cm-ink)]">{title}</h2>
       {children}
     </section>
   );
@@ -78,13 +79,10 @@ export default function AccountPage() {
 
   const lockedKind = me.restrictions.find((r) => r.kind === "ban" || r.kind === "suspend");
   return (
-    <div data-lenis-prevent className="h-full overflow-y-auto px-4 py-6 sm:px-8">
+    <>
+      <PageHeader icon={Settings} accent title={a.title} />
+    <div data-lenis-prevent className="cm-scroll min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
       <div className="mx-auto max-w-[680px] space-y-5">
-        <div>
-          <Eyebrow className="mb-1.5">{copy.brand}</Eyebrow>
-          <h1 className="text-[24px] font-semibold tracking-tight text-[#0a0a0a]">{a.title}</h1>
-        </div>
-
         {lockedKind && (
           <Notice tone="rose" title={lockedKind.kind === "ban" ? copy.restricted.banned : copy.restricted.suspended}>{copy.restricted.lead}</Notice>
         )}
@@ -93,17 +91,17 @@ export default function AccountPage() {
           <Section title={a.restrictionsSection}>
             <ul className="space-y-4">
               {restrictions.map((r) => (
-                <li key={r.id} className="rounded-xl border border-[#e8e4de] bg-[#fafaf8] p-4">
+                <li key={r.id} className="rounded-xl border border-[var(--cm-line)] bg-[var(--cm-canvas)] p-4">
                   <div className="mb-1.5 flex flex-wrap items-center gap-2">
                     <Pill tone="rose"><ShieldAlert className="size-3" aria-hidden />{a.restrictionKind[r.kind]}</Pill>
-                    <span className="text-[12.5px] text-[#6b7280]">{formatUntil(r.endsAt)}</span>
+                    <span className="text-[12.5px] text-[var(--cm-ink-3)]">{formatUntil(r.endsAt)}</span>
                   </div>
-                  <p className="text-[14.5px] leading-relaxed text-[#0a0a0a]"><span className="font-medium">Reason:</span> {r.reason}</p>
+                  <p className="text-[14.5px] leading-relaxed text-[var(--cm-ink)]"><span className="font-medium">Reason:</span> {r.reason}</p>
                   {r.appealStatus ? (
                     <p className="mt-3"><Pill tone={r.appealStatus === "overturned" ? "emerald" : r.appealStatus === "open" ? "amber" : "neutral"}>{a.appealStatus[r.appealStatus]}</Pill></p>
                   ) : appealFor === r.id ? (
                     <div className="mt-3 space-y-3">
-                      <p className="text-[13.5px] text-[#374151]">{a.appealLead}</p>
+                      <p className="text-[13.5px] text-[var(--cm-ink-2)]">{a.appealLead}</p>
                       <TextArea aria-label={a.appeal} rows={4} maxLength={1000} value={appealText} onChange={(e) => setAppealText(e.target.value)} placeholder={a.appealPlaceholder} />
                       {appealError && <Notice tone="red" role="alert">{appealError}</Notice>}
                       <div className="flex gap-2">
@@ -126,7 +124,7 @@ export default function AccountPage() {
               <div className="flex items-start gap-4">
                 <div className="flex flex-col items-center gap-2">
                   <Avatar seed={me.persona.avatarSeed} size={64} label="Your picture" />
-                  <button type="button" onClick={() => void newPicture()} disabled={busy === "avatar"} className="text-[12.5px] text-[#374151] underline underline-offset-4 hover:text-[#0a0a0a]">{a.newAvatar}</button>
+                  <button type="button" onClick={() => void newPicture()} disabled={busy === "avatar"} className="text-[12.5px] text-[var(--cm-ink-2)] underline underline-offset-4 hover:text-[var(--cm-ink)]">{a.newAvatar}</button>
                 </div>
                 <form className="flex-1 space-y-3" onSubmit={(e) => { e.preventDefault(); void saveName(); }}>
                   <Field label={copy.onboarding.nameLabel} htmlFor="acc-name" hint={copy.onboarding.nameHint} error={nameError}>
@@ -140,7 +138,7 @@ export default function AccountPage() {
             <Section title={a.privacySection}>
               <ul className="space-y-2.5">
                 {a.privacyPoints.map((p) => (
-                  <li key={p} className="flex gap-2.5 text-[14.5px] leading-relaxed text-[#374151]"><Lock className="mt-1 size-3.5 shrink-0 text-[#6366f1]" aria-hidden />{p}</li>
+                  <li key={p} className="flex gap-2.5 text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]"><Lock className="mt-1 size-3.5 shrink-0 text-[var(--cat-accent)]" aria-hidden />{p}</li>
                 ))}
               </ul>
             </Section>
@@ -156,13 +154,13 @@ export default function AccountPage() {
 
             <Section title={a.blockedSection}>
               {blocked === null ? <Spinner /> : blocked.length === 0 ? (
-                <p className="text-[14px] text-[#6b7280]">{a.blockedEmpty}</p>
+                <p className="text-[14px] text-[var(--cm-ink-3)]">{a.blockedEmpty}</p>
               ) : (
-                <ul className="divide-y divide-[#f0ede8]">
+                <ul className="divide-y divide-[var(--cm-hover)]">
                   {blocked.map((b) => (
                     <li key={b.personaId} className="flex items-center gap-3 py-2.5">
                       <Avatar seed={b.avatarSeed} size={28} label="" />
-                      <span className="flex-1 text-[14px] text-[#0a0a0a]">{b.displayName}</span>
+                      <span className="flex-1 text-[14px] text-[var(--cm-ink)]">{b.displayName}</span>
                       <SecondaryButton size="sm" onClick={() => void unblock(b.personaId)}>{a.unblock}</SecondaryButton>
                     </li>
                   ))}
@@ -173,7 +171,7 @@ export default function AccountPage() {
         )}
 
         <Section title={a.deleteSection}>
-          <p className="mb-4 text-[14.5px] leading-relaxed text-[#374151]">{a.deleteLead}</p>
+          <p className="mb-4 text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]">{a.deleteLead}</p>
           <Field label={a.deleteConfirmLabel} htmlFor="acc-del">
             <TextInput id="acc-del" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} autoComplete="off" />
           </Field>
@@ -184,5 +182,6 @@ export default function AccountPage() {
         </Section>
       </div>
     </div>
+    </>
   );
 }

@@ -1,0 +1,55 @@
+/*
+ * Community design tokens. Everything under .cm uses these, and nothing outside /community does.
+ * The palette comes from the watercolour banners in /public/support: mist, sage and a peach sun.
+ * Each channel group overrides --cat-* (see lib/community/channelTheme.ts) so the groups feel different.
+ */
+.cm {
+  --cm-canvas: #fafaf7;
+  --cm-surface: #ffffff;
+  --cm-sidebar: #f0f3ef;
+  --cm-sidebar-hover: #e6ebe4;
+  --cm-line: #e3e8e2;
+  --cm-line-strong: #cfd7ce;
+  --cm-hover: #eef2ec;
+  --cm-ink: #1f2a27;
+  --cm-ink-2: #46544f;
+  --cm-ink-3: #62706b;
+  --cm-own: #e4efea;
+  --cm-shadow: 0 10px 30px -14px rgb(31 42 39 / 0.28);
+
+  --cat-accent: #4c7c6d;
+  --cat-soft: #e3eee9;
+  --cat-ink: #2f5a4e;
+
+  /* The site's "indigo" classes already used by the shared pieces become the accent. */
+  --color-indigo-50: #eef5f2;
+  --color-indigo-100: #dfebe5;
+  --color-indigo-200: #c5d9d0;
+  --color-indigo-300: #a0bdb1;
+  --color-indigo-400: #72a091;
+  --color-indigo-500: #4c7c6d;
+  --color-indigo-600: #3e6b60;
+  --color-indigo-700: #335a50;
+  --color-indigo-800: #2a4a42;
+  --color-indigo-900: #223c36;
+
+  color: var(--cm-ink);
+  background: var(--cm-canvas);
+  font-feature-settings: "cv11", "ss01";
+}
+
+.cm *:focus-visible { outline: 2px solid var(--cat-accent); outline-offset: 2px; }
+
+.cm .cm-title { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -0.01em; }
+
+/* Quiet scrollbars so the sidebar and the conversation do not look like a form. */
+.cm .cm-scroll { scrollbar-width: thin; scrollbar-color: var(--cm-line-strong) transparent; }
+
+/* Used by the popovers, the reaction picker and the composer tray. */
+@keyframes cm-pop { from { opacity: 0; transform: translateY(var(--cm-pop-from, -4px)) scale(0.98); } to { opacity: 1; transform: none; } }
+.cm .cm-pop { animation: cm-pop 140ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cm .cm-pop { animation: none; }
+  .cm * { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

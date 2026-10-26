@@ -4,7 +4,7 @@ import { ApiError, get, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
 import { useCommunity } from "@/lib/community/session";
-import { Dialog, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "../ui";
+import { Dialog, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "@/components/community/ui";
 
 interface Account { id: string; handle: string; role: string; createdAt: string; lastSeenAt: string; activeRestrictions: number }
 interface Restriction { id: string; kind: string; reason: string; endsAt: string | null; personaName: string }
@@ -53,27 +53,27 @@ export function People() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-1 text-[16px] font-semibold text-[#0a0a0a]">People and roles</h2>
-        <p className="mb-4 text-[13.5px] text-[#6b7280]">Search by handle. Made-up names are deliberately not searchable here, so this page cannot be used to find out who someone is.</p>
+        <h2 className="mb-1 text-[16px] font-semibold text-[var(--cm-ink)]">People and roles</h2>
+        <p className="mb-4 text-[13.5px] text-[var(--cm-ink-3)]">Search by handle. Made-up names are deliberately not searchable here, so this page cannot be used to find out who someone is.</p>
         <form className="mb-4 flex gap-2" onSubmit={(e) => { e.preventDefault(); void load(q); }}>
           <TextInput aria-label="Handle starts with" placeholder="Handle starts with…" value={q} onChange={(e) => setQ(e.target.value)} />
           <PrimaryButton type="submit">Search</PrimaryButton>
         </form>
         {!accounts ? <Spinner /> : (
-          <div className="overflow-x-auto rounded-2xl border border-[#e8e4de] bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-[var(--cm-line)] bg-white">
             <table className="w-full min-w-[560px] text-left text-[13.5px]">
-              <thead><tr className="border-b border-[#e8e4de] font-mono text-[10.5px] uppercase tracking-widest text-[#6b7280]"><th className="px-4 py-3 font-normal">Handle</th><th className="px-4 py-3 font-normal">Role</th><th className="px-4 py-3 font-normal">Joined</th><th className="px-4 py-3 font-normal">Last seen</th><th className="px-4 py-3" /></tr></thead>
+              <thead><tr className="border-b border-[var(--cm-line)] text-[12.5px] text-[var(--cm-ink-3)]"><th className="px-4 py-3 font-normal">Handle</th><th className="px-4 py-3 font-normal">Role</th><th className="px-4 py-3 font-normal">Joined</th><th className="px-4 py-3 font-normal">Last seen</th><th className="px-4 py-3" /></tr></thead>
               <tbody>
                 {accounts.map((a) => (
-                  <tr key={a.id} className="border-b border-[#f0ede8] last:border-0">
+                  <tr key={a.id} className="border-b border-[var(--cm-hover)] last:border-0">
                     <td className="px-4 py-2.5 font-mono text-[13px]">{a.handle}{a.activeRestrictions > 0 && <Pill tone="rose" className="ml-2">Restricted</Pill>}</td>
                     <td className="px-4 py-2.5"><Pill tone={TONE[a.role] ?? "neutral"}>{ROLES.find((r) => r.id === a.role)?.label}</Pill></td>
-                    <td className="px-4 py-2.5 text-[#374151]">{new Date(a.createdAt).toLocaleDateString()}</td>
-                    <td className="px-4 py-2.5 text-[#374151]">{new Date(a.lastSeenAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-2.5 text-[var(--cm-ink-2)]">{new Date(a.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-2.5 text-[var(--cm-ink-2)]">{new Date(a.lastSeenAt).toLocaleDateString()}</td>
                     <td className="px-4 py-2.5 text-right"><SecondaryButton size="sm" onClick={() => { setEditing(a); setRole(a.role); setWhy(""); setError(null); }}>Change role</SecondaryButton></td>
                   </tr>
                 ))}
-                {accounts.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-[#6b7280]">No accounts match.</td></tr>}
+                {accounts.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-[var(--cm-ink-3)]">No accounts match.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -81,14 +81,14 @@ export function People() {
       </section>
 
       <section>
-        <h2 className="mb-4 text-[16px] font-semibold text-[#0a0a0a]">Active restrictions</h2>
-        {!restrictions ? <Spinner /> : restrictions.length === 0 ? <p className="text-[14px] text-[#6b7280]">Nobody is currently restricted.</p> : (
+        <h2 className="mb-4 text-[16px] font-semibold text-[var(--cm-ink)]">Active restrictions</h2>
+        {!restrictions ? <Spinner /> : restrictions.length === 0 ? <p className="text-[14px] text-[var(--cm-ink-3)]">Nobody is currently restricted.</p> : (
           <ul className="space-y-2">
             {restrictions.map((r) => (
-              <li key={r.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-[#e8e4de] bg-white px-4 py-3">
+              <li key={r.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--cm-line)] bg-white px-4 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[14px] font-medium text-[#0a0a0a]">{r.personaName} <Pill tone="rose" className="ml-1">{copy.account.restrictionKind[r.kind]}</Pill></p>
-                  <p className="text-[13px] text-[#374151]">{r.reason} · {formatUntil(r.endsAt)}</p>
+                  <p className="text-[14px] font-medium text-[var(--cm-ink)]">{r.personaName} <Pill tone="rose" className="ml-1">{copy.account.restrictionKind[r.kind]}</Pill></p>
+                  <p className="text-[13px] text-[var(--cm-ink-2)]">{r.reason} · {formatUntil(r.endsAt)}</p>
                 </div>
                 <SecondaryButton size="sm" onClick={() => { setLifting(r); setWhy(""); setError(null); }}>Lift</SecondaryButton>
               </li>
@@ -98,13 +98,13 @@ export function People() {
       </section>
 
       <Dialog open={editing !== null} onClose={() => setEditing(null)} title="Change role">
-        <p className="mb-3 font-mono text-[13px] text-[#374151]">{editing?.handle}</p>
+        <p className="mb-3 font-mono text-[13px] text-[var(--cm-ink-2)]">{editing?.handle}</p>
         <fieldset className="mb-4 space-y-2">
           <legend className="sr-only">Role</legend>
           {ROLES.map((r) => (
-            <label key={r.id} className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 ${role === r.id ? "border-[#0a0a0a]" : "border-[#e8e4de] bg-[#fafaf8]"}`}>
-              <input type="radio" name="role" checked={role === r.id} onChange={() => setRole(r.id)} className="size-4 accent-[#0a0a0a]" />
-              <span className="text-[14px] text-[#0a0a0a]">{r.label}</span>
+            <label key={r.id} className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 ${role === r.id ? "border-[var(--cat-accent)]" : "border-[var(--cm-line)] bg-[var(--cm-canvas)]"}`}>
+              <input type="radio" name="role" checked={role === r.id} onChange={() => setRole(r.id)} className="size-4 accent-[var(--cm-ink)]" />
+              <span className="text-[14px] text-[var(--cm-ink)]">{r.label}</span>
             </label>
           ))}
         </fieldset>
@@ -114,7 +114,7 @@ export function People() {
       </Dialog>
 
       <Dialog open={lifting !== null} onClose={() => setLifting(null)} title="Lift this restriction">
-        <p className="mb-3 text-[14px] text-[#374151]">{lifting?.personaName} will be told that the restriction was lifted.</p>
+        <p className="mb-3 text-[14px] text-[var(--cm-ink-2)]">{lifting?.personaName} will be told that the restriction was lifted.</p>
         <Field label="Reason" htmlFor="lift-why"><TextArea id="lift-why" rows={2} value={why} onChange={(e) => setWhy(e.target.value)} /></Field>
         {error && <div className="mt-3"><Notice tone="red" role="alert">{error}</Notice></div>}
         <div className="mt-4 flex justify-end gap-2"><SecondaryButton onClick={() => setLifting(null)}>Cancel</SecondaryButton><PrimaryButton disabled={why.trim().length < 3} onClick={() => void lift()}>Lift restriction</PrimaryButton></div>

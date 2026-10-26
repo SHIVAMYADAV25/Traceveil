@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ageAccount, newMember, roomId, setRole, uid, type Client, type TestEnv, createTestEnv } from "./helpers.js";
 
 let env: TestEnv;
-let room: string; // feeling-overwhelmed: no slow mode
+let room: string; // safety-and-privacy: no slow mode
 beforeAll(async () => {
   env = await createTestEnv();
-  room = await roomId(env, "feeling-overwhelmed");
+  room = await roomId(env, "safety-and-privacy");
 });
 afterAll(async () => env.close());
 
@@ -26,7 +26,9 @@ describe("posting and reading", () => {
     expect(r.body.spaces.map((s: any) => s.slug)).toContain("start-here");
     const rooms = r.body.spaces.flatMap((s: any) => s.rooms);
     expect(rooms.length).toBeGreaterThanOrEqual(20);
-    expect(rooms.find((x: any) => x.slug === "quiet-room").kind).toBe("quiet");
+    expect(rooms.find((x: any) => x.slug === "rules-and-safety").kind).toBe("announcements");
+    expect(rooms.map((x: any) => x.slug)).not.toContain("quiet-room"); // earlier channels are retired
+    expect(r.body.spaces.map((s: any) => s.slug)).not.toContain("healing");
   });
 
   it("posts a message and returns it with its author, then lists it", async () => {
@@ -62,7 +64,7 @@ describe("posting and reading", () => {
 
   it("pages through history with a cursor", async () => {
     const a = await oldMember();
-    const rid = await roomId(env, "small-wins");
+    const rid = await roomId(env, "healing-and-small-wins");
     for (let i = 1; i <= 5; i += 1) await say(a, `note ${i}`, {}, rid);
     const p1 = await a.get(`/rooms/${rid}/messages?limit=3`);
     expect(p1.body.messages.map((m: any) => m.body)).toEqual(["note 3", "note 4", "note 5"]);
@@ -90,7 +92,10 @@ describe("rules about who can post where", () => {
   it("keeps announcements and the quiet room staff-only, and lets staff post", async () => {
     const m = await oldMember();
     const ann = await roomId(env, "announcements");
-    const quiet = await roomId(env, "quiet-room");
+    // No quiet room is seeded any more; admins can still create one, so make one here.
+    const sp = (await env.db.query("SELECT id FROM spaces WHERE slug = 'start-here'")).rows[0].id;
+    await env.db.query("INSERT INTO rooms (space_id, slug, title, kind) VALUES ($1, 'test-quiet', 'test-quiet', 'quiet') ON CONFLICT DO NOTHING", [sp]);
+    const quiet = await roomId(env, "test-quiet");
     expect((await say(m, "hi", {}, ann)).body.error.code).toBe("staff_only_room");
     expect((await say(m, "hi", {}, quiet)).body.error.code).toBe("staff_only_room");
     const mod = await oldMember();
@@ -105,7 +110,7 @@ describe("rules about who can post where", () => {
     const closed = await createTestEnv({ COMMUNITY_OPEN: "false" });
     try {
       const m = await newMember(closed);
-      const rid = await roomId(closed, "feeling-overwhelmed");
+      const rid = await roomId(closed, "ask-for-help");
       const r = await m.post(`/rooms/${rid}/messages`, { clientMsgId: uid(), body: "hi" });
       expect(r.status).toBe(403);
       expect(r.body.error.code).toBe("community_closed");
@@ -207,7 +212,7 @@ describe("replies, mentions, content warnings and tags", () => {
 
   it("rejects a reply to a message from another room", async () => {
     const a = await oldMember();
-    const other = await roomId(env, "small-wins");
+    const other = await roomId(env, "healing-and-small-wins");
     const orig = await say(a, "elsewhere", {}, other);
     const r = await say(a, "cross-room reply", { replyToId: orig.body.message.id });
     expect(r.status).toBe(400);
@@ -265,7 +270,7 @@ describe("blocking", () => {
   it("hides a blocked person's messages from the list, and can be undone", async () => {
     const a = await oldMember();
     const b = await oldMember();
-    const rid = await roomId(env, "work-and-college");
+    const rid = await roomId(env, "scan-questions");
     await say(a, "from A", {}, rid);
     await say(b, "from B", {}, rid);
     expect((await a.post("/blocks", { personaId: b.personaId })).status).toBe(200);
@@ -322,7 +327,7 @@ describe("read markers and muting", () => {
   it("counts unread messages from others and clears them once read", async () => {
     const a = await oldMember();
     const b = await oldMember();
-    const rid = await roomId(env, "telling-family");
+    const rid = await roomId(env, "getting-started");
     const m1 = (await say(b, "one", {}, rid)).body.message;
     const m2 = (await say(b, "two", {}, rid)).body.message;
     const unread = async () =>

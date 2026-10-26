@@ -1,9 +1,11 @@
 "use client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Avatar } from "@/components/community/Avatar";
-import { QuickExitButton } from "@/components/community/QuickExit";
-import { Eyebrow, Field, Notice, PrimaryButton, Spinner, TextInput } from "@/components/community/ui";
+import { Avatar } from "@/components/community/ui/Avatar";
+import { QuickExitButton } from "@/components/community/shell/QuickExit";
+import { Field, Notice, PrimaryButton, Spinner, TextInput } from "@/components/community/ui";
 import { ApiError, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { lastRoomPath } from "@/lib/community/lastRoom";
@@ -22,7 +24,7 @@ export default function OnboardingPage() {
     else if (phase === "ready" && me?.onboardingComplete) router.replace(lastRoomPath());
   }, [phase, me, router]);
 
-  if (!me) return <div className="min-h-dvh bg-[#fafaf8]"><Spinner /></div>;
+  if (!me) return <div className="min-h-dvh bg-[var(--cm-canvas)]"><Spinner /></div>;
   const current = name ?? me.persona.displayName;
 
   async function enter() {
@@ -40,13 +42,26 @@ export default function OnboardingPage() {
   const o = copy.onboarding;
   const nameProblem = error && /name|characters|reserved|letters/i.test(error) ? error : null;
   return (
-    <main className="min-h-dvh bg-[#fafaf8] px-4 py-6 sm:px-8">
-      <div className="mx-auto flex max-w-[560px] justify-end"><QuickExitButton /></div>
-      <form onSubmit={(e) => { e.preventDefault(); void enter(); }} className="mx-auto mt-6 max-w-[560px] space-y-7 rounded-2xl border border-[#e8e4de] bg-white p-6 shadow-[0_18px_44px_-24px_rgba(15,23,42,0.25)] sm:p-8">
+    <main className="relative min-h-dvh overflow-hidden bg-[var(--cm-canvas)] px-4 py-6 sm:px-8">
+      <Image src="/community/banners/start-here.webp" alt="" fill priority sizes="100vw" className="pointer-events-none object-cover object-[80%_bottom] opacity-70" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--cm-canvas)] via-[var(--cm-canvas)]/70 to-transparent" aria-hidden />
+      <div className="relative mx-auto flex max-w-[600px] justify-end"><QuickExitButton /></div>
+      <form onSubmit={(e) => { e.preventDefault(); void enter(); }} className="relative mx-auto mt-8 max-w-[600px] space-y-7 rounded-3xl border border-[var(--cm-line)] bg-white/95 p-6 shadow-[var(--cm-shadow)] backdrop-blur sm:p-8">
         <div>
-          <Eyebrow className="mb-2">{o.eyebrow}</Eyebrow>
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#0a0a0a]">{o.title}</h1>
-          <p className="mt-1.5 text-[14.5px] leading-relaxed text-[#374151]">{o.lead}</p>
+          <h1 className="cm-title text-[30px] leading-tight text-[var(--cm-ink)]">{o.title}</h1>
+          <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]">{o.lead}</p>
+        </div>
+
+        <div className="rounded-3xl bg-[var(--cat-soft)]/70 p-5 ring-1 ring-[var(--cat-accent)]/15">
+          <h2 className="mb-3 flex items-center gap-2 text-[15px] font-semibold text-[var(--cat-ink)]"><ShieldCheck className="size-[18px] text-[var(--cat-accent)]" aria-hidden />{o.rulesTitle}</h2>
+          <ol className="space-y-3">
+            {o.rules.map((rule, i) => (
+              <li key={rule.title} className="flex gap-3">
+                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-white text-[12px] font-semibold text-[var(--cat-ink)]">{i + 1}</span>
+                <p className="text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]"><span className="font-semibold text-[var(--cm-ink)]">{rule.title}.</span> {rule.body}</p>
+              </li>
+            ))}
+          </ol>
         </div>
 
         <div className="flex items-start gap-4">
@@ -58,20 +73,8 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <div>
-          <h2 className="mb-3 text-[15px] font-semibold text-[#0a0a0a]">{o.rulesTitle}</h2>
-          <ol className="space-y-3">
-            {o.rules.map((rule, i) => (
-              <li key={rule.title} className="flex gap-3">
-                <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[#f0ede8] font-mono text-[11px] text-[#374151]">{i + 1}</span>
-                <p className="text-[14.5px] leading-relaxed text-[#374151]"><span className="font-semibold text-[#0a0a0a]">{rule.title}.</span> {rule.body}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#e8e4de] bg-[#fafaf8] p-3.5 text-[14px] text-[#0a0a0a]">
-          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 size-4 accent-[#0a0a0a]" />
+        <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[var(--cm-line)] bg-[var(--cm-canvas)] p-3.5 text-[14px] text-[var(--cm-ink)]">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 size-4 accent-[var(--cat-accent)]" />
           {o.accept}
         </label>
         {error && !nameProblem && <Notice tone="red" role="alert">{error}</Notice>}

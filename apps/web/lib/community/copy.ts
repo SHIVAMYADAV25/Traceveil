@@ -24,22 +24,25 @@ export const copy = {
       "A private place to talk with others who have been through it. Share what you want to, read quietly if you prefer, and find out what has helped people like you.",
     promises: [
       { title: "No real name needed", body: "You get a calm, made-up name. We never ask who you are, and you do not need an email address." },
-      { title: "Everyone in the room can read", body: "There are no private messages here. That keeps scammers and people who want to harm you away." },
+      { title: "Everyone in the channel can read", body: "There are no private messages here. That keeps scammers and people who want to harm you away." },
       { title: "Text only", body: "No images or videos can be shared, so nothing from your situation can be passed around here." },
       { title: "People look after it", body: "Reports go to a real person. You can report any message in two taps." },
     ],
     signIn: "Sign in",
     join: "Join the Community",
-    closedNotice: "The Community is being opened gradually. You can join and read announcements and the quiet room now. Conversation rooms will open once the moderation team is in place.",
-    adultsOnly: "For people aged 18 and over.",
+    closedNotice: "The Community is being opened gradually. You can join and read the welcome, rules and announcements channels now. Conversation channels will open once the moderation team is in place.",
     notAdviceTitle: "A note on advice",
     notAdvice: "Members support each other with their own experience. Nothing here is legal, medical or mental health advice.",
   },
 
   join: {
+    back: "Community",
+    tabCreate: "I am new here",
+    tabSignIn: "I have a sign-in",
+    points: ["No real name and no email", "You get a handle and a recovery phrase", "Everyone in a channel can read it, so there are no private messages"],
+    addPassword: "Add a password (optional)",
     createTitle: "Join the Community",
     createLead: "We will make you a private sign-in. There is no email and no real name.",
-    ageLabel: "I am 18 years old or older.",
     passwordLabel: "Add a password (optional)",
     passwordHint: "A password lets you sign in without typing your recovery phrase. Use at least 8 characters.",
     create: "Create my private sign-in",
@@ -70,8 +73,8 @@ export const copy = {
 
   onboarding: {
     eyebrow: "Before you go in",
-    title: "Choose how you appear",
-    lead: "This is the only name other people see. You can change it any time.",
+    title: "Read this first, then choose a name",
+    lead: "Four things we ask of everyone. After that you pick the only name other people will see. You can change it any time.",
     nameLabel: "Your name here",
     nameHint: "Letters, numbers, spaces and hyphens. Please do not use your real name.",
     shuffle: "Suggest another",
@@ -87,42 +90,47 @@ export const copy = {
   },
 
   rail: {
-    title: "Rooms",
-    spaces: "Spaces",
+    title: "Channels",
+    spaces: "Groups",
     unreadLabel: "unread",
     muted: "Muted",
-    openRooms: "Open the room list",
-    closeRooms: "Close the room list",
+    openRooms: "Open the channel list",
+    closeRooms: "Close the channel list",
   },
 
   room: {
-    about: "About this room",
+    about: "About this channel",
     pinned: "Pinned",
+    rules: "Rules",
+    goWelcome: "Go to #welcome",
     slowMode: (s: number) => `Slow mode: one message every ${s} seconds`,
     quietBadge: "Read and react only",
     staffBadge: "Team posts only",
     lockedBadge: "Paused",
     empty: {
       chat: { title: "Nobody has written here yet", body: "You can read first. There is no pressure to post. When you are ready, say as much or as little as you like." },
-      quiet: { title: "Stories will appear here", body: "The team shares stories and gentle prompts in this room. You can react to let someone know you were here." },
+      quiet: { title: "Stories will appear here", body: "The team shares stories and gentle prompts in this channel. You can react to let someone know you were here." },
       announcements: { title: "No announcements yet", body: "News from the Traceveil team will appear here." },
     },
     olderMessages: "Show earlier messages",
     loading: "Loading messages",
     newMessages: "New messages",
     reconnecting: "Reconnecting. Messages will catch up in a moment.",
-    couldNotLoad: "We could not load this room.",
+    couldNotLoad: "We could not load this channel.",
     retry: "Try again",
-    mutedRoom: "Mute this room",
-    unmutedRoom: "Unmute this room",
+    mutedRoom: "Mute this channel",
+    unmutedRoom: "Unmute this channel",
   },
 
   composer: {
-    placeholder: "Write to everyone in this room",
+    placeholder: "Write to everyone in this channel",
     send: "Send",
     sending: "Sending",
     needLabel: "What would help",
-    needNone: "No preference",
+    needNone: "Clear",
+    needHelp: "Tell people how they can be most useful. You can leave this out.",
+    cwHelp: "A few words about what is in your message. Readers choose whether to open it.",
+    cwShort: "Warning",
     need: { listen: "Someone to listen", advice: "Practical ideas", reading: "Just reading" } as Record<string, string>,
     needShort: { listen: "Wants someone to listen", advice: "Looking for practical ideas", reading: "Just reading" } as Record<string, string>,
     cwToggle: "Add a content warning",
@@ -140,16 +148,16 @@ export const copy = {
 
   postingBlocked: {
     onboarding_required: "Finish choosing your name and accept the four rules to write here.",
-    community_closed: "Conversation rooms are not open yet. You can read announcements and the quiet room.",
-    room_locked: "This room is paused by the team for now.",
-    staff_only_room: "Only the team writes in this room.",
-    account_too_new: "This room opens to accounts that are a little older. Please check back soon.",
-    muted_in_room: "You cannot write in this room for now.",
+    community_closed: "Conversation channels are not open yet. You can read the welcome, rules and announcements channels.",
+    room_locked: "This channel is paused by the team for now.",
+    staff_only_room: "Only the Traceveil team can post in this channel.",
+    account_too_new: "This channel opens to accounts that are a little older. Please check back soon.",
+    muted_in_room: "You cannot write in this channel for now.",
   } as Record<string, string>,
 
   personalDetails: {
-    title: "Share this with everyone in the room?",
-    body: "This looks like it may contain personal details. Everyone in this room can read it, and it may be seen by people outside your situation.",
+    title: "Share this with everyone in the channel?",
+    body: "This looks like it may contain personal details. Everyone in this channel can read it, and it may be seen by people outside your situation.",
     kinds: { phone: "a phone number", email: "an email address", government_id: "an ID number" } as Record<string, string>,
     edit: "Go back and edit",
     share: "Share anyway",
@@ -239,8 +247,8 @@ export const copy = {
     empty: "Nothing new. We will tell you here if someone replies to you or mentions you.",
     markAll: "Mark all as read",
     kinds: {
-      mention: (d: Record<string, unknown>) => `${d.fromName ?? "Someone"} mentioned you in ${d.roomTitle ?? "a room"}`,
-      reply: (d: Record<string, unknown>) => `${d.fromName ?? "Someone"} replied to you in ${d.roomTitle ?? "a room"}`,
+      mention: (d: Record<string, unknown>) => `${d.fromName ?? "Someone"} mentioned you in ${d.roomTitle ?? "a channel"}`,
+      reply: (d: Record<string, unknown>) => `${d.fromName ?? "Someone"} replied to you in ${d.roomTitle ?? "a channel"}`,
       report_result: (d: Record<string, unknown>) =>
         d.outcome === "no_action"
           ? "The team reviewed your report and decided no action was needed."
@@ -251,12 +259,12 @@ export const copy = {
         : d.action === "restriction_lifted" ? `A restriction on your account was lifted: ${d.reason ?? ""}`
         : `A note from the team: ${d.reason ?? ""}`,
       restriction: (d: Record<string, unknown>) =>
-        d.kind === "room_mute" ? `You cannot write in ${d.roomTitle ?? "a room"} for now. Reason: ${d.reason ?? ""}`
+        d.kind === "room_mute" ? `You cannot write in ${d.roomTitle ?? "a channel"} for now. Reason: ${d.reason ?? ""}`
         : d.kind === "ban" ? `Your access was removed. Reason: ${d.reason ?? ""}`
         : `Your access is paused. Reason: ${d.reason ?? ""}`,
       appeal_decided: (d: Record<string, unknown>) =>
         d.decision === "overturned" ? `Your appeal was accepted. ${d.note ?? ""}` : `Your appeal was reviewed and the decision stands. ${d.note ?? ""}`,
-      report_new: (d: Record<string, unknown>) => `${d.priority === "urgent" ? "Urgent report" : "New report"}: ${d.roomTitle ?? "a room"}`,
+      report_new: (d: Record<string, unknown>) => `${d.priority === "urgent" ? "Urgent report" : "New report"}: ${d.roomTitle ?? "a channel"}`,
       report_escalated: () => "A report was escalated to the admins",
       appeal_new: () => "A new appeal is waiting",
       role_changed: (d: Record<string, unknown>) => `Your role is now ${String(d.role ?? "").replace("_", " ")}`,
@@ -271,7 +279,7 @@ export const copy = {
     privacySection: "Your privacy",
     privacyPoints: [
       "Other members only ever see your made-up name and picture.",
-      "The team can read messages in rooms (that is how moderation works). Nobody can read messages in private, because there are none.",
+      "The team can read messages in channels (that is how moderation works). Nobody can read messages in private, because there are none.",
       "Messages are deleted automatically after a set time. Ask the team how long.",
       "We do not store IP addresses or use tracking.",
     ],
@@ -288,15 +296,18 @@ export const copy = {
     appealPlaceholder: "Write a few sentences",
     appealSent: "Your appeal was sent. We will reply here.",
     appealStatus: { open: "Waiting for a decision", upheld: "Reviewed. The decision stands", overturned: "Accepted" } as Record<string, string>,
-    restrictionKind: { room_mute: "Muted in a room", suspend: "Access paused", ban: "Access removed" } as Record<string, string>,
+    restrictionKind: { room_mute: "Muted in a channel", suspend: "Access paused", ban: "Access removed" } as Record<string, string>,
     deleteSection: "Delete my account",
-    deleteLead: "This removes your sign-in. Your past messages stay in the rooms until they expire, but they will show as “Deleted member” and cannot be linked back to you.",
+    deleteLead: "This removes your sign-in. Your past messages stay in the channels until they expire, but they will show as “Deleted member” and cannot be linked back to you.",
     deleteConfirmLabel: "Type “delete my account” to confirm",
     deleteButton: "Delete my account",
     signOut: "Sign out",
   },
 
+  roles: { member: "Member", verified_helper: "Verified helper", moderator: "Moderator", admin: "Admin" } as Record<string, string>,
+
   topbar: {
+    menu: "Community menu",
     leaveQuickly: "Leave quickly",
     leaveHint: "Closes this page right away. You can also press Escape three times.",
     notifications: "Notifications",

@@ -26,8 +26,8 @@ export async function insertAccount(
   v: { handle: string; recoveryHash: string; passwordHash: string | null },
 ): Promise<string> {
   const { rows } = await db.query<{ id: string }>(
-    `INSERT INTO accounts (handle, recovery_hash, password_hash, age_confirmed_at)
-     VALUES ($1, $2, $3, now()) RETURNING id`,
+    `INSERT INTO accounts (handle, recovery_hash, password_hash)
+     VALUES ($1, $2, $3) RETURNING id`,
     [v.handle, v.recoveryHash, v.passwordHash],
   );
   return (rows[0] as { id: string }).id;

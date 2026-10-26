@@ -8,15 +8,17 @@ beforeAll(async () => {
 afterAll(async () => env.close());
 
 describe("registration and sign-in", () => {
-  it("requires the 18+ confirmation", async () => {
+  it("needs no age or any other detail to sign up, and records none", async () => {
     const c = new Client(env);
-    expect((await c.post("/auth/register", {})).status).toBe(400);
-    expect((await c.post("/auth/register", { ageConfirmed: false })).status).toBe(400);
+    const r = await c.post("/auth/register", {});
+    expect(r.status).toBe(201);
+    const { rows } = await env.db.query("SELECT age_confirmed_at FROM accounts WHERE handle = $1", [r.body.handle]);
+    expect(rows[0].age_confirmed_at).toBeNull();
   });
 
   it("creates an account with a generated handle, name and one-time recovery phrase", async () => {
     const c = new Client(env);
-    const r = await c.post("/auth/register", { ageConfirmed: true });
+    const r = await c.post("/auth/register", {});
     expect(r.status).toBe(201);
     expect(r.body.handle).toMatch(/^[a-z]+-[a-z]+-\d{4}$/);
     expect(r.body.recoveryPhrase.split(" ")).toHaveLength(8);
@@ -40,7 +42,7 @@ describe("registration and sign-in", () => {
       method: "POST",
       url: "/api/community/auth/register",
       headers: { origin: "http://localhost:3000", "x-community-client": "web", "content-type": "application/json" },
-      payload: JSON.stringify({ ageConfirmed: true }),
+      payload: JSON.stringify({}),
     });
     const cookie = String(res.headers["set-cookie"]);
     expect(cookie).toMatch(/HttpOnly/i);
@@ -57,7 +59,7 @@ describe("registration and sign-in", () => {
 
   it("signs in with an optional password too", async () => {
     const c = new Client(env);
-    const reg = await c.post("/auth/register", { ageConfirmed: true, password: "a long password 123" });
+    const reg = await c.post("/auth/register", { password: "a long password 123" });
     const d = new Client(env);
     expect((await d.post("/auth/login", { handle: reg.body.handle, secret: "a long password 123" })).status).toBe(200);
     expect((await new Client(env).post("/auth/login", { handle: reg.body.handle, secret: "wrong password" })).status).toBe(401);
@@ -99,14 +101,14 @@ describe("request protection", () => {
       method: "POST",
       url: "/api/community/auth/register",
       headers: { origin: "http://localhost:3000", "content-type": "application/json" },
-      payload: JSON.stringify({ ageConfirmed: true }),
+      payload: JSON.stringify({}),
     });
     expect(noHeader.statusCode).toBe(403);
     const foreign = await env.app.inject({
       method: "POST",
       url: "/api/community/auth/register",
       headers: { origin: "https://evil.example", "x-community-client": "web", "content-type": "application/json" },
-      payload: JSON.stringify({ ageConfirmed: true }),
+      payload: JSON.stringify({}),
     });
     expect(foreign.statusCode).toBe(403);
   });
@@ -144,7 +146,7 @@ describe("onboarding, names and account deletion", () => {
 
   it("deletes an account but keeps its messages, shown as Deleted member", async () => {
     const a = await newMember(env);
-    const room = (await a.get("/rooms/by-slug/start-here/just-happened")).body.room;
+    const room = (await a.get("/rooms/by-slug/victim-support/ask-for-help")).body.room;
     const sent = await a.post(`/rooms/${room.id}/messages`, { clientMsgId: crypto.randomUUID(), body: "hello everyone" });
     expect(sent.status).toBe(201);
     const bad = await a.del("/me", { confirm: "yes" });

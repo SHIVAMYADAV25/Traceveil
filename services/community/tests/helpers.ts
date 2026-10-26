@@ -98,7 +98,7 @@ export class Client {
 /** Sign up a new member and finish onboarding. */
 export async function newMember(env: TestEnv, opts: { onboard?: boolean; displayName?: string } = {}): Promise<Client> {
   const c = new Client(env);
-  const r = await c.post("/auth/register", { ageConfirmed: true });
+  const r = await c.post("/auth/register", {});
   if (r.status !== 201) throw new Error(`register failed: ${JSON.stringify(r.body)}`);
   c.handle = r.body.handle;
   c.phrase = r.body.recoveryPhrase;

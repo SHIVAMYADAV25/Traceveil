@@ -4,7 +4,7 @@ import { ApiError, get, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
 import { useCommunity } from "@/lib/community/session";
-import { Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea } from "../ui";
+import { Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea } from "@/components/community/ui";
 
 interface Appeal { id: string; body: string; status: string; createdAt: string; decisionNote: string | null; personaName: string | null; imposedByMe: boolean; restriction: { id: string; kind: string; reason: string; endsAt: string | null; active: boolean } }
 
@@ -31,26 +31,26 @@ export function Appeals() {
 
   return (
     <div className="space-y-4">
-      <div role="tablist" className="inline-flex gap-1 rounded-full border border-[#e8e4de] bg-white p-1">
+      <div role="tablist" className="inline-flex gap-1 rounded-full border border-[var(--cm-line)] bg-white p-1">
         {(["open", "decided"] as const).map((v) => (
-          <button key={v} role="tab" aria-selected={view === v} type="button" onClick={() => { setItems(null); setView(v); }} className={`rounded-full px-4 py-1.5 text-[13px] font-medium ${view === v ? "bg-[#0a0a0a] text-white" : "text-[#374151] hover:bg-[#f0ede8]"}`}>{v === "open" ? "Waiting" : "Decided"}</button>
+          <button key={v} role="tab" aria-selected={view === v} type="button" onClick={() => { setItems(null); setView(v); }} className={`rounded-full px-4 py-1.5 text-[13px] font-medium ${view === v ? "bg-[var(--cat-accent)] text-white" : "text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]"}`}>{v === "open" ? "Waiting" : "Decided"}</button>
         ))}
       </div>
-      {!items ? <Spinner /> : items.length === 0 ? <p className="text-[14px] text-[#6b7280]">{view === "open" ? "No appeals are waiting." : "No decided appeals yet."}</p> : (
+      {!items ? <Spinner /> : items.length === 0 ? <p className="text-[14px] text-[var(--cm-ink-3)]">{view === "open" ? "No appeals are waiting." : "No decided appeals yet."}</p> : (
         <ul className="space-y-3">
           {items.map((a) => (
-            <li key={a.id} className="rounded-2xl border border-[#e8e4de] bg-white p-4 sm:p-5">
+            <li key={a.id} className="rounded-2xl border border-[var(--cm-line)] bg-white p-4 sm:p-5">
               <div className="mb-2 flex flex-wrap items-center gap-2">
-                <span className="text-[14.5px] font-semibold text-[#0a0a0a]">{a.personaName ?? "Deleted member"}</span>
+                <span className="text-[14.5px] font-semibold text-[var(--cm-ink)]">{a.personaName ?? "Deleted member"}</span>
                 <Pill tone="rose">{copy.account.restrictionKind[a.restriction.kind]}</Pill>
-                {a.restriction.active && <span className="text-[12.5px] text-[#6b7280]">{formatUntil(a.restriction.endsAt)}</span>}
+                {a.restriction.active && <span className="text-[12.5px] text-[var(--cm-ink-3)]">{formatUntil(a.restriction.endsAt)}</span>}
                 {a.status !== "open" && <Pill tone={a.status === "overturned" ? "emerald" : "neutral"}>{a.status === "overturned" ? "Accepted" : "Decision stands"}</Pill>}
               </div>
-              <p className="mb-1 text-[13px] text-[#6b7280]">Reason given at the time</p>
-              <p className="mb-3 text-[14px] text-[#0a0a0a]">{a.restriction.reason}</p>
-              <p className="mb-1 text-[13px] text-[#6b7280]">Their appeal</p>
-              <p className="mb-3 whitespace-pre-wrap rounded-xl bg-[#fafaf8] p-3 text-[14.5px] leading-relaxed text-[#0a0a0a]">{a.body}</p>
-              {a.decisionNote && <p className="text-[13.5px] text-[#374151]"><span className="font-medium">Decision note:</span> {a.decisionNote}</p>}
+              <p className="mb-1 text-[13px] text-[var(--cm-ink-3)]">Reason given at the time</p>
+              <p className="mb-3 text-[14px] text-[var(--cm-ink)]">{a.restriction.reason}</p>
+              <p className="mb-1 text-[13px] text-[var(--cm-ink-3)]">Their appeal</p>
+              <p className="mb-3 whitespace-pre-wrap rounded-xl bg-[var(--cm-canvas)] p-3 text-[14.5px] leading-relaxed text-[var(--cm-ink)]">{a.body}</p>
+              {a.decisionNote && <p className="text-[13.5px] text-[var(--cm-ink-2)]"><span className="font-medium">Decision note:</span> {a.decisionNote}</p>}
               {a.status === "open" && (
                 <>
                   {a.imposedByMe && <div className="mb-3"><Notice tone="amber">You made the original decision. If another admin is available, ask them to review this one.</Notice></div>}

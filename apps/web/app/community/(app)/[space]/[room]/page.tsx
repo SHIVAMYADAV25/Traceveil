@@ -1,13 +1,16 @@
 "use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BellOff, Bell, ChevronDown, Info, Lock, MessageSquareOff } from "lucide-react";
-import { BlockDialog } from "@/components/community/BlockDialog";
-import { Composer } from "@/components/community/Composer";
-import { MessageList } from "@/components/community/MessageList";
-import { ReportDialog } from "@/components/community/ReportDialog";
-import { useRoomMessages } from "@/components/community/useRoomMessages";
-import { Dialog, Notice, Pill, PrimaryButton, SecondaryButton, Spinner } from "@/components/community/ui";
+import { BlockDialog } from "@/components/community/chat/BlockDialog";
+import { ChannelHeader } from "@/components/community/chat/ChannelHeader";
+import { ChannelIntro } from "@/components/community/chat/ChannelIntro";
+import { Composer } from "@/components/community/chat/Composer";
+import { ReadOnlyBar } from "@/components/community/chat/ReadOnlyBar";
+import { MessageList } from "@/components/community/chat/MessageList";
+import { ReportDialog } from "@/components/community/chat/ReportDialog";
+import { useRoomMessages } from "@/components/community/chat/useRoomMessages";
+import { Dialog, Notice, PrimaryButton, SecondaryButton, Spinner } from "@/components/community/ui";
 import { ApiError, get, post, put } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
@@ -27,7 +30,6 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
   const { me, spaces, reconnectTick, socketStatus, showToast, markRoomRead, reloadSpaces } = useCommunity();
   const [room, setRoom] = useState<RoomDetail | null>(null);
   const [roomError, setRoomError] = useState<string | null>(null);
-  const [notesOpen, setNotesOpen] = useState(false);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
   const [reporting, setReporting] = useState<Message | null>(null);
   const [blocking, setBlocking] = useState<Message | null>(null);
@@ -99,7 +101,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
   }
 
   if (roomError) {
-    return <div className="mx-auto max-w-md p-8"><Notice tone="red" role="alert">{roomError}</Notice><div className="mt-4"><SecondaryButton onClick={() => void loadRoom()}>{copy.room.retry}</SecondaryButton></div></div>;
+    return <div className="mx-auto max-w-md p-8"><Notice tone="red" role="alert">{roomError}</Notice><div className="mt-4 flex gap-2"><SecondaryButton onClick={() => void loadRoom()}>{copy.room.retry}</SecondaryButton><Link href="/community/start-here/welcome"><SecondaryButton>{copy.room.goWelcome}</SecondaryButton></Link></div></div>;
   }
   if (!room || !me) return <Spinner label={copy.room.loading} />;
 
@@ -111,48 +113,11 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
     : null;
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="shrink-0 border-b border-[#e8e4de] bg-white px-4 py-3 sm:px-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h1 className="truncate text-[18px] font-semibold tracking-tight text-[#0a0a0a]">{room.title}</h1>
-            <p className="mt-0.5 text-[13.5px] leading-snug text-[#374151]">{room.purpose}</p>
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              {room.kind === "quiet" && <Pill tone="indigo">{copy.room.quietBadge}</Pill>}
-              {room.kind === "announcements" && <Pill>{copy.room.staffBadge}</Pill>}
-              {room.isLocked && <Pill tone="amber"><Lock className="size-3" aria-hidden />{copy.room.lockedBadge}</Pill>}
-              {room.slowModeSeconds > 0 && <Pill>{copy.room.slowMode(room.slowModeSeconds)}</Pill>}
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <button type="button" onClick={() => void toggleMute()} aria-pressed={muted} className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-colors ${muted ? "border-amber-200 bg-amber-50 text-amber-900" : "border-[#e8e4de] bg-white text-[#374151] hover:bg-[#f0ede8]"}`}>
-              {muted ? <BellOff className="size-3.5" aria-hidden /> : <Bell className="size-3.5" aria-hidden />}
-              <span className="hidden sm:inline">{muted ? copy.room.unmutedRoom : copy.room.mutedRoom}</span>
-              <span className="sm:hidden">{muted ? "Muted" : "Mute"}</span>
-            </button>
-          </div>
-        </div>
-        {room.notes.length > 0 && (
-          <div className="mt-2">
-            <button type="button" onClick={() => setNotesOpen((o) => !o)} aria-expanded={notesOpen} className="inline-flex items-center gap-1.5 rounded-full border border-[#e8e4de] bg-[#fafaf8] px-3 py-1 text-[12.5px] font-medium text-[#374151] hover:bg-[#f0ede8]">
-              <Info className="size-3.5" aria-hidden />{copy.room.pinned}: {room.notes[0]?.title}
-              <ChevronDown className={`size-3 transition-transform ${notesOpen ? "rotate-180" : ""}`} aria-hidden />
-            </button>
-            {notesOpen && (
-              <div className="mt-2 space-y-3 rounded-xl border border-[#e8e4de] bg-[#fafaf8] p-4">
-                {room.notes.map((n) => (
-                  <div key={n.id}>
-                    <p className="mb-1 font-mono text-[10.5px] uppercase tracking-widest text-[#6b7280]">{n.title}</p>
-                    <p className="whitespace-pre-line text-[14px] leading-relaxed text-[#0a0a0a]">{n.body}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </header>
+    <div className="flex h-full min-h-0 flex-col">
+      <ChannelHeader room={room} muted={muted} onToggleMute={() => void toggleMute()} />
 
       <MessageList
+        intro={<ChannelIntro room={room} />}
         messages={visible}
         roomKind={room.kind}
         myPersonaId={me.persona.id}
@@ -175,7 +140,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
         onCopy={onCopy}
       />
 
-      <div className="shrink-0 border-t border-[#e8e4de] bg-[#fafaf8] px-3 py-3 sm:px-6">
+      <div className="shrink-0 px-3 pb-4 pt-1 sm:px-6">
         {canWrite ? (
           <Composer
             room={room}
@@ -186,10 +151,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
             onSent={() => undefined}
           />
         ) : (
-          <div className="flex items-start gap-3 rounded-xl border border-[#e8e4de] bg-white px-4 py-3 text-[14px] leading-relaxed text-[#374151]">
-            <MessageSquareOff className="mt-0.5 size-4 shrink-0 text-[#6b7280]" aria-hidden />
-            <p>{blockedMessage}</p>
-          </div>
+          <div className="mx-auto w-full max-w-[860px]"><ReadOnlyBar room={room} message={blockedMessage ?? ""} /></div>
         )}
       </div>
 
@@ -200,7 +162,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
         onDone={(personaId) => { setBlocked((s) => new Set(s).add(personaId)); showToast(copy.block.done); }}
       />
       <Dialog open={deleting !== null} onClose={() => setDeleting(null)} title={copy.message.delete}>
-        <p className="mb-5 text-[14.5px] leading-relaxed text-[#374151]">{copy.message.deleteConfirm}</p>
+        <p className="mb-5 text-[14.5px] leading-relaxed text-[var(--cm-ink-2)]">{copy.message.deleteConfirm}</p>
         <div className="flex justify-end gap-2">
           <SecondaryButton onClick={() => setDeleting(null)}>{copy.block.cancel}</SecondaryButton>
           <PrimaryButton onClick={() => void confirmDelete()}>{copy.message.delete}</PrimaryButton>

@@ -1,3 +1,5 @@
+> **Superseded by [community-v2.md](./community-v2.md).** This is the original (v1) document, kept for history. The interface, channel list and sign-up described here have changed.
+
 # Traceveil Community
 
 An anonymous, moderated group chat for people affected by non-consensual intimate imagery (NCII).
