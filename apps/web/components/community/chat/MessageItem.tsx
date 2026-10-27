@@ -6,7 +6,7 @@ import { copy } from "@/lib/community/copy";
 import { formatTime } from "@/lib/community/format";
 import type { Message, NeedTag, ReactionKind } from "@/lib/community/types";
 import { Avatar } from "@/components/community/ui/Avatar";
-import { Notice, PrimaryButton, SecondaryButton, TextArea } from "@/components/community/ui";
+import { Notice, PrimaryButton, SecondaryButton, TextArea } from "@/components/community/ui/index";
 import { ContentWarning } from "./ContentWarning";
 import { MessageBody } from "./MessageBody";
 import { MessageToolbar } from "./MessageToolbar";
@@ -74,49 +74,45 @@ function MessageItemBase(props: Props) {
     setTapped((t) => !t);
   };
 
-  const bubble = own
-    ? "rounded-2xl rounded-tr-md bg-[var(--cm-own)]"
-    : "rounded-2xl rounded-tl-md border border-[var(--cm-line)] bg-[var(--cm-surface)]";
-
   return (
     <article
       id={`msg-${m.id}`}
       aria-label={`${m.author.displayName}, ${formatTime(m.createdAt)}`}
       onClick={onTap}
-      className={`group relative px-3 transition-colors sm:px-4 ${compact ? "pt-0.5" : "pt-4"} pb-0.5 ${highlighted ? "bg-[var(--cat-soft)]/60" : ""}`}
+      className={`group relative px-4 transition-colors duration-150 hover:bg-[var(--cm-row)] ${compact ? "py-px" : "mt-[17px] py-0.5"} ${tapped ? "bg-[var(--cm-row)]" : ""} ${highlighted ? "!bg-[var(--cat-soft)]/70" : ""}`}
     >
-      {m.replyTo && !gone && <ReplyPreview reply={m.replyTo} onJump={props.onJump} own={own} />}
+      {m.replyTo && !gone && <ReplyPreview reply={m.replyTo} onJump={props.onJump} />}
 
-      <div className={`flex gap-3 ${own ? "flex-row-reverse" : ""}`}>
-        {!own && (
-          <div className="w-9 shrink-0">
-            {compact
-              ? <time dateTime={m.createdAt} className="invisible block pt-2.5 text-center text-[10.5px] text-[var(--cm-ink-3)] group-hover:visible">{formatTime(m.createdAt)}</time>
-              : <Avatar seed={m.author.avatarSeed} size={36} label="" />}
-          </div>
-        )}
+      {/* Same for everyone, you included: picture on the left, name and time above the words, no bubble. */}
+      <div className="flex gap-4">
+        <div className="w-10 shrink-0">
+          {compact
+            ? <time dateTime={m.createdAt} className="invisible block pt-[5px] text-right text-[11px] leading-[22px] text-[var(--cm-ink-3)] group-hover:visible">{formatTime(m.createdAt)}</time>
+            : <Avatar seed={m.author.avatarSeed} size={40} label="" />}
+        </div>
 
-        <div className={`flex min-w-0 max-w-[min(100%,680px)] flex-col ${own ? "items-end" : "items-start"}`}>
+        <div className="min-w-0 flex-1">
           {!compact && (
-            <header className={`mb-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 ${own ? "justify-end" : ""}`}>
-              <span className={`text-[14px] font-semibold ${chip ? "text-[var(--cat-ink)]" : "text-[var(--cm-ink)]"}`}>{own ? copy.message.youLabel : m.author.displayName}</span>
+            <header className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-[22px]">
+              <span className={`text-[16px] font-medium ${chip ? "text-[var(--cat-ink)]" : "text-[var(--cm-ink)]"}`}>{m.author.displayName}</span>
+              {own && <span className="text-[12px] text-[var(--cm-ink-3)]">({copy.message.youLabel.toLowerCase()})</span>}
               {chip && (
-                <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11.5px] font-medium leading-4 ${chip.cls}`}>
+                <span className={`inline-flex items-center gap-1 self-center rounded px-1.5 text-[11px] font-semibold leading-[18px] ${chip.cls}`}>
                   <chip.Icon className="size-3" aria-hidden />{chip.label}
                 </span>
               )}
               <time dateTime={m.createdAt} className="text-[12px] text-[var(--cm-ink-3)]">{formatTime(m.createdAt)}</time>
-              {m.editedAt && <span className="text-[12px] text-[var(--cm-ink-3)]">({copy.message.edited})</span>}
+              {m.editedAt && <span className="text-[11px] text-[var(--cm-ink-3)]">({copy.message.edited})</span>}
             </header>
           )}
 
-          {m.status === "deleted_by_author" && <p className="rounded-xl border border-dashed border-[var(--cm-line-strong)] px-3.5 py-2 text-[13.5px] italic text-[var(--cm-ink-3)]">{copy.message.deleted}</p>}
-          {m.status === "hidden_by_mod" && <p className="rounded-xl border border-dashed border-[var(--cm-line-strong)] px-3.5 py-2 text-[13.5px] italic text-[var(--cm-ink-3)]">{copy.message.hiddenByTeam}</p>}
+          {m.status === "deleted_by_author" && <p className="text-[15px] italic leading-[22px] text-[var(--cm-ink-3)]">{copy.message.deleted}</p>}
+          {m.status === "hidden_by_mod" && <p className="text-[15px] italic leading-[22px] text-[var(--cm-ink-3)]">{copy.message.hiddenByTeam}</p>}
 
           {!gone && !editing && (
-            <div className={`${bubble} px-3.5 py-2.5 ${m.contentWarning && !cwOpen ? "!border-0 !bg-transparent !p-0" : ""}`}>
+            <div>
               {m.needTag && NeedIcon && (
-                <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--cat-soft)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--cat-ink)]">
+                <span className="mb-1 mt-0.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--cat-soft)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--cat-ink)]">
                   <NeedIcon className="size-3.5" aria-hidden />{copy.composer.needShort[m.needTag]}
                 </span>
               )}
@@ -126,7 +122,7 @@ function MessageItemBase(props: Props) {
           )}
 
           {editing && (
-            <div className="w-[min(100%,560px)] space-y-2 rounded-2xl border border-[var(--cm-line)] bg-[var(--cm-surface)] p-3">
+            <div className="my-1 w-full max-w-[640px] space-y-2 rounded-xl bg-[var(--cm-surface)] p-3 ring-1 ring-[var(--cm-line-strong)]">
               <TextArea aria-label={copy.composer.edit} value={draft} onChange={(e) => setDraft(e.target.value)} rows={3} maxLength={2000} data-lenis-prevent />
               <TextArea aria-label={copy.composer.cwLabel} value={cwDraft} onChange={(e) => setCwDraft(e.target.value)} rows={1} maxLength={120} placeholder={copy.composer.cwPlaceholder} />
               {editError && <Notice tone={needsConfirm ? "amber" : "red"} role="alert">{editError}</Notice>}
@@ -140,7 +136,7 @@ function MessageItemBase(props: Props) {
           )}
 
           {!gone && m.reactions.length > 0 && (
-            <div className={`mt-1.5 flex flex-wrap gap-1.5 ${own ? "justify-end" : ""}`} role="group" aria-label="Reactions">
+            <div className="mt-1 flex flex-wrap gap-1" role="group" aria-label="Reactions">
               {m.reactions.map((r) => {
                 const info = copy.reactions[r.kind];
                 return (
@@ -151,7 +147,7 @@ function MessageItemBase(props: Props) {
                     aria-pressed={r.mine}
                     aria-label={`${info?.label}: ${r.count}${r.mine ? ", you reacted" : ""}`}
                     onClick={() => props.onReact(m, r.kind, !r.mine)}
-                    className={`inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[13px] transition-colors disabled:opacity-60 ${r.mine ? "bg-[var(--cat-soft)] text-[var(--cat-ink)] ring-1 ring-[var(--cat-accent)]/50" : "bg-[var(--cm-hover)] text-[var(--cm-ink-2)] hover:bg-[var(--cm-line)]"}`}
+                    className={`inline-flex h-[26px] items-center gap-1.5 rounded-lg border px-2 text-[13px] transition-colors disabled:opacity-60 ${r.mine ? "border-[var(--cat-accent)]/55 bg-[var(--cat-soft)] text-[var(--cat-ink)]" : "border-transparent bg-[var(--cm-hover)] text-[var(--cm-ink-2)] hover:border-[var(--cm-line-strong)]"}`}
                   >
                     <span className="text-[15px] leading-none" aria-hidden>{info?.icon}</span>
                     <span className="font-medium tabular-nums">{r.count}</span>
@@ -164,13 +160,12 @@ function MessageItemBase(props: Props) {
       </div>
 
       {!gone && !editing && (
-        <div className={`${tapped ? "opacity-100" : "pointer-events-none opacity-0"} transition-opacity focus-within:pointer-events-auto focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100`}>
+        <div className={`${tapped ? "opacity-100" : "pointer-events-none opacity-0"} transition-opacity duration-150 focus-within:pointer-events-auto focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100`}>
           <MessageToolbar
             message={m}
             own={own}
             canReact={canReact}
             canWrite={canWrite}
-            side={own ? "left" : "right"}
             actions={{
               onReact: (kind, on) => props.onReact(m, kind, on),
               onReply: () => props.onReply(m),

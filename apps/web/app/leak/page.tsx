@@ -307,7 +307,7 @@ function LeakPageContent() {
       {/* ── Header ── */}
       <header className="border-b border-[#e8e4de] px-6 py-4 flex items-center gap-3 bg-white">
         <Link href="/" className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity">
-          Sniffer
+          Traceveil
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         <span className="text-[13px] text-[#9ca3af]">Leak Discovery</span>

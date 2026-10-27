@@ -131,6 +131,19 @@ describe("statistics", () => {
     expect(JSON.stringify(s.body)).not.toContain("private");
     expect(Object.values(s.body).every((v) => typeof v === "number" || v === null)).toBe(true);
   });
+
+  it("gives 14 days of counts for the overview charts, numbers only, admins only", async () => {
+    const adm = await admin();
+    const m = await newMember(env);
+    expect((await m.get("/admin/stats/series")).status).toBe(403);
+    const r = await adm.get("/admin/stats/series");
+    expect(r.status).toBe(200);
+    for (const k of ["days", "members", "messages", "reports", "appeals"]) expect(r.body[k]).toHaveLength(14);
+    expect(r.body.days[13]).toBe(new Date().toISOString().slice(0, 10));
+    expect(r.body.members.every((n: unknown) => typeof n === "number")).toBe(true);
+    expect(r.body.members.reduce((a: number, b: number) => a + b, 0)).toBeGreaterThan(0);
+    expect(JSON.stringify(r.body)).not.toContain("private");
+  });
 });
 
 describe("cleanup jobs", () => {

@@ -55,6 +55,21 @@ with sync_playwright() as p:
     pg.locator("article").last.get_by_role("button", name="React", exact=True).click()
     check("reaction picker shows six emoji", lambda: expect(pg.get_by_role("menuitemcheckbox")).to_have_count(6))
 
+    # Round 2: frame, header persistence, dropdown, message layout, input outline.
+    pg.goto(f"{BASE}/community/bugs-feedback/report-a-bug"); pg.wait_for_timeout(1500)
+    pg.evaluate("window.__hdr = document.querySelector('header')")
+    pg.get_by_role("link", name="feature-requests").click(); pg.wait_for_url("**/feature-requests")
+    check("header is the same element after changing channel", lambda: (_ for _ in ()).throw(AssertionError("header was rebuilt")) if not pg.evaluate("window.__hdr === document.querySelector('header') && window.__hdr.isConnected") else None)
+    check("header text follows the channel", lambda: expect(pg.locator("header h1")).to_have_text("feature-requests"))
+    pg.get_by_role("button", name="Community menu").click()
+    check("dropdown is on top of the list, not clipped", lambda: (_ for _ in ()).throw(AssertionError("clipped")) if not pg.evaluate("(() => { const e = [...document.querySelectorAll('[role=menuitem]')][0]; const r = e.getBoundingClientRect(); const t = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return e.contains(t); })()") else None)
+    pg.keyboard.press("Escape")
+    pg.locator("#composer").fill("my own message sits on the left"); pg.get_by_role("button", name="Send", exact=True).click()
+    pg.wait_for_selector("article:has-text('my own message sits on the left')")
+    check("own message starts at the left like everyone else's", lambda: (_ for _ in ()).throw(AssertionError("not on the left")) if pg.locator("article", has_text="my own message sits on the left").first.locator("svg, img").first.bounding_box()["x"] > 500 else None)
+    pg.locator("#composer").click()
+    check("composer input draws no square outline of its own", lambda: (_ for _ in ()).throw(AssertionError(pg.evaluate("getComputedStyle(document.querySelector('#composer')).outlineStyle"))) if pg.evaluate("getComputedStyle(document.querySelector('#composer')).outlineStyle") not in ("none",) else None)
+
     check("no script errors on the page", lambda: (_ for _ in ()).throw(AssertionError(errors[0])) if errors else None)
     browser.close()
 

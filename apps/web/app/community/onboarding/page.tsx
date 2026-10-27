@@ -45,7 +45,7 @@ export default function OnboardingPage() {
     <main className="relative min-h-dvh overflow-hidden bg-[var(--cm-canvas)] px-4 py-6 sm:px-8">
       <Image src="/community/banners/start-here.webp" alt="" fill priority sizes="100vw" className="pointer-events-none object-cover object-[80%_bottom] opacity-70" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--cm-canvas)] via-[var(--cm-canvas)]/70 to-transparent" aria-hidden />
-      <div className="relative mx-auto flex max-w-[600px] justify-end"><QuickExitButton /></div>
+      {/* <div className="relative mx-auto flex max-w-[600px] justify-end"><QuickExitButton /></div> */}
       <form onSubmit={(e) => { e.preventDefault(); void enter(); }} className="relative mx-auto mt-8 max-w-[600px] space-y-7 rounded-3xl border border-[var(--cm-line)] bg-white/95 p-6 shadow-[var(--cm-shadow)] backdrop-blur sm:p-8">
         <div>
           <h1 className="cm-title text-[30px] leading-tight text-[var(--cm-ink)]">{o.title}</h1>

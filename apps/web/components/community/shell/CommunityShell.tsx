@@ -1,27 +1,33 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { X } from "lucide-react";
-import { Spinner } from "@/components/community/ui";
+import { Loader } from "@/components/community/ui/index";
 import { themeFor, themeVars } from "@/lib/community/channelTheme";
 import { get } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { useCommunity, useCommunityEvents } from "@/lib/community/session";
+import { FrameBanner } from "./FrameBanner";
+import { routeHeader } from "./routeHeader";
 import { ShellProvider } from "./ShellContext";
 import { Sidebar, spaceSlugFromPath } from "./Sidebar";
+import { TopHeader } from "./TopHeader";
 
 /**
- * The signed-in shell: sidebar on the left, the current screen on the right. It also guards the area:
- * people who are not signed in, have not finished setting up, or are locked out are sent to the right
- * place, and nothing else is shown until they are. On phones the sidebar slides in over the screen.
+ * The one big component for the signed-in Community: sidebar and top header make an L-shaped frame in the
+ * current group's colours, and the screen sits in a rounded panel set into its corner. Moving between channels
+ * or pages changes only what is inside the panel (and the words in the header); the frame is never rebuilt.
+ * It also guards the area, sending people who are signed out, not set up, or locked out to the right place.
  */
 export function CommunityShell({ children }: { children: ReactNode }) {
-  const { phase, me, isStaff, isLockedOut } = useCommunity();
+  const { phase, me, isStaff, isLockedOut, spaces } = useCommunity();
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openReports, setOpenReports] = useState(0);
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
   const theme = themeFor(spaceSlugFromPath(pathname));
+  const header = useMemo(() => routeHeader(pathname, spaces), [pathname, spaces]);
 
   useEffect(() => {
     if (phase === "signed_out") router.replace("/community/join");
@@ -43,27 +49,35 @@ export function CommunityShell({ children }: { children: ReactNode }) {
     if (e.type === "notification.created" && ["report_new", "report_escalated"].includes(e.data.notification.kind)) void loadReportCount();
   });
 
-  // Close the phone sidebar when the screen changes.
+  // Close the phone drawer when the screen changes.
   useEffect(() => { const t = setTimeout(() => setSidebarOpen(false), 0); return () => clearTimeout(t); }, [pathname]);
 
   if (phase === "loading" || !me || (!me.onboardingComplete && pathname !== "/community/onboarding")) {
-    return <div className="min-h-dvh bg-[var(--cm-canvas)]"><Spinner /></div>;
+    return <div className="h-dvh bg-[var(--cm-canvas)]"><Loader label="Opening the Community" /></div>;
   }
 
   const showSidebar = !isLockedOut;
   return (
-    <ShellProvider value={{ openSidebar: () => setSidebarOpen(true) }}>
-      <div style={themeVars(theme)} className="flex h-dvh overflow-hidden bg-[var(--cm-canvas)]">
-        {showSidebar && <aside className="hidden w-[288px] shrink-0 border-r border-[var(--cm-line)] md:block"><Sidebar openReports={openReports} /></aside>}
-        <main className="flex min-w-0 flex-1 flex-col">{children}</main>
+    <ShellProvider value={{ openSidebar: () => setSidebarOpen(true), actionsSlot: slot }}>
+      <div style={themeVars(theme)} className="cm-themed relative flex h-dvh overflow-hidden bg-[var(--cm-frame)]">
+        <FrameBanner src={theme.banner} />
+        {showSidebar && <aside className="relative z-10 hidden w-[296px] shrink-0 md:block"><Sidebar openReports={openReports} /></aside>}
+        <div className="relative z-10 flex min-w-0 flex-1 flex-col">
+          <TopHeader info={header} onOpenSidebar={() => setSidebarOpen(true)} setSlot={setSlot} />
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-[22px] border border-[var(--cm-frame-line)] bg-[var(--cm-panel)] shadow-[var(--cm-shadow)] transition-colors duration-500 md:mb-2 md:mr-2 md:rounded-[26px]">
+            {children}
+          </main>
+        </div>
       </div>
 
-      {showSidebar && sidebarOpen && (
-        <div className="fixed inset-0 z-50 md:hidden" style={themeVars(theme)}>
-          <div className="absolute inset-0 bg-[#1f2a27]/35 backdrop-blur-[2px]" onClick={() => setSidebarOpen(false)} aria-hidden />
-          <div className="cm-pop absolute inset-y-0 left-0 w-[min(88vw,320px)] shadow-[var(--cm-shadow)]" style={{ ["--cm-pop-from" as string]: "0px" }}>
-            <button type="button" aria-label={copy.rail.closeRooms} onClick={() => setSidebarOpen(false)} className="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-2 text-[var(--cm-ink-2)] hover:bg-white"><X className="size-4" /></button>
-            <Sidebar openReports={openReports} onNavigate={() => setSidebarOpen(false)} />
+      {/* The phone drawer stays mounted so it can slide both ways. */}
+      {showSidebar && (
+        <div style={themeVars(theme)} className={`cm-themed fixed inset-0 z-50 md:hidden ${sidebarOpen ? "" : "pointer-events-none"}`} aria-hidden={!sidebarOpen} inert={!sidebarOpen}>
+          <div onClick={() => setSidebarOpen(false)} className={`absolute inset-0 bg-[#1f2a27]/35 backdrop-blur-[2px] transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0"}`} />
+          <div className={`absolute inset-y-0 left-0 w-[min(88vw,330px)] overflow-hidden bg-[var(--cm-frame)] shadow-[var(--cm-shadow)] transition-transform duration-300 ease-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+            <FrameBanner src={theme.banner} height={160} />
+            <button type="button" aria-label={copy.rail.closeRooms} onClick={() => setSidebarOpen(false)} className="absolute right-2 top-2 z-30 rounded-full bg-white/80 p-2 text-[var(--cm-ink-2)] hover:bg-white"><X className="size-4" /></button>
+            <div className="relative z-10 h-full"><Sidebar openReports={openReports} onNavigate={() => setSidebarOpen(false)} /></div>
           </div>
         </div>
       )}

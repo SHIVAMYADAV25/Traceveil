@@ -22,28 +22,27 @@ export function AdminNav() {
 
   const link = (i: Item) => (
     <Link key={i.href} href={i.href} aria-current={active(i) ? "page" : undefined}
-      className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-[13.5px] transition-colors ${active(i) ? "bg-[var(--cat-soft)] font-medium text-[var(--cat-ink)]" : "text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]"}`}>
+      className={`flex shrink-0 items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2.5 text-[14px] transition-all duration-200 ${active(i) ? "bg-[var(--cat-accent)] font-medium text-white shadow-[0_6px_14px_-6px_var(--cat-accent)]" : "text-[var(--cm-ink-2)] hover:bg-white/80 hover:text-[var(--cm-ink)]"}`}>
       <i.icon className="size-[18px]" aria-hidden />{i.label}
-      {!!i.badge && i.badge > 0 && <span className="ml-auto rounded-full bg-[var(--cat-accent)] px-1.5 text-[11px] font-semibold leading-[18px] text-white">{i.badge}</span>}
+      {!!i.badge && i.badge > 0 && <span className={`ml-auto rounded-full px-1.5 text-[11px] font-semibold leading-[18px] ${active(i) ? "bg-white/25 text-white" : "bg-[var(--cat-accent)] text-white"}`}>{i.badge}</span>}
     </Link>
   );
+  const plain = "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] text-[var(--cm-ink-2)] transition-colors hover:bg-white/80 hover:text-[var(--cm-ink)]";
 
   return (
     <>
-      <nav aria-label="Admin sections" className="hidden w-[236px] shrink-0 flex-col gap-0.5 border-r border-[var(--cm-line)] bg-[var(--cm-surface)] p-3 md:flex">
+      <nav aria-label="Admin sections" className="cm-glass m-4 mr-0 hidden w-[224px] shrink-0 flex-col gap-0.5 self-start rounded-[22px] p-2 md:flex">
         {main.map(link)}
-        <div className="my-2 border-t border-[var(--cm-line)]" role="separator" />
-        <Link href="/community/moderation" className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]">
+        <div className="mx-2 my-1.5 border-t border-[var(--cm-line)]" role="separator" />
+        <Link href="/community/moderation" className={plain}>
           <ShieldCheck className="size-[18px]" aria-hidden />Moderation queue
           {!!stats?.openReports && <span className="ml-auto rounded-full bg-rose-100 px-1.5 text-[11px] font-semibold leading-[18px] text-rose-700">{stats.openReports}</span>}
         </Link>
-        <Link href={lastRoomPath()} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]">
-          <ArrowLeft className="size-[18px]" aria-hidden />Back to channels
-        </Link>
+        <Link href={lastRoomPath()} className={plain}><ArrowLeft className="size-[18px]" aria-hidden />Back to channels</Link>
       </nav>
-      <nav aria-label="Admin sections" className="cm-scroll flex gap-1 overflow-x-auto border-b border-[var(--cm-line)] bg-[var(--cm-surface)] px-3 py-2 md:hidden">
+      <nav aria-label="Admin sections" className="cm-scroll flex gap-1 overflow-x-auto px-3 py-2 md:hidden">
         {main.map(link)}
-        <Link href="/community/moderation" className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-[13.5px] text-[var(--cm-ink-2)]"><ShieldCheck className="size-[18px]" aria-hidden />Moderation</Link>
+        <Link href="/community/moderation" className={`${plain} shrink-0`}><ShieldCheck className="size-[18px]" aria-hidden />Moderation</Link>
       </nav>
     </>
   );

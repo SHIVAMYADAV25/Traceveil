@@ -27,7 +27,7 @@ export function PageHeader({ icon: Icon, iconNode, title, description, children,
       </div>
       <div className="flex shrink-0 items-center gap-1.5">
         {children}
-        <QuickExitButton />
+        {/* <QuickExitButton /> */}
       </div>
     </header>
   );

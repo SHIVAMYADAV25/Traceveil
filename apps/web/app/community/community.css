@@ -38,7 +38,42 @@
   font-feature-settings: "cv11", "ss01";
 }
 
+/*
+ * Anything that wears a channel group's colours (the shell and the phone drawer) also has this class.
+ * The frame, panel and hover colours are derived from the group's tint, so changing channel changes them by a nudge.
+ * They are declared here, on the same element that sets --cat-*, so they resolve against the right group.
+ */
+.cm-themed {
+  --cm-frame: color-mix(in srgb, var(--cat-soft) 62%, #f4f5f2);
+  --cm-frame-line: color-mix(in srgb, var(--cat-accent) 16%, var(--cm-frame));
+  --cm-raised: color-mix(in srgb, var(--cm-frame) 55%, #ffffff);
+  --cm-panel: color-mix(in srgb, var(--cat-soft) 12%, #ffffff);
+  --cm-sidebar: var(--cm-frame);
+  --cm-sidebar-hover: color-mix(in srgb, var(--cat-accent) 10%, var(--cm-frame));
+  --cm-hover: color-mix(in srgb, var(--cat-accent) 7%, transparent);
+  --cm-row: color-mix(in srgb, var(--cat-accent) 5%, transparent);
+  transition: background-color 400ms ease;
+}
+.cm { --cm-frame: #f0f3ef; --cm-panel: #ffffff; --cm-row: rgb(31 42 39 / 0.04); --cm-raised: #f7f9f6; --cm-frame-line: #dfe5dd; }
+
 .cm *:focus-visible { outline: 2px solid var(--cat-accent); outline-offset: 2px; }
+/* The composer's own box carries the focus glow, so the text field inside it must not draw a second, square outline. */
+.cm .cm-bare:focus, .cm .cm-bare:focus-visible { outline: none; box-shadow: none; }
+
+/* Header text changes by a short fade, so switching channel feels like the data changed rather than the page reloading. */
+@keyframes cm-fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.cm .cm-fade { animation: cm-fade 220ms ease-out; }
+
+/* The loading mark (components/community/ui/Loader.tsx). */
+@keyframes cm-wave { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+@keyframes cm-sun { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes cm-ripple { 0% { transform: scale(0.4); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes cm-bird { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(5px, -3px); } }
+.cm .cm-wave-a { animation: cm-wave 2.8s linear infinite; }
+.cm .cm-wave-b { animation: cm-wave 4.2s linear infinite; }
+.cm .cm-sun { animation: cm-sun 3.2s ease-in-out infinite; }
+.cm .cm-ripple { transform-origin: center; transform-box: fill-box; animation: cm-ripple 2.4s ease-out infinite; }
+.cm .cm-bird { animation: cm-bird 3s ease-in-out infinite; }
 
 .cm .cm-title { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: -0.01em; }
 
@@ -50,6 +85,15 @@
 .cm .cm-pop { animation: cm-pop 140ms ease-out; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cm .cm-pop { animation: none; }
+  .cm .cm-pop, .cm .cm-fade, .cm .cm-wave-a, .cm .cm-wave-b, .cm .cm-sun, .cm .cm-ripple, .cm .cm-bird { animation: none; }
   .cm * { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* A soft wash behind the admin and moderation screens: two blurred patches of colour, so the glass cards have something to sit on. */
+.cm .cm-wash {
+  background:
+    radial-gradient(55% 45% at 92% 0%, color-mix(in srgb, var(--cat-soft) 85%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, color-mix(in srgb, #f3d9c7 45%, transparent), transparent 70%),
+    var(--cm-panel);
+}
+.cm .cm-glass { background: rgb(255 255 255 / 0.72); backdrop-filter: blur(10px); border: 1px solid rgb(255 255 255 / 0.9); box-shadow: 0 1px 2px rgb(31 42 39 / 0.04), 0 12px 28px -18px rgb(31 42 39 / 0.25); }

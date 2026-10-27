@@ -6,7 +6,7 @@ import { copy } from "@/lib/community/copy";
 export function ContentWarning({ text, open, onToggle }: { text: string; open: boolean; onToggle: () => void }) {
   if (open) {
     return (
-      <div className="mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12.5px] text-amber-900">
+      <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12.5px] text-amber-900">
         <TriangleAlert className="size-3.5 shrink-0 text-amber-700" aria-hidden />
         <span className="min-w-0"><span className="font-semibold">{copy.message.cwPrefix}:</span> {text}</span>
         <button type="button" onClick={onToggle} className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium underline-offset-2 hover:bg-amber-100 hover:underline">
@@ -16,7 +16,7 @@ export function ContentWarning({ text, open, onToggle }: { text: string; open: b
     );
   }
   return (
-    <div className="flex min-w-[240px] items-start gap-3 rounded-xl bg-amber-50 px-3.5 py-3 ring-1 ring-amber-200/70">
+    <div className="my-1 flex min-w-[240px] max-w-[520px] items-start gap-3 rounded-xl bg-amber-50 px-3.5 py-3 ring-1 ring-amber-200/70">
       <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700"><TriangleAlert className="size-4" aria-hidden /></span>
       <div className="min-w-0 flex-1">
         <p className="text-[12.5px] font-semibold text-amber-900">{copy.message.cwPrefix}</p>

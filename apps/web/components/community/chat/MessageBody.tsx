@@ -2,7 +2,7 @@
 import { Fragment, useMemo, useState, type ReactNode } from "react";
 import { copy } from "@/lib/community/copy";
 import type { Message } from "@/lib/community/types";
-import { Dialog, PrimaryButton, SecondaryButton } from "@/components/community/ui";
+import { Dialog, PrimaryButton, SecondaryButton } from "@/components/community/ui/index";
 
 const URL_RE = /\b((?:https?:\/\/|www\.)[^\s<>"')]+)/giu;
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -42,7 +42,7 @@ export function MessageBody({ message, myPersonaId }: { message: Message; myPers
 
   return (
     <>
-      <p className="whitespace-pre-wrap break-words text-[15px] leading-[1.6] text-[var(--cm-ink)]">{nodes}</p>
+      <p className="whitespace-pre-wrap break-words text-[16px] leading-[22px] text-[var(--cm-ink)]">{nodes}</p>
       <Dialog open={leaving !== null} onClose={() => setLeaving(null)} title={copy.message.leavingTitle}>
         <p className="mb-2 text-[14px] leading-relaxed text-[var(--cm-ink-2)]">{copy.message.leavingBody}</p>
         <p className="mb-5 break-all rounded-lg bg-[var(--cm-hover)] px-3 py-2 font-mono text-[12.5px] text-[var(--cm-ink)]">{leaving}</p>

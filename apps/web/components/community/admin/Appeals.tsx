@@ -4,7 +4,7 @@ import { ApiError, get, post } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
 import { useCommunity } from "@/lib/community/session";
-import { Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea } from "@/components/community/ui";
+import { Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea } from "@/components/community/ui/index";
 
 interface Appeal { id: string; body: string; status: string; createdAt: string; decisionNote: string | null; personaName: string | null; imposedByMe: boolean; restriction: { id: string; kind: string; reason: string; endsAt: string | null; active: boolean } }
 
@@ -31,7 +31,7 @@ export function Appeals() {
 
   return (
     <div className="space-y-4">
-      <div role="tablist" className="inline-flex gap-1 rounded-full border border-[var(--cm-line)] bg-white p-1">
+      <div role="tablist" className="inline-flex gap-1 rounded-full cm-glass p-1">
         {(["open", "decided"] as const).map((v) => (
           <button key={v} role="tab" aria-selected={view === v} type="button" onClick={() => { setItems(null); setView(v); }} className={`rounded-full px-4 py-1.5 text-[13px] font-medium ${view === v ? "bg-[var(--cat-accent)] text-white" : "text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]"}`}>{v === "open" ? "Waiting" : "Decided"}</button>
         ))}
@@ -39,7 +39,7 @@ export function Appeals() {
       {!items ? <Spinner /> : items.length === 0 ? <p className="text-[14px] text-[var(--cm-ink-3)]">{view === "open" ? "No appeals are waiting." : "No decided appeals yet."}</p> : (
         <ul className="space-y-3">
           {items.map((a) => (
-            <li key={a.id} className="rounded-2xl border border-[var(--cm-line)] bg-white p-4 sm:p-5">
+            <li key={a.id} className="rounded-2xl cm-glass p-4 sm:p-5">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span className="text-[14.5px] font-semibold text-[var(--cm-ink)]">{a.personaName ?? "Deleted member"}</span>
                 <Pill tone="rose">{copy.account.restrictionKind[a.restriction.kind]}</Pill>

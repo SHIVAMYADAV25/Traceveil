@@ -1,8 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Lock, Settings, ShieldAlert } from "lucide-react";
-import { PageHeader } from "@/components/community/shell/PageHeader";
+import { Lock, ShieldAlert } from "lucide-react";
 import { Avatar } from "@/components/community/ui/Avatar";
 import { DangerButton, Field, Notice, Pill, PrimaryButton, SecondaryButton, Spinner, TextArea, TextInput } from "@/components/community/ui";
 import { ApiError, del, get, patch, post, put } from "@/lib/community/api";
@@ -80,7 +79,6 @@ export default function AccountPage() {
   const lockedKind = me.restrictions.find((r) => r.kind === "ban" || r.kind === "suspend");
   return (
     <>
-      <PageHeader icon={Settings} accent title={a.title} />
     <div data-lenis-prevent className="cm-scroll min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8">
       <div className="mx-auto max-w-[680px] space-y-5">
         {lockedKind && (

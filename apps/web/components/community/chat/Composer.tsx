@@ -5,7 +5,7 @@ import { ApiError, newClientId } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import type { Message, NeedTag, Room } from "@/lib/community/types";
 import { SupportCard } from "@/components/community/chat/SupportCard";
-import { Dialog, Notice, PrimaryButton, SecondaryButton } from "@/components/community/ui";
+import { Dialog, Notice, PrimaryButton, SecondaryButton } from "@/components/community/ui/index";
 
 type Panel = "need" | "cw" | null;
 
@@ -143,7 +143,7 @@ export function Composer({ room, candidates, replyTo, onCancelReply, onSend, onS
     `inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[12.5px] font-medium transition-colors ${active ? "bg-[var(--cat-soft)] text-[var(--cat-ink)]" : "text-[var(--cm-ink-2)] hover:bg-[var(--cm-hover)]"}`;
 
   return (
-    <div className="mx-auto w-full max-w-[860px] space-y-2">
+    <div className="w-full space-y-2">
       {support && <SupportCard onClose={() => setSupport(false)} />}
 
       <div className="rounded-3xl border border-[var(--cm-line-strong)] bg-[var(--cm-surface)] shadow-[var(--cm-shadow)] transition-shadow focus-within:border-[var(--cat-accent)] focus-within:ring-4 focus-within:ring-[var(--cat-soft)]">
@@ -175,7 +175,7 @@ export function Composer({ room, candidates, replyTo, onCancelReply, onSend, onS
                 <div>
                   <label htmlFor="cw" className="mb-2 block text-[12.5px] text-[var(--cm-ink-3)]">{c.cwHelp}</label>
                   <input id="cw" value={cw} onChange={(e) => { setCw(e.target.value); setCwOn(true); }} maxLength={120} placeholder={c.cwPlaceholder}
-                    className="w-full rounded-xl bg-amber-50 px-3.5 py-2.5 text-[14px] text-amber-950 ring-1 ring-amber-200 placeholder:text-amber-800/60 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                    className="cm-bare w-full rounded-xl bg-amber-50 px-3.5 py-2.5 text-[14px] text-amber-950 ring-1 ring-amber-200 placeholder:text-amber-800/60 focus:ring-2 focus:ring-amber-400" />
                 </div>
               )}
             </div>
@@ -196,7 +196,7 @@ export function Composer({ room, candidates, replyTo, onCancelReply, onSend, onS
             onKeyDown={onKeyDown}
             aria-describedby="composer-hint"
             data-lenis-prevent
-            className="block max-h-[200px] w-full resize-none bg-transparent px-5 pb-2 pt-4 text-[15px] leading-[1.6] text-[var(--cm-ink)] placeholder:text-[var(--cm-ink-3)]/70 focus:outline-none"
+            className="cm-bare block max-h-[200px] w-full resize-none bg-transparent px-5 pb-2 pt-4 text-[15px] leading-[1.6] text-[var(--cm-ink)] placeholder:text-[var(--cm-ink-3)]/70 focus:outline-none"
           />
           {options.length > 0 && (
             <ul role="listbox" aria-label="People you can mention" className="cm-pop absolute bottom-full left-3 z-30 mb-1 min-w-[200px] rounded-2xl border border-[var(--cm-line)] bg-[var(--cm-surface)] p-1 shadow-[var(--cm-shadow)]">

@@ -1,16 +1,16 @@
 "use client";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { BlockDialog } from "@/components/community/chat/BlockDialog";
-import { ChannelHeader } from "@/components/community/chat/ChannelHeader";
+import { ChannelHeaderActions } from "@/components/community/chat/ChannelHeader";
 import { ChannelIntro } from "@/components/community/chat/ChannelIntro";
 import { Composer } from "@/components/community/chat/Composer";
 import { ReadOnlyBar } from "@/components/community/chat/ReadOnlyBar";
 import { MessageList } from "@/components/community/chat/MessageList";
 import { ReportDialog } from "@/components/community/chat/ReportDialog";
 import { useRoomMessages } from "@/components/community/chat/useRoomMessages";
-import { Dialog, Notice, PrimaryButton, SecondaryButton, Spinner } from "@/components/community/ui";
+import { Dialog, Loader, Notice, PrimaryButton, SecondaryButton } from "@/components/community/ui/index";
 import { ApiError, get, post, put } from "@/lib/community/api";
 import { copy } from "@/lib/community/copy";
 import { formatUntil } from "@/lib/community/format";
@@ -21,12 +21,13 @@ import type { Message, ReactionKind, RoomDetail } from "@/lib/community/types";
 const FOURTEEN_DAYS = 14 * 24 * 3600 * 1000;
 
 /** A new RoomView is mounted for every room, so nothing from the previous room (draft reply, open dialogs, notes panel) can carry over. */
-export default function RoomPage() {
+function RoomScreen() {
   const { space, room } = useParams<{ space: string; room: string }>();
   return <RoomView key={`${space}/${room}`} space={space} roomSlug={room} />;
 }
 
 function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
+  const focusId = useSearchParams().get("m");
   const { me, spaces, reconnectTick, socketStatus, showToast, markRoomRead, reloadSpaces } = useCommunity();
   const [room, setRoom] = useState<RoomDetail | null>(null);
   const [roomError, setRoomError] = useState<string | null>(null);
@@ -103,7 +104,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
   if (roomError) {
     return <div className="mx-auto max-w-md p-8"><Notice tone="red" role="alert">{roomError}</Notice><div className="mt-4 flex gap-2"><SecondaryButton onClick={() => void loadRoom()}>{copy.room.retry}</SecondaryButton><Link href="/community/start-here/welcome"><SecondaryButton>{copy.room.goWelcome}</SecondaryButton></Link></div></div>;
   }
-  if (!room || !me) return <Spinner label={copy.room.loading} />;
+  if (!room || !me) return <Loader label="Opening the channel" />;
 
   const canWrite = room.posting.allowed;
   const blockedMessage = !room.posting.allowed
@@ -114,10 +115,11 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <ChannelHeader room={room} muted={muted} onToggleMute={() => void toggleMute()} />
+      <ChannelHeaderActions room={room} muted={muted} onToggleMute={() => void toggleMute()} />
 
       <MessageList
         intro={<ChannelIntro room={room} />}
+        focusId={focusId}
         messages={visible}
         roomKind={room.kind}
         myPersonaId={me.persona.id}
@@ -140,7 +142,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
         onCopy={onCopy}
       />
 
-      <div className="shrink-0 px-3 pb-4 pt-1 sm:px-6">
+      <div className="shrink-0 px-4 pb-4 pt-1">
         {canWrite ? (
           <Composer
             room={room}
@@ -151,7 +153,7 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
             onSent={() => undefined}
           />
         ) : (
-          <div className="mx-auto w-full max-w-[860px]"><ReadOnlyBar room={room} message={blockedMessage ?? ""} /></div>
+          <ReadOnlyBar room={room} message={blockedMessage ?? ""} />
         )}
       </div>
 
@@ -169,5 +171,13 @@ function RoomView({ space, roomSlug }: { space: string; roomSlug: string }) {
         </div>
       </Dialog>
     </div>
+  );
+}
+
+export default function RoomPage() {
+  return (
+    <Suspense fallback={<Loader label="Opening the channel" />}>
+      <RoomScreen />
+    </Suspense>
   );
 }

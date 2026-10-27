@@ -5,11 +5,13 @@ import { copy } from "@/lib/community/copy";
 import { formatDay, sameDay } from "@/lib/community/format";
 import type { Message, RoomKind } from "@/lib/community/types";
 import { MessageItem, type MessageActions } from "@/components/community/chat/MessageItem";
-import { Notice, SecondaryButton, Spinner } from "@/components/community/ui";
+import { Loader, Notice, SecondaryButton } from "@/components/community/ui/index";
 
 interface Props extends Omit<MessageActions, "onJump"> {
   /** Shown at the very start of the channel, above the first message. */
   intro?: ReactNode;
+  /** A message to scroll to once the channel has loaded (from a notification link). */
+  focusId?: string | null;
   messages: Message[];
   roomKind: RoomKind;
   myPersonaId: string;
@@ -89,6 +91,15 @@ export function MessageList(p: Props) {
     setTimeout(() => setHighlight((h) => (h === id ? null : h)), 2200);
   }, []);
 
+  const doneFocus = useRef<string | null>(null);
+  const { focusId, loading: isLoading, messages: all } = p;
+  useEffect(() => {
+    if (!focusId || isLoading || doneFocus.current === focusId || !all.some((m) => m.id === focusId)) return;
+    doneFocus.current = focusId;
+    const t = setTimeout(() => jump(focusId), 250);
+    return () => clearTimeout(t);
+  }, [focusId, isLoading, all, jump]);
+
   const empty = p.messages.length === 0 && !p.loading && !p.error;
   const e = copy.room.empty[p.roomKind];
 
@@ -102,9 +113,9 @@ export function MessageList(p: Props) {
         aria-live="polite"
         aria-relevant="additions"
         aria-label="Conversation"
-        className="cm-scroll h-full overflow-y-auto pb-6"
+        className="cm-scroll h-full overflow-y-auto pb-4"
       >
-        {p.loading && <Spinner label={copy.room.loading} />}
+        {p.loading && <Loader label={copy.room.loading} />}
 
         {p.error && (
           <div className="mx-auto my-8 max-w-sm space-y-3 text-center">
@@ -136,9 +147,9 @@ export function MessageList(p: Props) {
             prev.status === "visible" && m.status === "visible" &&
             new Date(m.createdAt).getTime() - new Date(prev.createdAt).getTime() < GROUP_MS;
           return (
-            <div key={m.id} className="mx-auto max-w-[860px]">
+            <div key={m.id}>
               {newDay && (
-                <div className="mx-auto mt-5 flex max-w-[860px] items-center gap-3 px-4" role="separator" aria-label={formatDay(m.createdAt)}>
+                <div className="mt-5 flex items-center gap-3 px-4" role="separator" aria-label={formatDay(m.createdAt)}>
                   <span className="h-px flex-1 bg-[var(--cm-line)]" />
                   <span className="text-[12px] font-medium text-[var(--cm-ink-3)]">{formatDay(m.createdAt)}</span>
                   <span className="h-px flex-1 bg-[var(--cm-line)]" />

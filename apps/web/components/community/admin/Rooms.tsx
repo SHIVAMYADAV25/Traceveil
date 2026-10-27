@@ -72,7 +72,7 @@ export function Rooms() {
         <SecondaryButton onClick={() => { setNewSpace(true); setError(null); }}><Plus className="size-3.5" />New group</SecondaryButton>
       </div>
       {spaces.map((s) => (
-        <section key={s.id} className="rounded-2xl border border-[var(--cm-line)] bg-white">
+        <section key={s.id} className="rounded-2xl cm-glass">
           <div className="flex items-center justify-between gap-3 border-b border-[var(--cm-hover)] px-4 py-3">
             <div><h3 className="text-[15px] font-semibold text-[var(--cm-ink)]">{s.title}</h3><p className="text-[12.5px] text-[var(--cm-ink-3)]">{s.description}</p></div>
             <SecondaryButton size="sm" onClick={() => { setCreatingIn(s); setNewTitle(""); setError(null); }}><Plus className="size-3.5" />Add channel</SecondaryButton>

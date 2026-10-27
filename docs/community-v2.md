@@ -105,45 +105,47 @@ Unchanged from v1 sections 5 and 6, plus one migration (`002`). Seventeen tables
 - **Type.** The site's body font; Georgia for large titles, matching the existing headline style. Sentence-case labels throughout, no shouting.
 - **Motion.** Only what answers an action: popups, the composer tray, the phone sidebar. All of it is switched off when the system asks for reduced motion.
 
-### Layout
+### Layout: one frame, one panel
+The sidebar and the top header form an L-shaped frame in the current channel group's colour. The banner is laid across the top of the frame and fades downward, so the sidebar and header share it. The screen sits in a rounded panel set into the corner, which gives the curve where the three meet.
 ```
-Sidebar (288 px)                      Main
- ┌───────────────────────┐            ┌────────────────────────────────────────┐
- │ banner of the group   │            │ Header: icon, name, purpose, Rules,    │
- │ Community ▾  (menu)   │            │         mute, Leave quickly            │
- │ Notifications         │            ├────────────────────────────────────────┤
- │ Moderation  (team)    │            │ Banner · "Welcome to #channel" · rules │
- │ Admin       (admin)   │            │ ── Today ──                            │
- │ ▾ Start here          │            │ messages                               │
- │   # channels          │            ├────────────────────────────────────────┤
- │ ▾ Victim support …    │            │ Composer (or a read-only bar)          │
- │ you · role · account  │            └────────────────────────────────────────┘
- └───────────────────────┘
+┌────────────┬──────────────────────────────────────────────┐
+│ sidebar    │ top header (title, line of text, buttons)    │
+│ (banner,   ├──╮───────────────────────────────────────────┤
+│  menu,     │  │ panel: messages, composer, or a page      │
+│  channels, │  │                                           │
+│  you)      │  │                                           │
+└────────────┴──┴───────────────────────────────────────────┘
 ```
-On phones the sidebar slides in from the left (menu button in the header). The banner at the top of the sidebar changes with the group you are in.
+- `shell/CommunityShell.tsx` owns the frame. It never unmounts while you move around; only the panel's content changes.
+- The header's title and line of text come from the address (`shell/routeHeader.ts`) and the channel list the sidebar already has, so they change the instant you click. A screen adds its own buttons (rules, mute, mark all read) through `HeaderActions`, which draws them inside the header.
+- Colours of the frame, panel and hover tint are derived from the group's tint in `community.css` (`.cm-themed`), so changing group changes them by a nudge, with a short transition.
+- Sidebar: groups collapse with an animated height, the phone drawer slides in and out, the community menu opens over the list in the sidebar's own tone.
+- Loading: a round "sun over waves" mark (`ui/Loader.tsx`) is centred in the panel while a channel loads. The header is already right at that point.
 
 ### Moving around
-- **Members:** sidebar → channel. Notifications and account are one tap away (sidebar row, account button, or the menu under "Community").
-- **Moderators:** the same, plus **Moderation** in the sidebar with a count of reports waiting.
-- **Admins:** the same, plus **Admin**. Inside Admin a side navigation (a scrolling strip on phones) lists Overview, People and roles, Channels, Appeals, Audit log, then "Moderation queue" and "Back to channels". The Moderation page has an "Admin" link for admins.
-- **Leave quickly** is in the header of every screen, always labelled, and Escape three times does the same.
+- **Members:** sidebar to channel. Notifications and account are one tap away.
+- **Moderators:** plus **Moderation** in the sidebar with a count of waiting reports.
+- **Admins:** plus **Admin**. Inside Admin a side navigation lists Overview, People and roles, Channels, Appeals, Audit log, Moderation queue and Back to channels. Moderation has an "Admin dashboard" button for admins.
+- **Leave quickly** is in the header of every screen; Escape three times does the same.
 
-### Admin pages
-`/community/admin` (overview), `/people`, `/rooms` (channels), `/appeals`, `/audit`. The overview shows an attention strip when urgent reports or appeals wait, seven stat cards with coloured SVG icons, a progress ring for "active in the last 7 days" as a share of members, and shortcuts. All numbers come from the existing `/admin/stats` counts; nothing is estimated and nothing shows what anyone wrote.
+### Admin and moderation pages
+Breadcrumb, large title, short explanation and the main action on the right; frosted cards on a soft wash; table cards with a name and count, search and filter, status pills and a row menu. Layout idea from a reference dashboard; colours, icons and charts are our own.
+- Overview: attention strip, four cards with a small chart and a change against last week (members, messages, reports, appeals), then active members as a ring, urgent reports, average time to resolve, and shortcuts. Charts use `GET /admin/stats/series` (counts per day for 14 days, admins only, numbers only). Nothing is estimated.
+- People: search as you type, role filter, status (Restricted, New, Active, Quiet) worked out from existing fields, row menu for "Change role".
+- Moderation: three count cards, the report list, and the detail beside it.
 
 ### Messages
-- Bubbles: others on the left with a picture, your own on the right in the group's tint. Consecutive messages from one person within five minutes are joined.
-- A reply shows a small curved line back to the original, who wrote it and an excerpt; pressing it scrolls there.
-- The hover bar (tap a message on a touch screen): three one-tap reactions, a picker with all six, reply, and a menu (copy, edit, delete, block, report). Menus open downward and flip upward when there is no room.
-- "What would help" shows as a chip with an icon. Role chips mark verified helpers and the team.
-- A content warning collapses the message into a soft card with "Show message"; opened, it becomes a one-line reminder with "Hide again".
-- Not built: an unread-messages banner. The API does not return where you stopped reading.
+- Discord-style rows: no bubbles or borders, everyone including you on the left with a 40 px picture, name, role tag and time, 16 px text, a faint tint on hover. Consecutive messages within five minutes are joined, with the time shown on hover.
+- A reply shows a curved line back to the original; pressing it scrolls there.
+- Hover bar at the row's top right (tap a message on a touch screen): three one-tap reactions, a picker with all six, reply, and a menu (copy, edit, delete, block, report).
+- Reaction chips, "what would help" chips, role tags and the content-warning card are quiet and take their colour from the group.
+- Not built: an unread-messages banner (the API does not return where you stopped reading).
 
-### Channel introduction and rules
-Every channel opens with its banner, a large title ("Welcome to Traceveil Community" in `#welcome`, otherwise "Welcome to #name"), the purpose, badges (team only, slow mode, paused) and the channel's pinned notes written out in full. In a long channel the introduction is above "Show earlier messages"; the header's **Rules** button opens the notes in a dialog from anywhere.
+### Notifications
+Grouped Today and Earlier, All or Unread, an icon tile per kind, an unread dot, a hover state that says where it goes, and "Mark all as read" in the header. Pressing one marks it read and goes to the place; replies and mentions go to the exact message, which is scrolled to and highlighted (`?m=<message id>`).
 
 ### Composer
-Soft rounded input. Below the text: **What would help** (three choices) and **Content warning** open as a tray inside the box, above the text. Send is a round button; during slow mode it shows the wait. Team-only channels, paused channels and restricted accounts show a read-only bar with the reason in plain words instead.
+Soft rounded box with a glow on focus. The text field inside draws no outline of its own. "What would help" and "Content warning" open as a tray inside the box.
 
 ### Wording
 Plain, warm, specific. "Group" and "channel" replace "space" and "room" in all member-facing and team-facing text. The internal names (`rooms`, `spaces`, API paths, database tables) are unchanged.
@@ -158,6 +160,7 @@ None beyond v1 (Navbar, Footer, `.env.example`, `docker-compose.yml`, `package.j
 ### Service (`services/community`)
 - `src/db/seed/spaces.ts`: new channel list, `archiveLegacy`.
 - `src/modules/auth/{schema,repo}.ts`: no age at sign-up.
+- `src/modules/admin/routes.ts`: new `GET /admin/stats/series`.
 - `migrations/002_open_to_all_ages.sql`: new.
 - `tests/*`: updated for the new channels and sign-up; one test now creates its own quiet channel because none is seeded.
 - `e2e/community_smoke.e2e.py`: new browser smoke test. `e2e/community_ui.e2e.OUTDATED.py`: the v1 script, kept for reference, does not match the new interface.
@@ -174,11 +177,12 @@ app/community/
   (app)/admin/             layout.tsx (guard, nav) + page.tsx, people/, rooms/, appeals/, audit/
 components/community/
   ui/      primitives, Menu, Avatar, Illustration, ChannelIcon
-  shell/   CommunityShell, Sidebar, PageHeader, ShellContext, QuickExit
+  shell/   CommunityShell, Sidebar, TopHeader, FrameBanner, routeHeader, ShellContext (HeaderActions), QuickExit
   chat/    ChannelHeader, ChannelIntro, NoteBody, MessageList, MessageItem, MessageToolbar,
            ReactionPicker, ReplyPreview, ContentWarning, MessageBody, Composer, ReadOnlyBar,
            ReportDialog, BlockDialog, SupportCard, useRoomMessages
   admin/   AdminNav, StatsContext, StatCard, Overview, People, Rooms, Appeals, Audit
+  (ui/ also has Loader, Sparkline and Layout: PageIntro, GlassCard, TableCard, StatusDot)
   mod/     ReportDetailPanel
 lib/community/   channelTheme.ts (new) plus the v1 files
 public/community/banners/   five themed banners
@@ -189,21 +193,20 @@ Removed: `mod/ConsoleHeader.tsx`, the tabbed admin page. The old `?tab=` admin a
 
 ## 9. How it was checked
 
-Run on a Linux machine with PostgreSQL 16 installed directly and Chromium.
+Round 1 (the first v2 build) was checked with the service tests (97 passing), `tsc`, `eslint`, a browser smoke test and screenshots. Round 2 (frame, Discord-style messages, notifications, admin and moderation restyle, loader, series endpoint) was checked as it was built with `tsc`, the admin service tests (12 passing, including the new endpoint), an extended 16-check browser smoke test (`community_smoke.e2e.py`) and screenshots of the channel, hover bar, community menu, composer focus, notifications, admin overview, people, moderation with a real report, loader and phone drawer.
 
-- **Service: 97 tests passing** (`vitest`), after the changes in this version.
-- **Retiring old channels:** run by hand against a database holding the v1 channels. Old channels were archived and `announcements` renamed.
-- **Web: `tsc --noEmit` and `eslint` report nothing** for the Community code.
-- **Browser smoke test: 11 checks passing** (`community_smoke.e2e.py`) against the dev server: sign-up without an age box, rules before the name step, rules visible on `#welcome`, read-only team channel, the five groups, posting, the composer tray, the reaction picker, no script errors.
-- **Looked at in screenshots:** entry, join, recovery, onboarding, `#welcome`, a chat channel with replies, own message, reaction and hover bar, the reaction picker, the admin overview and channels pages, and a 390 px wide phone view.
+**Not re-run after the last small edits** (the loader redraw and the "New" / "Quiet" wording on the overview): `eslint`, the full service test suite and the smoke test. Run them before shipping:
+```
+pnpm --filter @sniffer/community test
+cd apps/web && npx tsc --noEmit && npx eslint app/community components/community lib/community
+python3 services/community/e2e/community_smoke.e2e.py   # needs service and web app running
+```
 
-### Not verified (please do not assume it works)
-- **`next build`** was not run. The environment cannot reach Google Fonts; the dev server ran with fallback fonts, so the real fonts were not seen.
-- The v1 45-check browser test was not updated or run. The smoke test covers a fraction of it. Not covered: moderation actions, appeals, a suspended member, live two-person delivery, Leave quickly, and the personal-details and support-card prompts.
-- Moderation, People, Appeals, Audit and Account were re-coloured and re-worded but not redesigned, and only the Channels and Overview admin pages were looked at.
-- Keyboard-only use, screen readers, Safari, Firefox, a real phone, load, and `docker compose up community-db`.
-- Colour contrast was chosen with care but not measured with a tool.
-- No dark theme.
+### Not verified
+- `next build` (needs Google Fonts); the dev server used fallback fonts.
+- The old 45-check script (`community_ui.e2e.OUTDATED.py`) is out of date; moderation actions, appeals, suspended members, live two-person delivery and Leave quickly are not covered by the smoke test.
+- Appeals, Channels and Audit pages were restyled but only Audit and Channels were glanced at.
+- Keyboard-only use, screen readers, Safari, Firefox, a real phone, load, `docker compose`, contrast measurement. No dark theme.
 
 ---
 

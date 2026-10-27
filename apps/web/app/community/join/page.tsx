@@ -91,7 +91,7 @@ function JoinInner() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--cm-canvas)] via-[var(--cm-canvas)]/70 to-transparent" aria-hidden />
       <div className="relative mx-auto flex max-w-[460px] items-center justify-between">
         <Link href="/community" className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] text-[var(--cm-ink-2)] hover:bg-white/70"><ArrowLeft className="size-4" aria-hidden />{copy.join.back}</Link>
-        <QuickExitButton />
+        {/* <QuickExitButton /> */}
       </div>
 
       <div className="relative mx-auto mt-10 max-w-[460px] rounded-3xl border border-[var(--cm-line)] bg-white/95 p-6 shadow-[var(--cm-shadow)] backdrop-blur sm:p-8">

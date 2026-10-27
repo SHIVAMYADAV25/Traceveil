@@ -10,12 +10,14 @@ interface MenuProps {
   side?: "auto" | "up" | "down";
   triggerClassName?: string;
   panelClassName?: string;
+  /** "frame" gives the panel the sidebar's own colour, for menus that open from the sidebar. */
+  tone?: "surface" | "frame";
   /** Called when the menu opens or closes, so a parent can keep a toolbar visible while its menu is open. */
   onOpenChange?: (open: boolean) => void;
 }
 
 /** A small popup. Closes on Escape or an outside click, returns focus to its button, and flips to stay on screen. */
-export function Menu({ trigger, label, children, align = "right", side = "auto", triggerClassName = "", panelClassName = "", onOpenChange }: MenuProps) {
+export function Menu({ trigger, label, children, align = "right", side = "auto", triggerClassName = "", panelClassName = "", tone = "surface", onOpenChange }: MenuProps) {
   const [open, setOpen] = useState(false);
   const [up, setUp] = useState(side === "up");
   const wrap = useRef<HTMLDivElement>(null);
@@ -53,7 +55,7 @@ export function Menu({ trigger, label, children, align = "right", side = "auto",
           ref={panel}
           role="menu"
           style={{ ["--cm-pop-from" as string]: up ? "4px" : "-4px" }}
-          className={`cm-pop absolute z-40 min-w-[210px] rounded-2xl border border-[var(--cm-line)] bg-[var(--cm-surface)] p-1.5 shadow-[var(--cm-shadow)] ${up ? "bottom-full mb-2" : "top-full mt-2"} ${align === "right" ? "right-0" : "left-0"} ${panelClassName}`}
+          className={`cm-pop absolute z-40 min-w-[210px] rounded-2xl border p-1.5 shadow-[var(--cm-shadow)] ${tone === "frame" ? "border-[var(--cm-frame-line)] bg-[var(--cm-raised)]" : "border-[var(--cm-line)] bg-[var(--cm-surface)]"} ${up ? "bottom-full mb-2" : "top-full mt-2"} ${align === "right" ? "right-0" : "left-0"} ${panelClassName}`}
         >
           {children(() => change(false))}
         </div>

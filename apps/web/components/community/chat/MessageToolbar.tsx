@@ -23,13 +23,13 @@ export interface ToolbarActions {
  * and a menu for everything else. Same arrangement as the reference chat. Menus open downward and
  * flip upward when there is no room.
  */
-export function MessageToolbar({ message: m, own, canReact, canWrite, actions, side }: {
-  message: Message; own: boolean; canReact: boolean; canWrite: boolean; actions: ToolbarActions; side: "left" | "right";
+export function MessageToolbar({ message: m, own, canReact, canWrite, actions }: {
+  message: Message; own: boolean; canReact: boolean; canWrite: boolean; actions: ToolbarActions;
 }) {
   const mine = new Set(m.reactions.filter((r) => r.mine).map((r) => r.kind));
   const canBlock = !m.author.badge || m.author.badge === "verified_helper";
   return (
-    <div className={`absolute -top-4 z-10 flex items-center gap-0.5 rounded-xl border border-[var(--cm-line)] bg-[var(--cm-surface)] p-0.5 shadow-[var(--cm-shadow)] ${side === "right" ? "right-3" : "left-3"}`}>
+    <div className="absolute -top-[18px] right-4 z-10 flex items-center gap-0.5 rounded-lg border border-[var(--cm-line)] bg-[var(--cm-surface)] p-0.5 shadow-[0_2px_10px_-2px_rgb(31_42_39/0.2)]">
       {canReact && (
         <>
           {QUICK.map((kind) => (
@@ -40,7 +40,7 @@ export function MessageToolbar({ message: m, own, canReact, canWrite, actions, s
             </button>
           ))}
           <span className="mx-0.5 h-5 w-px bg-[var(--cm-line)]" aria-hidden />
-          <Menu label={copy.message.react} side="auto" align={side === "right" ? "right" : "left"} triggerClassName={BTN} panelClassName="min-w-0 p-1" trigger={<SmilePlus className="size-[18px]" aria-hidden />}>
+          <Menu label={copy.message.react} side="auto" align="right" triggerClassName={BTN} panelClassName="min-w-0 p-1" trigger={<SmilePlus className="size-[18px]" aria-hidden />}>
             {(close) => <ReactionPicker mine={mine} onPick={(k, on) => { actions.onReact(k, on); close(); }} />}
           </Menu>
         </>
@@ -50,7 +50,7 @@ export function MessageToolbar({ message: m, own, canReact, canWrite, actions, s
           <CornerUpLeft className="size-[18px]" aria-hidden />
         </button>
       )}
-      <Menu label={copy.message.more} side="auto" align={side === "right" ? "right" : "left"} triggerClassName={BTN} trigger={<MoreHorizontal className="size-[18px]" aria-hidden />}>
+      <Menu label={copy.message.more} side="auto" align="right" triggerClassName={BTN} trigger={<MoreHorizontal className="size-[18px]" aria-hidden />}>
         {(close) => (
           <>
             <MenuItem icon={<Copy className="size-4" />} onClick={() => { close(); actions.onCopy(); }}>{copy.message.copyText}</MenuItem>

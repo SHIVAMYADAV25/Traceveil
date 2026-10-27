@@ -290,4 +290,25 @@ export async function adminRoutes(app: FastifyInstance, hub: Hub): Promise<void>
       averageHoursToResolve: r.avg_hours_to_resolve,
     };
   });
+
+  // Counts per day for the last 14 days (oldest first), for the small charts on the admin overview.
+  // Numbers only, like /admin/stats. Messages are counted while they are still kept (see RETENTION_DAYS).
+  app.get("/admin/stats/series", { preHandler: admin }, async () => {
+    const { rows } = await ctx.db.query(
+      `WITH days AS (SELECT d::date AS day FROM generate_series((now() AT TIME ZONE 'UTC')::date - 13, (now() AT TIME ZONE 'UTC')::date, interval '1 day') d)
+       SELECT to_char(days.day, 'YYYY-MM-DD') AS day,
+              (SELECT count(*)::int FROM accounts a WHERE (a.created_at AT TIME ZONE 'UTC')::date = days.day) AS members,
+              (SELECT count(*)::int FROM messages m WHERE (m.created_at AT TIME ZONE 'UTC')::date = days.day) AS messages,
+              (SELECT count(*)::int FROM reports r WHERE (r.created_at AT TIME ZONE 'UTC')::date = days.day) AS reports,
+              (SELECT count(*)::int FROM appeals p WHERE (p.created_at AT TIME ZONE 'UTC')::date = days.day) AS appeals
+         FROM days ORDER BY days.day`,
+    );
+    return {
+      days: rows.map((r) => r.day as string),
+      members: rows.map((r) => r.members as number),
+      messages: rows.map((r) => r.messages as number),
+      reports: rows.map((r) => r.reports as number),
+      appeals: rows.map((r) => r.appeals as number),
+    };
+  });
 }

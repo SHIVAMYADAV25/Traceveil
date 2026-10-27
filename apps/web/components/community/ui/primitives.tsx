@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from "react";
 import { Loader2, X } from "lucide-react";
+import { Loader } from "./Loader";
 
 /**
  * Small building blocks for the Community. Colours come from the tokens in app/community/community.css,
@@ -105,11 +106,7 @@ export function Notice({ tone = "neutral", title, children, role }: { tone?: Ton
 }
 
 export function Spinner({ label = "Loading" }: { label?: string }) {
-  return (
-    <div role="status" className="flex items-center justify-center gap-2 py-10 text-[13px] text-[var(--cm-ink-3)]">
-      <Loader2 className="size-4 animate-spin" aria-hidden /> {label}
-    </div>
-  );
+  return <Loader label={label} fill={false} />;
 }
 
 /** A modal that traps focus, closes on Escape, and returns focus to where it was opened. */
