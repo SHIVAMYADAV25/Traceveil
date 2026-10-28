@@ -85,6 +85,7 @@ export interface DiscoveryResult {
   domain_status?: Record<string, "checked" | "no_images" | "blocked" | "unreachable" | "skipped">;
   coverage?: { checked?: number; no_images?: number; blocked?: number; unreachable?: number; skipped?: number };
   input_type?: "image" | "video";
+  demo?: boolean;
   reference_frames?: number;
   video_info?: { duration_seconds: number; width: number; height: number; keyframe_times: number[] } | null;
   truncated?: boolean;
