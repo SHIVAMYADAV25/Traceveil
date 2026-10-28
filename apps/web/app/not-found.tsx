@@ -7,8 +7,8 @@ export default function NotFound() {
       {/* Minimal nav */}
       <header className="border-b border-[#e8e4de] bg-white px-4 sm:px-8 py-4 flex items-center gap-3">
         <Link href="/" className="flex items-center gap-2 hover:opacity-75 transition-opacity">
-          <Image src="/logo.png" alt="Sniffer" width={24} height={24} />
-          <span className="font-semibold text-[18px] tracking-tight text-[#0a0a0a]">sniffer</span>
+          {/* <Image src="/logo.png" alt="Sniffer" width={24} height={24} /> */}
+          <span className="font-semibold text-[18px] tracking-tight text-[#0a0a0a]">Traceveil</span>
         </Link>
       </header>
 

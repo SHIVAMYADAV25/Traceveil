@@ -62,8 +62,8 @@ export function CommunityFrame({ children }: { children: ReactNode }) {
           </button>
         )}
         <Link href="/community" className="flex items-center gap-2" aria-label="Community home">
-          <Image src="/logo.png" alt="" width={24} height={24} className="hidden sm:block" />
-          <span className="hidden text-[17px] font-semibold tracking-tight text-[#0a0a0a] sm:inline">sniffer</span>
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg><b style={{fontSize:'22px',fontWeight:'500'}}>traceveil</b></div>
+          {/* <span className="hidden text-[17px] font-semibold tracking-tight text-[#0a0a0a] sm:inline">sniffer</span> */}
           <span className="rounded-full border border-[#e8e4de] bg-[#f0ede8] px-2.5 py-0.5 font-mono text-[10.5px] uppercase tracking-widest text-[#374151]">{copy.brand}</span>
         </Link>
 
@@ -72,7 +72,7 @@ export function CommunityFrame({ children }: { children: ReactNode }) {
             <span className={`size-1.5 rounded-full ${live ? "bg-emerald-500" : "bg-amber-500"}`} aria-hidden />
             {live ? copy.topbar.live : "…"}
           </span>
-          <QuickExitButton />
+          {/* <QuickExitButton /> */}
           <Link href="/community/notifications" aria-label={`${copy.topbar.notifications}${me.unreadNotifications ? `, ${me.unreadNotifications} unread` : ""}`} className="relative rounded-full p-2 text-[#374151] hover:bg-[#f0ede8]">
             <Bell className="size-[18px]" aria-hidden />
             {me.unreadNotifications > 0 && (

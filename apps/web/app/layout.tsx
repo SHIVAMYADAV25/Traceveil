@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sniffer - Digital Media Authenticity Verification",
+  title: "Traceveil - Digital Media Authenticity Verification",
   description:
     "Verify manipulated images, detect deepfakes, and generate structured evidence reports for reporting and takedown actions.",
 };

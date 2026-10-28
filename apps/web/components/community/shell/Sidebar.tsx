@@ -103,8 +103,8 @@ export function Sidebar({ openReports, onNavigate }: { openReports: number; onNa
       {/* No overflow clipping here, so the menu below can open over the list. */}
       <div className="relative z-20 shrink-0 px-4 pb-3 pt-4">
         <Link href="/community" onClick={onNavigate} className="mb-3 flex w-fit items-center gap-2 text-[13px] font-medium text-[var(--cm-ink-2)]">
-          <Image src="/logo.png" alt="" width={20} height={20} className="rounded" />
-          Traceveil
+          {/* <Image src="/logo.png" alt="" width={20} height={20} className="rounded" /> */}
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="20" height="20" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg><b style={{fontSize:'20px',fontWeight:'500'}}>traceveil</b></div>
         </Link>
         <Menu
           label={copy.topbar.menu}

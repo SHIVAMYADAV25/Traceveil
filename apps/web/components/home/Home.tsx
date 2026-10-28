@@ -16,7 +16,7 @@ export default function Home() {
 <main className="tv-p">
 <div className="tv-w tv-nav">
 <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg><b style={{fontSize:'22px',fontWeight:'500'}}>traceveil</b></div>
-<div><a className="tv-l" href="#what">What it is</a><a className="tv-l" href="#who">Who it’s for</a><a className="tv-l" href="#how">How it works</a><a className="tv-l" href="#support">Support</a><a className="tv-l" href="#community">Community</a><a className="tv-l" href="#faq">FAQ</a><a className="tv-pill tv-dk" href="#how" style={{minHeight:'42px'}}>Get help →</a></div>
+<div><a className="tv-l" href="#what">What it is</a><a className="tv-l" href="#who">Who it’s for</a><a className="tv-l" href="#how">How it works</a><a className="tv-l" href="http://localhost:3000/support">Support</a><a className="tv-l" href="http://localhost:3000/community">Community</a><a className="tv-l" href="#faq">FAQ</a><a className="tv-pill tv-dk" href="/leak?demo=1" style={{minHeight:'42px'}}>Analyze an Image →</a></div>
 </div>
 
 <section className="tv-w tv-sec" style={{paddingTop:'96px'}}>
@@ -53,16 +53,16 @@ export default function Home() {
 <div className="tv-card tv-or"><h3>You’re not sure</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>You think something is out there but don’t know. We can help you find out.</p></div>
 </div></div></section>
 
-<section id="how" className="tv-w tv-sec" style={{paddingTop:"199px"}}>
+<section id="how" className="tv-w tv-sec" style={{paddingTop:"120px"}}>
 <h2 style={{textAlign:'center'}}>How to use <b>Traceveil</b></h2>
 <p className="tv-mu" style={{textAlign:'center',margin:'14px 0 36px'}}>Three simple steps. Stop whenever you want.</p>
 <div className="tv-g tv-g3">
-<div className="tv-card"><div className="tv-num">1</div><h3>Tell us what you need</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>Check for your content, get a removal plan, or just talk to someone first.</p></div>
-<div className="tv-card"><div className="tv-num">2</div><h3>Get clear next steps</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>See what we found in plain language and what each option means.</p></div>
-<div className="tv-card"><div className="tv-num">3</div><h3>Act at your own pace</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>Send removal requests, contact helplines, or return to the community any time.</p></div>
+<div className="tv-card"><div className="tv-num">1</div><h3>Start a private case</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>Upload a photo or video you're worried about. Your case stays private, and nothing is shared without your permission.</p></div>
+<div className="tv-card"><div className="tv-num">2</div><h3>Review what we found</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>We scan known sites and show possible matches in plain language, with how confident we are and where each appears. Evidence is saved safely.</p></div>
+<div className="tv-card"><div className="tv-num">3</div><h3>Choose your next step</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'8px'}}>Send removal requests when you're ready, talk to a helpline or counsellor, or connect with survivors in peer support.</p></div>
 </div></section>
 
-<section className="tv-w tv-sec" style={{paddingTop:"199px"}}><div className="tv-card tv-mn" style={{padding:'48px'}}><div className="tv-row">
+<section className="tv-w tv-sec" style={{paddingTop:"120px"}}><div className="tv-card tv-mn" style={{padding:'48px'}}><div className="tv-row">
 <div><h2>Your privacy <b>comes first</b></h2>
 <p className="tv-mu" style={{margin:'16px 0 24px'}}>This is a sensitive moment. Here is what we promise.</p>
 <div className="tv-tick"><i>✓</i><span>No account or email needed to get help</span></div>
@@ -72,14 +72,14 @@ export default function Home() {
 <img className="tv-img" src="/landing/privacy-Photoroom.png" width="900" height="600" alt="Person holding a shield with a lock" />
 </div></div></section>
 
-<section className="tv-w tv-sec" style={{paddingTop:"199px"}}><div className="tv-row">
+<section className="tv-w tv-sec" style={{paddingTop:"120px"}}><div className="tv-row">
 <div><span className="tv-chip">Get it taken down</span><h2 style={{marginTop:'14px'}}>Find it. Report it. <b>Track it.</b></h2>
 <p className="tv-mu" style={{margin:'16px 0 24px'}}>Upload one image to see where it may appear. Traceveil prepares removal requests for each platform and a clear record you can use with the police or a lawyer.</p>
-<Link className="tv-pill tv-dk" href="/leak">Start a check →</Link></div>
+<Link className="tv-pill tv-dk" href="/leak">Start a check →</Link> <Link className="tv-pill" href="/leak?demo=1">Try a demo</Link></div>
 <img className="tv-img" src="/landing/doc.webp" width="800" height="477" alt="Person reading a prepared removal request" />
 </div></section>
 
-<section id="support" className="tv-w tv-sec" style={{paddingTop:"199px"}}><div className="tv-card tv-bl" style={{padding:'48px'}}><div className="tv-row">
+<section id="support" className="tv-w tv-sec" style={{paddingTop:"120px"}}><div className="tv-card tv-bl" style={{padding:'48px'}}><div className="tv-row">
 <img className="tv-img" src="/landing/calm-removebg-preview.png" width="800" height="477" alt="Person listening to calming audio with a warm drink" />
 <div><span className="tv-chip" style={{background:'#fff',color:'#2E4A7A'}}>Talk to someone</span><h2 style={{marginTop:'14px'}}>Counsellors and helplines, <b>free</b></h2>
 <p className="tv-mu" style={{margin:'16px 0 18px'}}>Trained people who won’t judge. Pick one and reach out whenever you’re ready.</p>
@@ -88,7 +88,7 @@ export default function Home() {
 <Link className="tv-lk" href="/support/counsellors" style={{color:'#2E4A7A'}}>See all helplines →</Link></div>
 </div></div></section>
 
-<section id="community" className="tv-w tv-sec" style={{paddingTop:"199px"}}>
+<section id="community" className="tv-w tv-sec" style={{paddingTop:"120px"}}>
 <div className="tv-row"><div><span className="tv-chip">More than a tool</span><h2 style={{marginTop:'14px'}}>Community, <b>stories and calm</b></h2>
 <p className="tv-mu" style={{margin:'16px 0 24px'}}>Meet people who understand, in moderated rooms or on our Discord. Join with a nickname, no email and no private messages.</p>
 <Link className="tv-pill tv-dk" href="/community">Join the community</Link> <a className="tv-pill tv-lt" href={DISCORD_URL ?? "/community"}>Open Discord</a></div>
@@ -99,7 +99,7 @@ export default function Home() {
 <div className="tv-card tv-mn"><span className="tv-chip" style={{background:'#fff'}}>Music &amp; audio</span><h3 style={{marginTop:'12px'}}>A moment of calm</h3><p className="tv-mu" style={{fontSize:'14px',marginTop:'6px'}}>Playlists and soft audio for hard days.</p></div>
 </div></section>
 
-<section className="tv-w tv-sec" style={{paddingTop:"199px"}}>
+<section className="tv-w tv-sec" style={{paddingTop:"120px"}}>
 <h2 style={{textAlign:'center'}}>Organisations that <b>help</b></h2>
 <p className="tv-mu" style={{textAlign:'center',margin:'14px 0 36px'}}>Trusted NGOs and official services. Contact them directly.</p>
 <div className="tv-g tv-g4">
@@ -109,7 +109,7 @@ export default function Home() {
 <div className="tv-card"><h3>Cyber Crime Portal</h3><p className="tv-mu" style={{fontSize:'14px',margin:'8px 0'}}>Report online to the National Cybercrime Reporting Portal or call the helpline.</p><b>1930</b></div>
 </div></section>
 
-<section className="tv-w tv-sec" style={{paddingTop:"199px"}}><div className="tv-card tv-or" style={{padding:'40px 48px'}}><div className="tv-row" style={{gridTemplateColumns:'1fr 1fr'}}>
+<section className="tv-w tv-sec" style={{paddingTop:"120px"}}><div className="tv-card tv-or" style={{padding:'40px 48px'}}><div className="tv-row" style={{gridTemplateColumns:'1fr 1fr'}}>
 <div><h2>You don’t have to figure this out <b>alone</b></h2><p className="tv-mu" style={{margin:'14px 0 22px'}}>Take the next step at your own pace.</p><a className="tv-pill tv-dk" href="#how">Get help →</a></div>
 <img className="tv-img" src="/landing/group-Photoroom.png" width="1300" height="542" alt="Four people standing together with a heart" />
 </div></div></section>
