@@ -43,9 +43,10 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="mb-4 flex items-center gap-2">
-              <Image src="/logo.png" alt="Sniffer" width={28} height={28} />
+              {/* <Image src="/logo.png" alt="Sniffer" width={28} height={28} /> */}
+              <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg></div>
               <span className="text-[20px] font-semibold tracking-tight text-white">
-                sniffer
+                Traceveil
               </span>
             </div>
             <p

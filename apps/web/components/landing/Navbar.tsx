@@ -56,7 +56,8 @@ export function Navbar() {
         style={{ maxWidth: "1200px", margin: "0 auto" }}
       >
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Sniffer" width={28} height={28} />
+          {/* <Image src="/logo.png" alt="Sniffer" width={28} height={28} /> */}
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg></div>
           <span
             className="text-[21px] font-semibold tracking-tight"
             style={{ color: "#0a0a0a" }}
@@ -66,7 +67,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* <div className="hidden md:flex items-center gap-8">
           {NAV_HREFS.map((item) => (
             <Link
               key={item.id}
@@ -79,10 +80,10 @@ export function Navbar() {
               <span className="text-[9px] ml-0.5" style={{ color: "#b0a89e" }}>›</span>
             </Link>
           ))}
-        </div>
+        </div> */}
 
         {/* Desktop CTAs */}
-        <div className="hidden md:flex items-center gap-2.5">
+        {/* <div className="hidden md:flex items-center gap-2.5">
           <LanguageSwitcher />
           <Link
             href="/leak?demo=1"
@@ -91,7 +92,7 @@ export function Navbar() {
           >
             {t.nav.startVerification}
           </Link>
-        </div>
+        </div> */}
 
         {/* Mobile: verify CTA + hamburger */}
         <div className="flex md:hidden items-center gap-3">
