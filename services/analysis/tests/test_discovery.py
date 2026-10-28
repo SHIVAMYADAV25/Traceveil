@@ -132,10 +132,24 @@ def test_request_budget_truncates_honestly(scan, monkeypatch):
     assert result.truncated is True and result.truncation_reason == "request_budget"
 
 
-def test_demo_flag_does_not_leak_between_scans(scan):
-    demo = scan(demo=True)
-    assert demo.status == "completed"
-    real = scan()                        # a later real scan must NOT return scripted demo data
-    assert "good.example" in real.target_domains
-    assert real.target_domains != demo.target_domains
+DEMO_SAMPLE = (d.DEMO_IMAGES_DIR / "demo_original.jpg").read_bytes()
+
+
+def test_demo_flag_only_applies_to_bundled_sample_images(scan):
+    # A user's own image with demo=True must get a REAL scan, never the scripted result.
+    own = scan(demo=True)
+    assert own.demo is False
+    assert "good.example" in own.target_domains
+
+
+def test_demo_sample_returns_scripted_result_and_is_labelled(monkeypatch):
+    monkeypatch.setattr(d, "_load_dataset_rows", lambda: ROWS)
+    sample = d.run_discovery_scan("case-1", DEMO_SAMPLE, demo=True)
+    assert sample.demo is True and sample.status == "completed"
+    # ...and a later real scan is unaffected
     assert d.DEMO_DISCOVERY_MODE is False
+
+
+def test_sample_without_demo_flag_is_a_real_scan(scan):
+    result = d.run_discovery_scan("case-1", DEMO_SAMPLE)
+    assert result.demo is False

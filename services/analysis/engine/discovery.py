@@ -95,9 +95,34 @@ HTTP_TIMEOUT = 12
 MAX_CONCURRENT = 12
 CPU_WORKERS = 4
 
-# Demo mode is now opt-in per request (run_discovery_scan(demo=True)).
-# SNIFFER_DEMO_MODE=1 forces it process-wide for local demos only.
+# Demo mode is opt-in per request (run_discovery_scan(demo=True)) AND only ever
+# applies to the bundled sample images in demo_images/. Any other image always
+# gets a real scan, even if a demo flag is sent. SNIFFER_DEMO_MODE=1 turns the
+# demo on for sample images without the per-request flag (local demos only).
 DEMO_DISCOVERY_MODE = os.getenv("SNIFFER_DEMO_MODE", "0") == "1"
+DEMO_IMAGES_DIR = Path(__file__).resolve().parents[1] / "demo_images"
+
+
+def _demo_sample_hashes() -> frozenset[str]:
+    import hashlib
+    try:
+        return frozenset(
+            hashlib.md5(path.read_bytes()).hexdigest()
+            for path in DEMO_IMAGES_DIR.iterdir()
+            if path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
+        )
+    except OSError:
+        return frozenset()
+
+
+def is_demo_sample(image_bytes: Optional[bytes]) -> bool:
+    """True only for a byte-identical copy of one of the bundled demo images."""
+    import hashlib
+    if not image_bytes:
+        return False
+    return hashlib.md5(image_bytes).hexdigest() in _demo_sample_hashes()
+
+
 DEMO_MATCH_URLS = [
     "https://mydesi.ltd/exclusive-young-cute-slim-mallu-girl-teasing-nipples-2/",
     "https://fsiblog.pro/exclusive-young-cute-slim-mallu-girl-teasing-nipples-2/",
@@ -167,11 +192,12 @@ def run_discovery_scan(
     video_ref: Optional[VideoReference] = None,
 ) -> DiscoveryResult:
     """Scan the monitored sites for copies of an image (suspicious_bytes) or, when
-    video_ref is given, of a video (its keyframes). Demo mode never applies to video."""
+    video_ref is given, of a video (its keyframes). Demo mode never applies to video,
+    and only applies to images that are one of the bundled demo samples."""
     started_at = time.time()
     rows = _load_dataset_rows()
 
-    if (demo or DEMO_DISCOVERY_MODE) and video_ref is None:
+    if (demo or DEMO_DISCOVERY_MODE) and video_ref is None and is_demo_sample(suspicious_bytes):
         return _build_demo_discovery_result(
             case_id=case_id,
             started_at=started_at,
@@ -962,6 +988,7 @@ def _build_demo_discovery_result(
         direct_matches=direct_matches,
         related_domains=related_domains,
         recent_events=recent_events,
+        demo=True,
     )
 
 

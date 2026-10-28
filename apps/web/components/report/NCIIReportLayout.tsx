@@ -67,8 +67,10 @@ export function NCIIReportLayout({
       <header className="sticky top-0 z-20 border-b border-[#e8e4de]/80 bg-white/90 backdrop-blur-md px-4 py-3.5 print:hidden sm:px-6 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.08)]">
         <div className="mx-auto flex max-w-4xl items-center gap-3">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Image src="/logo.png" alt="Sniffer" width={24} height={24} />
-            <span className="text-[17px] font-semibold tracking-tight text-[#0a0a0a]">sniffer</span>
+            {/* <Image src="/logo.png" alt="Sniffer" width={24} height={24} /> */}
+            <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg></div>
+      
+            <span className="text-[17px] font-semibold tracking-tight text-[#0a0a0a]">Traceveil</span>
           </Link>
           <span className="text-[#d4cfc9]">/</span>
           <span className="text-[11px] font-mono uppercase tracking-[0.22em] text-[#9ca3af]">Investigation Report</span>

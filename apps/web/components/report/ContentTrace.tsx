@@ -192,6 +192,13 @@ export function ContentTrace({ caseId }: Props) {
   return (
     <div className="rounded-2xl border border-[#e8e4de] bg-white overflow-hidden shadow-[0_4px_24px_-12px_rgba(15,23,42,0.06)]">
 
+      {trace.demo && (
+        <div className="border-b border-emerald-200 bg-emerald-50 px-6 py-2.5 text-[12px] text-emerald-800">
+          <span className="font-mono text-[10px] uppercase tracking-widest mr-2">Demo</span>
+          These are sample results for the built-in demo images, not a live scan of the web.
+        </div>
+      )}
+
       {/* ── Header ── */}
       <div className="border-b border-[#e8e4de] px-6 py-5 bg-gradient-to-br from-[#fafaf8] to-white">
         <div className="flex items-start justify-between gap-4">

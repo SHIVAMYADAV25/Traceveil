@@ -99,12 +99,10 @@ def test_too_many_concurrent_scans_gets_429(monkeypatch):
     assert post_scan(new_case()).status_code == 429
 
 
-def test_demo_flag_is_per_request_and_never_global():
+def test_demo_flag_on_own_image_still_runs_a_real_scan():
     cid = new_case()
-    post_scan(cid, demo="true")
-    wait_done(cid)
+    post_scan(cid, demo="true")           # IMG is not a bundled demo image
+    body = wait_done(cid)
+    assert body["demo"] is False
+    assert "good.example" in body["target_domains"]
     assert d.DEMO_DISCOVERY_MODE is False
-    cid2 = new_case()
-    post_scan(cid2)
-    body = wait_done(cid2)
-    assert "good.example" in body["target_domains"], "a normal scan after a demo scan must be a real scan"

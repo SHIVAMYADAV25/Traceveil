@@ -175,6 +175,7 @@ class DiscoveryResult(BaseModel):
     truncation_reason: Optional[str] = None
     evidence: Optional[dict] = None     # optional supporting screenshot (hash + ELA)
     input_type: str = "image"           # image | video
+    demo: bool = False                  # True: sample results for the built-in demo images, not a live scan
     reference_frames: int = 0           # keyframes taken from an uploaded video
     video_info: Optional[dict] = None   # duration, size and keyframe times (never the frames themselves)
     pages_scanned: int = 0
