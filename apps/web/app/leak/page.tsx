@@ -132,7 +132,9 @@ const SOURCES = [
 function LeakPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const demoMode = searchParams.get("demo") === "1";
+  const [demoOn, setDemoOn] = useState(searchParams.get("demo") === "1");
+  /* true only while the selected file is one of the bundled demo samples */
+  const [fromDemo, setFromDemo] = useState(false);
 
   const [source, setSource] = useState("Telegram");
   const [file, setFile] = useState<File | null>(null);
@@ -152,6 +154,7 @@ function LeakPageContent() {
   function switchMode(next: "image" | "video") {
     if (next === mode) return;
     setMode(next);
+    setFromDemo(false);
     setFile(null);
     setPreview(null);
     setError(null);
@@ -175,6 +178,7 @@ function LeakPageContent() {
   }
 
   function handleFile(f: File) {
+    setFromDemo(false);
     if (isVideo) { void handleVideoFile(f); return; }
     if (!f.type.startsWith("image/")) {
       setError("Please upload an image file (JPG, PNG, WEBP).");
@@ -269,7 +273,7 @@ function LeakPageContent() {
       const formData = new FormData();
       formData.append(isVideo ? "video" : "suspicious_image", file);
       if (evidenceFile) formData.append("evidence_image", evidenceFile);
-      if (demoMode && !isVideo) formData.append("demo", "true");
+      if (fromDemo && !isVideo) formData.append("demo", "true");
       const origin = originDomain.trim();
       if (origin) formData.append("origin_domain", origin);
 
@@ -307,7 +311,7 @@ function LeakPageContent() {
       {/* ── Header ── */}
       <header className="border-b border-[#e8e4de] px-6 py-4 flex items-center gap-3 bg-white">
         <Link href="/" className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity">
-          Traceveil
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg><b>traceveil</b></div>
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         <span className="text-[13px] text-[#9ca3af]">Leak Discovery</span>
@@ -453,7 +457,18 @@ function LeakPageContent() {
             ))}
           </div>
 
-          {demoMode && !isVideo && (
+          {!demoOn && !isVideo && (
+            <button
+              type="button"
+              onClick={() => setDemoOn(true)}
+              className="mb-4 ml-2 inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-[12px] font-medium text-emerald-700 hover:border-emerald-400 transition-colors"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Try with demo images
+            </button>
+          )}
+
+          {demoOn && !isVideo && (
             <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -479,6 +494,7 @@ function LeakPageContent() {
                       setFile(f);
                       setPreview(URL.createObjectURL(blob));
                       setError(null);
+                      setFromDemo(true);
                     }}
                     className="group relative aspect-[16/9] rounded-lg overflow-hidden border border-emerald-200 bg-white hover:border-emerald-400 hover:shadow-md transition-all"
                   >
@@ -501,7 +517,7 @@ function LeakPageContent() {
             label={isVideo ? "Drag & drop your video here" : undefined}
             hint={isVideo ? "MP4 · MOV · WEBM · MKV · MAX 100 MB" : undefined}
             onFile={handleFile}
-            onClear={() => { setFile(null); setPreview(null); }}
+            onClear={() => { setFile(null); setPreview(null); setFromDemo(false); }}
           />
 
           {/* Where did you see it? (optional) — lets the scan check sites on the same network first */}
