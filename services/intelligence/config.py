@@ -16,7 +16,7 @@ class _Config:
     DATA_PATH: str = os.getenv(
         "INTELLIGENCE_DATA_PATH", str(_BASE / "data" / "dataset.csv")
     )
-    SERVICE_NAME: str = "Sniffer Intelligence Service"
+    SERVICE_NAME: str = "Traceveil Intelligence Service"
     VERSION: str = "1.0.0"
 
 

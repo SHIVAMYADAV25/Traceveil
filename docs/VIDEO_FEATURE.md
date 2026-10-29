@@ -1,6 +1,6 @@
 # Video feature: how it works, how it was built, and what it can and cannot do
 
-Upload a video of yourself or another person. Sniffer looks for copies on the monitored websites and returns, for each one: **the site, the page URL, the direct video URL (when one can be found), and a match category with the evidence behind it.**
+Upload a video of yourself or another person. Traceveil looks for copies on the monitored websites and returns, for each one: **the site, the page URL, the direct video URL (when one can be found), and a match category with the evidence behind it.**
 
 This document describes what is **built and tested**. It follows the design in `IMAGE_FIXES_AND_VIDEO_ARCHITECTURE.md` (Part 2) and notes where the build differs.
 
@@ -128,12 +128,12 @@ Only keyframe **times** are stored, never frames or video. Image results are unc
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `SNIFFER_MAX_VIDEO_MB` | 100 | Upload size cap |
-| `SNIFFER_MAX_VIDEO_SECONDS` | 600 | Duration cap |
-| `SNIFFER_MAX_CONCURRENT_VIDEO_SCANS` | 1 | Video scans at once (they also use a general scan slot) |
-| `SNIFFER_VERIFY_VIDEO` | 1 | Set to 0 to turn stage 3 off (thumbnail matching and URL discovery stay on) |
-| `SNIFFER_VERIFY_MAX_BYTES` | 6 MB | Bytes read from each candidate video |
-| `SNIFFER_VERIFY_MAX_CANDIDATES` | 6 | Candidate videos verified per scan |
+| `TRACEVEIL_MAX_VIDEO_MB` | 100 | Upload size cap |
+| `TRACEVEIL_MAX_VIDEO_SECONDS` | 600 | Duration cap |
+| `TRACEVEIL_MAX_CONCURRENT_VIDEO_SCANS` | 1 | Video scans at once (they also use a general scan slot) |
+| `TRACEVEIL_VERIFY_VIDEO` | 1 | Set to 0 to turn stage 3 off (thumbnail matching and URL discovery stay on) |
+| `TRACEVEIL_VERIFY_MAX_BYTES` | 6 MB | Bytes read from each candidate video |
+| `TRACEVEIL_VERIFY_MAX_CANDIDATES` | 6 | Candidate videos verified per scan |
 
 All the image-scan settings from `IMAGE_FIXES_AND_VIDEO_ARCHITECTURE.md` section 6 (budgets, retention, network guard) apply to video scans too.
 

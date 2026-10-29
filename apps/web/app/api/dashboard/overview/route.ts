@@ -57,7 +57,7 @@ function addPercentages(items: { name: string; count: number }[], total: number)
 export async function GET() {
   try {
     const client = await clientPromise;
-    const db = client.db("snifferX");
+    const db = client.db("traceveilX");
 
     const casesCol = db.collection("cases");
     const eventsCol = db.collection("claim_events");

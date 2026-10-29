@@ -1,6 +1,6 @@
-# Sniffer Analysis Service
+# Traceveil Analysis Service
 
-FastAPI-based image analysis engine for the Sniffer platform.
+FastAPI-based image analysis engine for the Traceveil platform.
 
 ## Setup
 

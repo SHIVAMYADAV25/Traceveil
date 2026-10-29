@@ -20,7 +20,7 @@ def test_is_public_ip(ip, expected):
 
 
 def test_redirect_to_internal_address_is_blocked(monkeypatch):
-    monkeypatch.setenv("SNIFFER_NETGUARD", "1")
+    monkeypatch.setenv("TRACEVEIL_NETGUARD", "1")
 
     async def fake_resolve(host):
         return ["93.184.216.34"] if host == "public.example" else ["127.0.0.1"]

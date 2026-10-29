@@ -195,7 +195,7 @@ Rules I wrote to and checked the copy against:
 
 | Feature | What it does | Why |
 |---|---|---|
-| **Leave quickly** (header, all Support pages) | Replaces the page with google.com so Back doesn't return, and clears this tab's `sniffer_*` session values (image previews from the report flow). Pressing Esc twice does the same. | Someone may walk in. The report keeps image previews in `sessionStorage`, so leaving the page alone isn't enough. **Remove the storage clearing if you don't want that side effect.** |
+| **Leave quickly** (header, all Support pages) | Replaces the page with google.com so Back doesn't return, and clears this tab's `traceveil_*` session values (image previews from the report flow). Pressing Esc twice does the same. | Someone may walk in. The report keeps image previews in `sessionStorage`, so leaving the page alone isn't enough. **Remove the storage clearing if you don't want that side effect.** |
 | **No tracking** | The Support pages make no analytics or API calls. | Visiting support is itself sensitive. |
 | **`tel:` links with 40 px+ tap targets** | Every number is a one-tap call on mobile. | Typing a number while upset causes errors. |
 | **Checked-on date and source on every card** | Visible on the card. | Same rule as your backend takedown contacts. A reader or a reviewer can check it. |

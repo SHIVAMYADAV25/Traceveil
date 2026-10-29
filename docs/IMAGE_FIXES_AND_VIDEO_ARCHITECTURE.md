@@ -53,7 +53,7 @@ Numbers match the review list.
 | # | Problem | Change | Why it helps | Evidence |
 |---|---|---|---|---|
 | 1 | The match panel filled with hard-coded sample matches after 1.8 s; zero real matches never showed "Clear". | `ContentTrace.tsx`: all mock data deleted. It now polls the real scan and shows five real states: connecting, in progress (live counters), failed (with reason), no matches (with coverage), and matches. "Clear" is gone; it now says "No matches found" and what that does and does not cover. Wording changed from "confirmed hosting" to "visually matches". | A report that may go to police or a lawyer can no longer contain invented evidence. | Type-check clean. **No browser test was run.** |
-| 2 | `demo=true` set a global flag that was never reset, so later scans returned scripted data. | `run_discovery_scan(demo=...)` is a per-request argument. The router no longer touches module state. `SNIFFER_DEMO_MODE=1` remains for local demos only. | One demo request can no longer poison every later real scan. | `test_demo_flag_does_not_leak_between_scans` (engine) and `test_demo_flag_is_per_request_and_never_global` (API). |
+| 2 | `demo=true` set a global flag that was never reset, so later scans returned scripted data. | `run_discovery_scan(demo=...)` is a per-request argument. The router no longer touches module state. `TRACEVEIL_DEMO_MODE=1` remains for local demos only. | One demo request can no longer poison every later real scan. | `test_demo_flag_does_not_leak_between_scans` (engine) and `test_demo_flag_is_per_request_and_never_global` (API). |
 | 3 | UI said "91 domains" and "under 60 seconds"; 83 are scanned and scans take minutes. | Text no longer states a number. The report shows `reachable / total` taken from the backend. | The user is told what actually happened. | Code review. |
 | 4 | Every match showed "SSIM 0.00" (hard-coded). | A real SSIM is computed (both images to 128×128 grey, compared with the matched variant of your image). The UI shows "–" when unavailable. | The number now means something. | `test_finds_copy_via_sitemap...` asserts SSIM above 0.5 on a real copy. |
 | 5 | `domains_scanned` counted only domains with a match. | It now counts reachable, parsed domains. A separate `domains_with_matches` was added. | Progress numbers are correct. | `test_domain_status_distinguishes...` asserts 5 reachable, 2 with matches. |
@@ -71,7 +71,7 @@ Numbers match the review list.
 
 | # | Problem | Change | Evidence |
 |---|---|---|---|
-| 10 | All state was in memory; a restart lost everything. | New `engine/store.py`: atomic JSON files, strict ID validation (no path traversal), retention (`SNIFFER_RETENTION_DAYS`, default 7). Cases and scan results are written through to it. At startup, scans that were running are marked failed with a clear message. | `test_result_and_case_survive_a_restart`, `test_scan_interrupted_by_restart...`, store tests. **Also proven on a real server:** case and result survived a real process restart. |
+| 10 | All state was in memory; a restart lost everything. | New `engine/store.py`: atomic JSON files, strict ID validation (no path traversal), retention (`TRACEVEIL_RETENTION_DAYS`, default 7). Cases and scan results are written through to it. At startup, scans that were running are marked failed with a clear message. | `test_result_and_case_survive_a_restart`, `test_scan_interrupted_by_restart...`, store tests. **Also proven on a real server:** case and result survived a real process restart. |
 | 11 | Unlimited threads; up to about 20,000 requests per scan. | At most 2 scans run at once (`429` otherwise); a second scan on the same case gets `409`. Per-scan budget: 8,000 images and 600 seconds. A scan that hits a limit says so (`truncated`, `truncation_reason`) and unfinished sites are marked `skipped`, not "no images". | `test_too_many_concurrent_scans_gets_429`, `test_request_budget_truncates_honestly`. |
 | 12 | Page and image URLs were fetched without checks, redirects followed freely. | New `engine/netguard.py`, installed as an httpx hook, so it runs on **every request including every redirect hop**. It allows only http/https on ports 80, 443, 8080, 8443 and requires every resolved IP to be globally routable (blocks private, loopback, link-local, cloud-metadata, CGNAT, IPv4-mapped IPv6). Downloads are streamed and abandoned at the byte cap (previously a huge file was downloaded in full before the size check). | 17 netguard tests including a redirect from a public host to `169.254.169.254`. **Residual risk:** DNS can change between the check and the connection (rebinding); run the crawler with egress filtering for full protection. |
 | 13 | Hashing and keypoint work ran inside the async loop. | Matching runs in worker threads (4 at a time) so downloads are not blocked. | Crawler test suite passes. No benchmark was run. |
@@ -109,7 +109,7 @@ Before, only the homepage and up to 10 links with words like "video" were scanne
 - The homepage is fetched once and reused (it used to be fetched twice).
 - Sitemaps are parsed with a regular expression, not an XML parser, so a hostile file cannot trigger entity-expansion attacks.
 
-Up to 15 pages per domain (`SNIFFER_MAX_PAGES_PER_DOMAIN`), half reserved for sitemap pages.
+Up to 15 pages per domain (`TRACEVEIL_MAX_PAGES_PER_DOMAIN`), half reserved for sitemap pages.
 
 ### 3.4 More image sources (improvement 5)
 
@@ -165,15 +165,15 @@ New fields on the result: `domains_with_matches`, `domain_status`, `coverage`, `
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `SNIFFER_DATA_DIR` | `services/analysis/.data` | Where cases and scans are stored. Git-ignored. Contains sensitive data: protect it. |
-| `SNIFFER_RETENTION_DAYS` | 7 | Records older than this are deleted at startup. |
-| `SNIFFER_MAX_CONCURRENT_SCANS` | 2 | Parallel scans. |
-| `SNIFFER_MAX_PAGES_PER_DOMAIN` | 15 | Pages scanned per site. |
-| `SNIFFER_MAX_ASSETS_PER_PAGE` | 32 | Images compared per page. |
-| `SNIFFER_MAX_TOTAL_CANDIDATES` | 8000 | Image budget per scan. |
-| `SNIFFER_SCAN_TIMEOUT_SECONDS` | 600 | Time budget per scan. |
-| `SNIFFER_NETGUARD` | 1 | Set to 0 only for local testing against private hosts. |
-| `SNIFFER_DEMO_MODE` | 0 | Forces demo results process-wide (local demos only). |
+| `TRACEVEIL_DATA_DIR` | `services/analysis/.data` | Where cases and scans are stored. Git-ignored. Contains sensitive data: protect it. |
+| `TRACEVEIL_RETENTION_DAYS` | 7 | Records older than this are deleted at startup. |
+| `TRACEVEIL_MAX_CONCURRENT_SCANS` | 2 | Parallel scans. |
+| `TRACEVEIL_MAX_PAGES_PER_DOMAIN` | 15 | Pages scanned per site. |
+| `TRACEVEIL_MAX_ASSETS_PER_PAGE` | 32 | Images compared per page. |
+| `TRACEVEIL_MAX_TOTAL_CANDIDATES` | 8000 | Image budget per scan. |
+| `TRACEVEIL_SCAN_TIMEOUT_SECONDS` | 600 | Time budget per scan. |
+| `TRACEVEIL_NETGUARD` | 1 | Set to 0 only for local testing against private hosts. |
+| `TRACEVEIL_DEMO_MODE` | 0 | Forces demo results process-wide (local demos only). |
 
 ## 7. How it was verified
 

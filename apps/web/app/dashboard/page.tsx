@@ -131,7 +131,7 @@ export default function DashboardPage() {
           href="/"
           className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity"
         >
-          Sniffer
+          Traceveil
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         <span className="text-[13px] text-[#9ca3af]">Post-removal monitoring</span>
@@ -377,7 +377,7 @@ export default function DashboardPage() {
         </section>
 
         <div className="border-t border-[#e8e4de] mt-10 pt-6 flex items-center justify-between">
-          <p className="font-mono text-[10px] text-[#c4bdb5]">SNIFFER FORENSICS · SFIT · 2026</p>
+          <p className="font-mono text-[10px] text-[#c4bdb5]">TRACEVEIL FORENSICS · SFIT · 2026</p>
           <Link href="/leak" className="text-[12px] text-indigo-600 hover:underline">
             New leak case →
           </Link>

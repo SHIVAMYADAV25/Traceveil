@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Navbar } from "@/components/landing/Navbar";
-import { Footer } from "@/components/landing/Footer";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
-  title: "How It Works — Sniffer",
+  title: "How It Works — Traceveil",
   description:
-    "A detailed walkthrough of Sniffer's forensic image verification pipeline — from upload to signed evidence report.",
+    "A detailed walkthrough of Traceveil's forensic image verification pipeline — from upload to signed evidence report.",
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -234,7 +234,7 @@ export default function HowItWorksPage() {
                 From pixel to proof —<br />the complete forensic pipeline.
               </h1>
               <p className="text-[16px] leading-[1.75] text-[#6b7280]">
-                Sniffer runs a seven-layer forensic analysis on every image submitted. Each layer operates
+                Traceveil runs a seven-layer forensic analysis on every image submitted. Each layer operates
                 independently. The results are weighted, scored, and assembled into a cryptographically
                 signed evidence report — formatted for platform takedown filings, legal exhibits, and
                 personal records.
@@ -539,7 +539,7 @@ export default function HowItWorksPage() {
               From report to removal — in one step.
             </h2>
             <p className="text-[14px] leading-[1.7] text-[#6b7280]" style={{ maxWidth: "320px" }}>
-              Platform abuse forms require evidence in specific formats. Sniffer generates compliant takedown notices for all major platforms automatically.
+              Platform abuse forms require evidence in specific formats. Traceveil generates compliant takedown notices for all major platforms automatically.
             </p>
           </div>
 

@@ -17,7 +17,7 @@ export function QuickExit() {
   const exit = useCallback(() => {
     try {
       Object.keys(sessionStorage)
-        .filter((k) => k.startsWith("sniffer_"))
+        .filter((k) => k.startsWith("traceveil_"))
         .forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage may be unavailable */ }
     window.location.replace(EXIT_URL);

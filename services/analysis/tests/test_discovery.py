@@ -66,7 +66,7 @@ def handler(request: httpx.Request) -> httpx.Response:
 
 @pytest.fixture()
 def scan(monkeypatch):
-    monkeypatch.setenv("SNIFFER_NETGUARD", "0")      # fake hosts do not resolve in DNS
+    monkeypatch.setenv("TRACEVEIL_NETGUARD", "0")      # fake hosts do not resolve in DNS
     monkeypatch.setattr(d, "_load_dataset_rows", lambda: ROWS)
     monkeypatch.setattr(d, "_TRANSPORT", httpx.MockTransport(handler))
 

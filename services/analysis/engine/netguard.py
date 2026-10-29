@@ -14,7 +14,7 @@ Residual risk: DNS can change between this check and the actual connection
 (DNS rebinding). For stricter isolation run the crawler in a network
 namespace / egress-filtered container as well.
 
-Set SNIFFER_NETGUARD=0 to disable (local development against localhost only).
+Set TRACEVEIL_NETGUARD=0 to disable (local development against localhost only).
 """
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ class BlockedAddress(httpx.RequestError):
 
 
 def enabled() -> bool:
-    return os.getenv("SNIFFER_NETGUARD", "1") != "0"
+    return os.getenv("TRACEVEIL_NETGUARD", "1") != "0"
 
 
 def is_public_ip(value: str) -> bool:

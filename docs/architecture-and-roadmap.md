@@ -1,4 +1,4 @@
-# Sniffer — Architecture Context & Production Roadmap
+# Traceveil — Architecture Context & Production Roadmap
 
 Digital media authenticity verification and takedown intelligence platform.
 
@@ -117,7 +117,7 @@ Digital media authenticity verification and takedown intelligence platform.
 
 | Route | Page Component | Description |
 |-------|---------------|-------------|
-| `/` | `app/page.tsx` | Landing page — 9 sections: Navbar, Hero, Problem, HowItWorks, Features, ReportPreview, Audience, CTA, Footer |
+| `/` | `app/page.tsx` | Landing page — `components/landing/LandingPage.tsx` composing Hero, About, Audience, HowItWorks, Privacy, Takedown, Support, Community, Partners, FinalCta, MinorsNotice, FAQ |
 | `/start` | `app/start/page.tsx` | Investigation type selector (Deepfake/AI, NCII Leak, Screenshot) |
 | `/verify` | — | Redirects to `/verify/upload` |
 | `/verify/upload` | `app/verify/upload/page.tsx` | Upload suspicious image for deepfake analysis |
@@ -210,7 +210,7 @@ The Next.js app acts as a unified API gateway. It:
 | Route | Method | Source | Behavior |
 |-------|--------|--------|----------|
 | `/api/cases/[caseId]` | GET | MongoDB → Analysis API fallback | Fetches case from MongoDB; falls back to Analysis API in-memory store if not found |
-| `/api/cases/save` | POST | MongoDB | Saves case + analysis result to `snifferX.cases` collection |
+| `/api/cases/save` | POST | MongoDB | Saves case + analysis result to `traceveilX.cases` collection |
 | `/api/user/cases` | GET | MongoDB | Lists user-saved cases sorted by `last_saved_at` desc |
 | `/api/user/cases` | DELETE | MongoDB | Deletes a saved case by `case_id` |
 | `/api/dashboard/overview` | GET | MongoDB | Aggregates across `cases`, `claim_events`, `claim_metrics`; **falls back to hardcoded demo data** |
@@ -461,7 +461,7 @@ ReportWorkflowContext
 
 ```
 LanguageProvider (i18n — 8 languages)
-├── locale: string  (stored in localStorage key: "sniffer-locale")
+├── locale: string  (stored in localStorage key: "traceveil-locale")
 ├── setLocale: (locale: string) => void
 ├── t: (key: string) => string  (translation lookup)
 └── dir: "ltr" | "rtl"
@@ -474,7 +474,7 @@ Translations: apps/web/lib/translations.ts (flat key-value objects per locale)
 
 ## 7. Database
 
-### MongoDB (`snifferX` database)
+### MongoDB (`traceveilX` database)
 
 | Collection | Document Shape | Key Fields | Indexes |
 |------------|---------------|------------|---------|

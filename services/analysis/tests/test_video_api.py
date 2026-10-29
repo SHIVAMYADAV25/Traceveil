@@ -20,7 +20,7 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def offline_world(monkeypatch):
-    monkeypatch.setenv("SNIFFER_NETGUARD", "0")
+    monkeypatch.setenv("TRACEVEIL_NETGUARD", "0")
     monkeypatch.setattr(d, "_load_dataset_rows", lambda: ROWS)
     monkeypatch.setattr(d, "_TRANSPORT", httpx.MockTransport(handler))
 
@@ -39,7 +39,7 @@ def drain_scans():
 
 
 def temp_files():
-    return set(glob.glob(os.path.join(tempfile.gettempdir(), "sniffer-video-*")))
+    return set(glob.glob(os.path.join(tempfile.gettempdir(), "traceveil-video-*")))
 
 
 def new_case() -> str:

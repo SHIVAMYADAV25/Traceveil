@@ -1,11 +1,11 @@
 import { getAllPosts } from "@/lib/blog";
-import { Navbar } from "@/components/landing/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { ArticleCard } from "@/components/blog/ArticleCard";
 
 export const metadata = {
-  title: "Resources — Sniffer",
+  title: "Resources — Traceveil",
   description:
-    "Insights on digital media authenticity, C2PA provenance, AI detection, and forensic analysis from the Sniffer team.",
+    "Insights on digital media authenticity, C2PA provenance, AI detection, and forensic analysis from the Traceveil team.",
 };
 
 export default function ResourcesPage() {
@@ -33,7 +33,7 @@ export default function ResourcesPage() {
                 className="text-[3rem] font-semibold tracking-tight leading-none"
                 style={{ color: "#0a0a0a" }}
               >
-                Sniffer Research
+                Traceveil Research
               </h1>
             </div>
             <div className="text-right pb-1 shrink-0">
@@ -94,7 +94,7 @@ export default function ResourcesPage() {
         }}
       >
         <p className="text-[12px] font-mono" style={{ color: "#b0a89e" }}>
-          © 2026 Sniffer · Digital Media Authenticity
+          © 2026 Traceveil · Digital Media Authenticity
         </p>
       </footer>
     </div>

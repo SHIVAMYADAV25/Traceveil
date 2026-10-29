@@ -18,7 +18,7 @@ IMG = to_bytes(photo("astronaut"), "PNG")
 
 @pytest.fixture(autouse=True)
 def offline_world(monkeypatch):
-    monkeypatch.setenv("SNIFFER_NETGUARD", "0")
+    monkeypatch.setenv("TRACEVEIL_NETGUARD", "0")
     monkeypatch.setattr(d, "_load_dataset_rows", lambda: td.ROWS)
     monkeypatch.setattr(d, "_TRANSPORT", httpx.MockTransport(td.handler))
 

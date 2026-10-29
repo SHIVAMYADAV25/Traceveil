@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { BlurImage } from "@/components/ui/blur-image";
 import { useSearchParams } from "next/navigation";
 import { openMailtoDraft, splitSubjectLineDraft } from "@/lib/mailto";
 
@@ -534,7 +535,7 @@ function TakedownPageInner() {
     return [
       "Dear Cybercrime Authority,",
       "",
-      "I am filing an urgent NCII cybercrime complaint with machine-generated evidence from Sniffer.",
+      "I am filing an urgent NCII cybercrime complaint with machine-generated evidence from Traceveil.",
       "",
       "Case Details:",
       `Case ID: ${caseIdFromQuery ?? "Not provided"}`,
@@ -724,7 +725,7 @@ function TakedownPageInner() {
     <div className="min-h-screen bg-[#fafaf8]">
       <header className="border-b border-[#e8e4de] px-6 py-4 flex items-center gap-3 bg-white sticky top-0 z-10">
         <Link href="/" className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity">
-          Sniffer
+          Traceveil
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         <span className="text-[13px] text-[#9ca3af]">Step 3 · Takedown</span>
@@ -1163,8 +1164,7 @@ function TakedownPageInner() {
               <p className="text-[10px] font-mono text-[#a8a29e] uppercase tracking-widest mb-2">Image Found Online</p>
               {file && preview ? (
                 <div className="flex gap-4 items-start rounded-xl border border-[#e8e4de] bg-white p-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={preview} alt={file.name} className="w-20 h-20 object-cover rounded-lg border border-[#e8e4de] shrink-0" />
+                  <BlurImage key={preview} src={preview} alt={file.name} className="w-20 h-20 rounded-lg border border-[#e8e4de] shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-semibold text-[#0a0a0a] truncate">{file.name}</p>
                     <p className="text-[11.5px] text-[#9ca3af] mt-0.5">{(file.size / 1024).toFixed(0)} KB · {file.type.split("/")[1].toUpperCase()}</p>

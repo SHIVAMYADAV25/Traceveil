@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
 import { Typography } from "@/components/ui/typography";
-import { Navbar } from "@/components/landing/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { CoverImage } from "@/components/blog/CoverImage";
 import Image from "next/image";
 interface PageProps {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps) {
   const post = getPostBySlug(slug);
   if (!post) return {};
   return {
-    title: `${post.title} — Sniffer`,
+    title: `${post.title} — Traceveil`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               className="text-[11px] font-mono uppercase tracking-widest mb-3"
               style={{ color: "#7a7268" }}
             >
-              Sniffer Platform
+              Traceveil Platform
             </p>
             <h3
               className="text-[1.3rem] font-semibold mb-3"

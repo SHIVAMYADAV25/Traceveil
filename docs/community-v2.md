@@ -59,7 +59,7 @@ Names are exactly as supplied. Channel kinds: **chat** (everyone writes), **team
 Three channels were added beyond the brief: `#safety-and-privacy`, `#healing-and-small-wins`, `#police-and-cybercrime`.
 They are in the seed file and can be archived from **Admin → Channels**.
 
-**Retiring the old list.** Running the seed (`pnpm --filter @sniffer/community seed`) archives the v1 groups and the
+**Retiring the old list.** Running the seed (`pnpm --filter @traceveil/community seed`) archives the v1 groups and the
 channels `welcome-and-rules` and `just-happened`, and renames the surviving `announcements`. Messages, reports and audit
 records keep their links. It touches only those known v1 names, so channels an admin adds later are never archived.
 Browsers that remembered an old channel are offered a "Go to #welcome" button.
@@ -197,7 +197,7 @@ Round 1 (the first v2 build) was checked with the service tests (97 passing), `t
 
 **Not re-run after the last small edits** (the loader redraw and the "New" / "Quiet" wording on the overview): `eslint`, the full service test suite and the smoke test. Run them before shipping:
 ```
-pnpm --filter @sniffer/community test
+pnpm --filter @traceveil/community test
 cd apps/web && npx tsc --noEmit && npx eslint app/community components/community lib/community
 python3 services/community/e2e/community_smoke.e2e.py   # needs service and web app running
 ```

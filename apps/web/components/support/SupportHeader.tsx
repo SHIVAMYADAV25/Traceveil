@@ -13,7 +13,7 @@ const CRUMBS: Record<string, string> = {
   "/support/read-and-listen": "Read, watch and listen",
 };
 
-const CASE_KEY = "sniffer_support_case";
+const CASE_KEY = "traceveil_support_case";
 
 /** Same chrome as the Report header: logo, "/", mono crumb, actions on the right. */
 export function SupportHeader() {
@@ -40,7 +40,7 @@ export function SupportHeader() {
     <header className="sticky top-0 z-30 border-b border-line/80 bg-white/90 px-4 py-3.5 backdrop-blur-md sm:px-6">
       <div className="mx-auto flex max-w-5xl items-center gap-3">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          {/* <Image src="/logo.png" alt="Sniffer" width={24} height={24} /> */}
+          {/* <Image src="/logo.png" alt="Traceveil" width={24} height={24} /> */}
           <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="20" height="20" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg></div>
           <span className="text-[17px] font-semibold tracking-tight text-ink">Traceveil</span>
         </Link>

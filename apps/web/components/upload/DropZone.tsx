@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { BlurImage } from "@/components/ui/blur-image";
 
 interface Props {
   file: File | null;
@@ -66,11 +67,12 @@ export function DropZone({
           className={`flex gap-4 items-start ${compact ? "p-4" : "p-6"}`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* key: a newly chosen file always starts blurred again */}
+          <BlurImage
+            key={preview}
             src={preview}
             alt="Upload preview"
-            className={`object-cover rounded-xl border border-[#e8e4de] shrink-0 ${
+            className={`rounded-xl border border-[#e8e4de] shrink-0 ${
               compact ? "w-16 h-16" : "w-24 h-24"
             }`}
           />

@@ -27,7 +27,7 @@ export function OwnSpaceCard({ s }: { s: OwnSpace }) {
           <ChatIcon size={18} />
         </span>
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-widest text-ink-quiet">Run by Sniffer</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-ink-quiet">Run by Traceveil</p>
           <h3 className="text-[17px] font-semibold leading-snug text-ink">{s.name}</h3>
         </div>
         <span

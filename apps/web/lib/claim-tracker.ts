@@ -26,7 +26,7 @@ function buildCaseRef(caseId: string): string {
 
 export async function recordClaimEvent(input: RecordClaimEventInput): Promise<{ insertedCase: boolean }> {
   const client = await clientPromise;
-  const db = client.db("snifferX");
+  const db = client.db("traceveilX");
   const eventsCol = db.collection("claim_events");
   const casesCol = db.collection("cases");
   const metricsCol = db.collection("claim_metrics");
@@ -93,7 +93,7 @@ export async function recordClaimEvent(input: RecordClaimEventInput): Promise<{ 
 
 export async function getClaimStats() {
   const client = await clientPromise;
-  const db = client.db("snifferX");
+  const db = client.db("traceveilX");
   const metricsCol = db.collection("claim_metrics");
   const casesCol = db.collection("cases");
 

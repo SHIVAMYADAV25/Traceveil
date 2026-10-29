@@ -30,7 +30,7 @@ export function normalisePhrase(phrase: string): string {
 }
 
 export const RESERVED_NAMES = [
-  "admin", "administrator", "moderator", "mod", "staff", "traceveil", "sniffer", "support",
+  "admin", "administrator", "moderator", "mod", "staff", "traceveil", "traceveil", "support",
   "helper", "official", "system", "deleted member", "community",
 ];
 

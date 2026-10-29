@@ -7,6 +7,7 @@ import { ContentTrace } from "./ContentTrace";
 import { LeakActionConsole } from "./LeakActionConsole";
 import { ReportWellbeingLegal } from "./ReportWellbeingLegal";
 import { SupportCallout } from "@/components/support/SupportCallout";
+import { BlurImage } from "@/components/ui/blur-image";
 import type { CaseData } from "./types";
 import { buildCaseRef } from "./utils";
 import { formatDate } from "./utils";
@@ -67,7 +68,7 @@ export function NCIIReportLayout({
       <header className="sticky top-0 z-20 border-b border-[#e8e4de]/80 bg-white/90 backdrop-blur-md px-4 py-3.5 print:hidden sm:px-6 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.08)]">
         <div className="mx-auto flex max-w-4xl items-center gap-3">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            {/* <Image src="/logo.png" alt="Sniffer" width={24} height={24} /> */}
+            {/* <Image src="/logo.png" alt="Traceveil" width={24} height={24} /> */}
             <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg></div>
       
             <span className="text-[17px] font-semibold tracking-tight text-[#0a0a0a]">Traceveil</span>
@@ -145,7 +146,7 @@ export function NCIIReportLayout({
       <div className="hidden print:block border-b-2 border-[#0a0a0a] px-0 pb-6 mb-2">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[9px] font-mono uppercase tracking-[0.32em] text-[#9ca3af] mb-1">Sniffer · Impic Labs</p>
+            <p className="text-[9px] font-mono uppercase tracking-[0.32em] text-[#9ca3af] mb-1">Traceveil · Impic Labs</p>
             <p className="text-[22px] font-semibold tracking-tight text-[#0a0a0a]">NCII Investigation Report</p>
           </div>
           <div className="text-right">
@@ -268,11 +269,11 @@ export function NCIIReportLayout({
               {suspiciousImg ? (
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-7">
                   <div className="shrink-0 rounded-lg border border-[#e8e4de] bg-[#fafaf8] p-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <BlurImage
                       src={suspiciousImg}
                       alt="Submitted evidence image"
-                      className="h-44 w-44 rounded object-contain sm:h-52 sm:w-52 print:h-40 print:w-40"
+                      fit="contain"
+                      className="h-44 w-44 rounded sm:h-52 sm:w-52 print:h-40 print:w-40"
                     />
                   </div>
                   <div className="space-y-3 min-w-0">
@@ -398,7 +399,7 @@ export function NCIIReportLayout({
         ══════════════════════════════════════════════════════════════════════ */}
         <footer className="flex flex-col gap-3 border-t border-[#e8e4de] pt-8 print:border-t-2 print:border-[#0a0a0a] print:pt-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.22em] text-[#9ca3af] uppercase">Sniffer · Impic Labs · 2026</p>
+            <p className="font-mono text-[10px] tracking-[0.22em] text-[#9ca3af] uppercase">Traceveil · Impic Labs · 2026</p>
             <p className="mt-1 max-w-xl text-[11px] leading-relaxed text-[#b3aaa1]">
               This report is generated automatically as an investigation aid. It is not legal advice, not medical advice, and
               not a substitute for police or a lawyer. The legal reference block is orientation only, not legal advice.

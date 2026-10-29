@@ -7,7 +7,7 @@ IDs are validated against a strict pattern, so a caller-supplied case_id can
 never escape the data directory (path traversal).
 
 Retention: `purge_older_than` deletes records past their retention window.
-Data dir: SNIFFER_DATA_DIR (default: services/analysis/.data).
+Data dir: TRACEVEIL_DATA_DIR (default: services/analysis/.data).
 """
 from __future__ import annotations
 
@@ -25,13 +25,13 @@ DEFAULT_DIR = Path(__file__).resolve().parents[1] / ".data"
 
 
 def retention_seconds() -> float:
-    days = float(os.getenv("SNIFFER_RETENTION_DAYS", "7"))
+    days = float(os.getenv("TRACEVEIL_RETENTION_DAYS", "7"))
     return days * 86400
 
 
 class JsonStore:
     def __init__(self, namespace: str, base_dir: Optional[Path] = None):
-        root = Path(os.getenv("SNIFFER_DATA_DIR", "") or base_dir or DEFAULT_DIR)
+        root = Path(os.getenv("TRACEVEIL_DATA_DIR", "") or base_dir or DEFAULT_DIR)
         self.dir = root / namespace
         self._lock = threading.Lock()
 

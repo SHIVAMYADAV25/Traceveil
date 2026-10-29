@@ -11,7 +11,7 @@ import { COMMUNITY_SAFETY } from "@/content/support/guides";
 import { OWN_SPACES } from "@/content/support/own-spaces";
 import { REMOVAL_INTRO, REMOVAL_ROUTES } from "@/content/support/removal";
 
-export const metadata = { title: "Get help, talk with others — Support — Sniffer" };
+export const metadata = { title: "Get help, talk with others — Support — Traceveil" };
 
 /** Order matters: most specific to this problem first. */
 const ORG_ORDER = ["meri-trustline", "responsible-netism", "sneha", "majlis", "women-181"];

@@ -11,7 +11,7 @@ import { BOOKS } from "@/content/support/books";
 import { STORIES, BLOGS } from "@/content/support/stories";
 import { Piece } from "@/lib/support/types";
 
-export const metadata = { title: "Read, watch and listen — Support — Sniffer" };
+export const metadata = { title: "Read, watch and listen — Support — Traceveil" };
 
 const Intro = ({ children }: { children: React.ReactNode }) => (
   <p className="mb-6 max-w-xl text-[14px] leading-relaxed text-ink-soft">{children}</p>

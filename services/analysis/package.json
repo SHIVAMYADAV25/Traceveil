@@ -1,5 +1,5 @@
 {
-  "name": "@sniffer/analysis",
+  "name": "@traceveil/analysis",
   "version": "1.0.0",
   "private": true,
   "scripts": {

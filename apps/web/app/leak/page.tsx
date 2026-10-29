@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { DropZone } from "@/components/upload/DropZone";
+import { BlurImage, BlurToggle } from "@/components/ui/blur-image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -139,6 +140,7 @@ function LeakPageContent() {
   const [source, setSource] = useState("Telegram");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [demoBlurred, setDemoBlurred] = useState(true); // demo samples start blurred
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [evidencePreview, setEvidencePreview] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
@@ -257,8 +259,8 @@ function LeakPageContent() {
       setScanning(true);
       setScanStep(0);
 
-      if (preview) await storePreview(preview, `sniffer_suspicious_${case_id}`);
-      if (evidencePreview) await storePreview(evidencePreview, `sniffer_evidence_${case_id}`);
+      if (preview) await storePreview(preview, `traceveil_suspicious_${case_id}`);
+      if (evidencePreview) await storePreview(evidencePreview, `traceveil_evidence_${case_id}`);
 
       const interval = setInterval(() => {
         setScanStep((s) => {
@@ -473,6 +475,7 @@ function LeakPageContent() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span className="font-mono text-[10px] text-emerald-700 uppercase tracking-widest">Demo Mode — Try these</span>
+                <BlurToggle blurred={demoBlurred} onChange={setDemoBlurred} className="ml-auto text-emerald-700 hover:text-emerald-900" />
               </div>
               <p className="text-[12px] text-emerald-800 mb-4 leading-relaxed">
                 Tap a pre-loaded sample to see the 3-tier matching engine in action.
@@ -498,8 +501,7 @@ function LeakPageContent() {
                     }}
                     className="group relative aspect-[16/9] rounded-lg overflow-hidden border border-emerald-200 bg-white hover:border-emerald-400 hover:shadow-md transition-all"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.file} alt={item.label} className="w-full h-full object-cover" />
+                    <BlurImage src={item.file} alt={item.label} className="h-full w-full" blurred={demoBlurred} showToggle={false} />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                       <p className="text-[11px] font-medium text-white">{item.label}</p>
                       <p className="text-[9px] text-white/70">{item.desc}</p>
@@ -554,8 +556,7 @@ function LeakPageContent() {
               {evidenceFile ? (
                 <div className="flex items-center gap-3 p-2.5 rounded-lg border border-[#e8e4de] bg-[#fafaf8]">
                   {evidencePreview && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={evidencePreview} alt="Evidence" className="w-10 h-10 object-cover rounded" />
+                    <BlurImage key={evidencePreview} src={evidencePreview} alt="Evidence" className="w-10 h-10 rounded shrink-0" strength="sm" />
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-[12px] font-medium text-[#0a0a0a] truncate">{evidenceFile.name}</p>

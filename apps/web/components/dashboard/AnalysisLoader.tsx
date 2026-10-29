@@ -80,7 +80,7 @@ export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({
       {/* Header */}
       <header className="border-b border-[#e8e4de] px-8 py-6 flex justify-between items-center bg-white/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[13px] tracking-widest uppercase font-bold">Sniffer</span>
+          <span className="font-mono text-[13px] tracking-widest uppercase font-bold">Traceveil</span>
           <span className="text-[#d4cfc9]">/</span>
           <span className="text-[12px] text-[#9ca3af] uppercase tracking-wider">Forensic Analysis Engine</span>
         </div>

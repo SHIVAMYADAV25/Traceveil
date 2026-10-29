@@ -36,7 +36,7 @@ const LanguageContext = createContext<LanguageContextValue>({
   languages: LANGUAGES,
 });
 
-const STORAGE_KEY = "sniffer_lang";
+const STORAGE_KEY = "traceveil_lang";
 
 /** BCP 47 tags for <html lang="…"> — matches browser / screen reader expectations. */
 const HTML_LANG: Record<LangCode, string> = {

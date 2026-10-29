@@ -25,19 +25,19 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 _results: dict[str, dict] = {}
 _discoveries: dict[str, dict] = {}   # live cache for running scans
 _discovery_lock = threading.Lock()
-_discovery_store = JsonStore("discoveries")  # durable copy: survives restarts, purged after SNIFFER_RETENTION_DAYS
+_discovery_store = JsonStore("discoveries")  # durable copy: survives restarts, purged after TRACEVEIL_RETENTION_DAYS
 
 # At most N scans run at once; each scan can issue thousands of requests.
-MAX_CONCURRENT_SCANS = int(os.getenv("SNIFFER_MAX_CONCURRENT_SCANS", "2"))
+MAX_CONCURRENT_SCANS = int(os.getenv("TRACEVEIL_MAX_CONCURRENT_SCANS", "2"))
 _scan_slots = threading.BoundedSemaphore(MAX_CONCURRENT_SCANS)
 _HOST_RE = re.compile(r"^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$")
 # Video scans are far heavier than image scans, so they get their own, tighter cap.
-MAX_CONCURRENT_VIDEO_SCANS = int(os.getenv("SNIFFER_MAX_CONCURRENT_VIDEO_SCANS", "1"))
+MAX_CONCURRENT_VIDEO_SCANS = int(os.getenv("TRACEVEIL_MAX_CONCURRENT_VIDEO_SCANS", "1"))
 _video_slots = threading.BoundedSemaphore(MAX_CONCURRENT_VIDEO_SCANS)
 VIDEO_MIME_TYPES = {"video/mp4", "video/quicktime", "video/webm", "video/x-matroska", "video/x-m4v"}
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".webm", ".mkv", ".m4v"}
 INTERRUPTED_MESSAGE = "This scan was interrupted by a server restart. Please run it again."
-logger = logging.getLogger("sniffer.discovery")
+logger = logging.getLogger("traceveil.discovery")
 
 
 def startup_maintenance() -> None:

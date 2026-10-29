@@ -43,7 +43,7 @@ export function ReportWorkflowProvider({
   useEffect(() => {
     if (!caseId) return;
 
-    setSuspiciousImg(sessionStorage.getItem(`sniffer_suspicious_${caseId}`));
+    setSuspiciousImg(sessionStorage.getItem(`traceveil_suspicious_${caseId}`));
 
     setLoading(true);
     setFetchError(null);

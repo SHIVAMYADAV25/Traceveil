@@ -65,7 +65,7 @@ def test_duration_cap(monkeypatch):
 
 
 def test_spool_upload_enforces_cap_and_leaves_no_temp_file():
-    before = set(glob.glob(os.path.join(tempfile.gettempdir(), "sniffer-video-*")))
+    before = set(glob.glob(os.path.join(tempfile.gettempdir(), "traceveil-video-*")))
     stream = io.BytesIO(b"x" * 5000)
 
     async def read(n):
@@ -73,13 +73,13 @@ def test_spool_upload_enforces_cap_and_leaves_no_temp_file():
 
     with pytest.raises(videolib.VideoTooLarge):
         asyncio.run(videolib.spool_upload(read, limit=1000, chunk=512))
-    assert set(glob.glob(os.path.join(tempfile.gettempdir(), "sniffer-video-*"))) == before
+    assert set(glob.glob(os.path.join(tempfile.gettempdir(), "traceveil-video-*"))) == before
 
     async def empty(n):
         return b""
     with pytest.raises(videolib.VideoError, match="empty"):
         asyncio.run(videolib.spool_upload(empty, limit=1000))
-    assert set(glob.glob(os.path.join(tempfile.gettempdir(), "sniffer-video-*"))) == before
+    assert set(glob.glob(os.path.join(tempfile.gettempdir(), "traceveil-video-*"))) == before
 
 
 # ── Temporal ordering ─────────────────────────────────────────────────────
@@ -175,7 +175,7 @@ def test_truncated_download_whose_index_is_at_the_end_is_honestly_not_verified(v
 
 
 def test_download_is_blocked_for_internal_addresses(vref, monkeypatch):
-    monkeypatch.setenv("SNIFFER_NETGUARD", "1")
+    monkeypatch.setenv("TRACEVEIL_NETGUARD", "1")
 
     async def fake_resolve(host):
         return ["169.254.169.254"]
@@ -196,7 +196,7 @@ def test_download_is_blocked_for_internal_addresses(vref, monkeypatch):
 @pytest.fixture(scope="module")
 def scan_result(vref):
     mp = pytest.MonkeyPatch()
-    mp.setenv("SNIFFER_NETGUARD", "0")
+    mp.setenv("TRACEVEIL_NETGUARD", "0")
     mp.setattr(d, "_load_dataset_rows", lambda: ROWS)
     mp.setattr(d, "_TRANSPORT", httpx.MockTransport(handler))
     try:
@@ -250,7 +250,7 @@ def test_image_scan_is_unaffected_by_video_support():
     from helpers import photo, to_bytes
     import test_discovery as td
     mp = pytest.MonkeyPatch()
-    mp.setenv("SNIFFER_NETGUARD", "0")
+    mp.setenv("TRACEVEIL_NETGUARD", "0")
     mp.setattr(d, "_load_dataset_rows", lambda: td.ROWS)
     mp.setattr(d, "_TRANSPORT", httpx.MockTransport(td.handler))
     try:

@@ -1,10 +1,10 @@
-# Sniffer
+# Traceveil
 
 Digital media authenticity and takedown intelligence platform for high-risk image abuse scenarios.
 
 Quick version: [README.md](README.md)
 
-Sniffer helps users and investigators:
+Traceveil helps users and investigators:
 
 - detect potentially manipulated or deepfake images,
 - preserve evidence with structured case workflows,
@@ -19,7 +19,7 @@ Sniffer helps users and investigators:
 Victims and investigators dealing with manipulated or non-consensual imagery face fragmented workflows: verify authenticity, collect admissible evidence, identify distribution infrastructure, and perform platform takedowns.
 
 ### Solution
-Sniffer unifies the entire response lifecycle in one product:
+Traceveil unifies the entire response lifecycle in one product:
 
 - **Verification**: AI + forensic analysis pipeline,
 - **Case management**: claim tracking and event timelines,
@@ -100,7 +100,7 @@ sequenceDiagram
 ### Submission-Ready Monorepo Layout
 
 ```text
-sniffer/
+traceveil/
 	apps/
 		web/                  # Next.js frontend + API routes + auth + dashboard
 	services/
@@ -321,7 +321,7 @@ Recommended production topology:
 
 ```bash
 pnpm install
-pnpm --filter @sniffer/web build
+pnpm --filter @traceveil/web build
 ```
 
 ### Start Strategy

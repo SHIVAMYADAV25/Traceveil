@@ -6,4 +6,4 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
-os.environ["SNIFFER_DATA_DIR"] = tempfile.mkdtemp(prefix="sniffer-test-")
+os.environ["TRACEVEIL_DATA_DIR"] = tempfile.mkdtemp(prefix="traceveil-test-")

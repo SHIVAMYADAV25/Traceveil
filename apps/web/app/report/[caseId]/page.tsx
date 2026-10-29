@@ -2,7 +2,7 @@ import { ReportWorkflowProvider } from "@/components/report/ReportWorkflowContex
 import { ReportWorkflowShell } from "@/components/report/ReportWorkflowShell";
 
 export const metadata = {
-  title: "Investigation Report — Sniffer",
+  title: "Investigation Report — Traceveil",
   description: "Forensic investigation report for NCII leak discovery.",
 };
 

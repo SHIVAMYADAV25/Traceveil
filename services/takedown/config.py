@@ -16,7 +16,7 @@ class _Config:
     )
     # How long (seconds) to wait for live-scrape fallback
     SCRAPE_TIMEOUT: float = float(os.getenv("SCRAPE_TIMEOUT", "5"))
-    SERVICE_NAME: str = "Sniffer Takedown Service"
+    SERVICE_NAME: str = "Traceveil Takedown Service"
     VERSION: str = "1.0.0"
 
 

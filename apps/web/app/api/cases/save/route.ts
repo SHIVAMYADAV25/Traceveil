@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const now = new Date();
     const createdAtSec = Math.floor(now.getTime() / 1000);
-    const col = client.db("snifferX").collection("cases");
+    const col = client.db("traceveilX").collection("cases");
 
     await col.updateOne(
       { case_id: caseId },

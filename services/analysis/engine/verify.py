@@ -38,9 +38,9 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
-VERIFY_ENABLED = os.getenv("SNIFFER_VERIFY_VIDEO", "1") != "0"
-VERIFY_MAX_BYTES = _env_int("SNIFFER_VERIFY_MAX_BYTES", 6 * 1024 * 1024)
-VERIFY_MAX_CANDIDATES = _env_int("SNIFFER_VERIFY_MAX_CANDIDATES", 6)
+VERIFY_ENABLED = os.getenv("TRACEVEIL_VERIFY_VIDEO", "1") != "0"
+VERIFY_MAX_BYTES = _env_int("TRACEVEIL_VERIFY_MAX_BYTES", 6 * 1024 * 1024)
+VERIFY_MAX_CANDIDATES = _env_int("TRACEVEIL_VERIFY_MAX_CANDIDATES", 6)
 VERIFY_TIMEOUT_SECONDS = 45
 FRAMES_PER_CANDIDATE = 12
 FRAME_STEP_SECONDS = 2.0
@@ -87,7 +87,7 @@ async def _download_prefix(
     """Stream up to max_bytes of `url` into a private temp file. Returns (path, None)
     or (None, reason). Stopping at the cap is normal, not an error."""
     headers = {"Range": f"bytes=0-{max_bytes - 1}", "Accept": "video/*,application/octet-stream;q=0.8,*/*;q=0.5"}
-    fd, path = tempfile.mkstemp(prefix="sniffer-cand-", suffix=".bin")
+    fd, path = tempfile.mkstemp(prefix="traceveil-cand-", suffix=".bin")
     try:
         with os.fdopen(fd, "wb") as out:
             async with client.stream("GET", url, headers=headers) as response:

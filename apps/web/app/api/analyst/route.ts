@@ -54,7 +54,7 @@ function buildSystemPrompt(ctx: RequestBody["caseContext"]): string {
     ? JSON.stringify(trimContext(ctx.analysis), null, 2)
     : "Analysis has not completed yet.";
 
-  return `You are a forensic case analyst embedded in Sniffer, a digital media verification and deepfake detection platform. You have full access to the forensic analysis of the current case.
+  return `You are a forensic case analyst embedded in Traceveil, a digital media verification and deepfake detection platform. You have full access to the forensic analysis of the current case.
 
 CASE METADATA:
 ${caseBlock}

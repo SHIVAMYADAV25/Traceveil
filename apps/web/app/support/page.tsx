@@ -14,7 +14,7 @@ import { CALM_AUDIO } from "@/content/support/calm";
 import { STORIES, BLOGS } from "@/content/support/stories";
 import { OWN_SPACES } from "@/content/support/own-spaces";
 
-export const metadata = { title: "Support — Sniffer" };
+export const metadata = { title: "Support — Traceveil" };
 
 export default function SupportHubPage() {
   return (
@@ -75,7 +75,7 @@ export default function SupportHubPage() {
         className="group mt-8 flex flex-col gap-4 rounded-2xl border border-line bg-paper p-5 transition-colors hover:border-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:flex-row sm:items-center sm:justify-between sm:p-6"
       >
         <div className="max-w-xl">
-          <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-indigo-600">Run by Sniffer</p>
+          <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-indigo-600">Run by Traceveil</p>
           <p className="mb-1 text-[15px] font-semibold text-ink">Talk with others who understand</p>
           <p className="text-[13.5px] leading-relaxed text-ink-soft">
             Our Discord and our chat are for people whose private images were shared without consent.{" "}

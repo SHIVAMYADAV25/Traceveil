@@ -35,7 +35,7 @@ export async function GET(_req: NextRequest, context: RouteCtx) {
 
     try {
       const client = await clientPromise;
-      const col = client.db("snifferX").collection("cases");
+      const col = client.db("traceveilX").collection("cases");
       const doc = await col.findOne(
         { case_id: caseId },
         {

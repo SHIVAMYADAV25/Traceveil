@@ -3,7 +3,7 @@ import { SupportHeader } from "@/components/support/SupportHeader";
 import { SupportFooter } from "@/components/support/SupportFooter";
 
 export const metadata = {
-  title: "Support — Sniffer",
+  title: "Support — Traceveil",
   description:
     "Free counsellors, ways to get content taken down, our own Discord and chat, and stories, books and music for hard days.",
 };

@@ -114,9 +114,9 @@ LanguageProvider
     └── 8 languages: en, hi, bn, ta, te, mr, kn, gu
 Database (MongoDB)
 Collection	Documents	Key Fields
-snifferX.cases	Case records	caseId, analysisResult, images, userId, createdAt
-snifferX.claim_events	Lifecycle events	caseId, eventType, metadata, timestamp
-snifferX.claim_metrics	Dashboard metrics	type, value, timestamp, labels
+traceveilX.cases	Case records	caseId, analysisResult, images, userId, createdAt
+traceveilX.claim_events	Lifecycle events	caseId, eventType, metadata, timestamp
+traceveilX.claim_metrics	Dashboard metrics	type, value, timestamp, labels
 Auth (Currently Disabled — Stub)
 auth.ts → returns null (all exports)
 NextAuth v5 beta with EmailProvider / MongoDB adapter configured but disabled

@@ -4,7 +4,7 @@ import clientPromise from "@/lib/mongodb";
 export async function GET(req: NextRequest) {
   try {
     const client = await clientPromise;
-    const col = client.db("snifferX").collection("cases");
+    const col = client.db("traceveilX").collection("cases");
     const url = new URL(req.url);
     const caseId = url.searchParams.get("caseId");
 
@@ -73,7 +73,7 @@ export async function DELETE(req: NextRequest) {
 
   const client = await clientPromise;
   await client
-    .db("snifferX")
+    .db("traceveilX")
     .collection("cases")
     .deleteOne({ case_id: caseId });
 

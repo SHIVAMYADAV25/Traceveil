@@ -1,0 +1,12 @@
+export { AboutSection } from "./AboutSection";
+export { AudienceSection } from "./AudienceSection";
+export { CommunitySection } from "./CommunitySection";
+export { FaqSection } from "./FaqSection";
+export { FinalCtaSection } from "./FinalCtaSection";
+export { HeroSection } from "./HeroSection";
+export { HowItWorksSection } from "./HowItWorksSection";
+export { MinorsNotice } from "./MinorsNotice";
+export { PartnersSection } from "./PartnersSection";
+export { PrivacySection } from "./PrivacySection";
+export { SupportSection } from "./SupportSection";
+export { TakedownSection } from "./TakedownSection";

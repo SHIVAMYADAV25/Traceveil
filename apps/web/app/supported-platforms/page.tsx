@@ -113,7 +113,7 @@ export default async function SupportedPlatformsPage() {
           href="/"
           className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity"
         >
-          Sniffer
+          Traceveil
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         <span className="text-[13px] text-[#9ca3af]">Supported Platforms</span>
@@ -134,7 +134,7 @@ export default async function SupportedPlatformsPage() {
             Supported Platforms
           </h1>
           <p className="text-[14px] text-[#6b7280] max-w-3xl leading-relaxed">
-            Platforms where Sniffer currently has takedown routing metadata. Coverage is sourced from the takedown dataset and updated continuously.
+            Platforms where Traceveil currently has takedown routing metadata. Coverage is sourced from the takedown dataset and updated continuously.
           </p>
         </div>
 

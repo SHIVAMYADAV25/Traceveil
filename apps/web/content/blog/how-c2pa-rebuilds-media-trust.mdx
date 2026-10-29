@@ -2,7 +2,7 @@
 title: "How C2PA Is Rebuilding Trust in the Age of AI-Generated Images"
 description: "The Coalition for Content Provenance and Authenticity is establishing a new standard for digital media integrity. Here's what it means for journalists, creators, and platforms fighting misinformation."
 date: "2025-06-12"
-author: "Misbah at Sniffer"
+author: "Misbah at Traceveil"
 image: "/images/blog/c2pa-cover.jpg"
 tags: ["C2PA", "AI Detection", "Provenance", "Deepfakes"]
 ---
@@ -40,7 +40,7 @@ This means a forged "provenance chain" is detectable. Either the signature is va
 
 The C2PA standard has specific provisions for AI-generated content. Platforms like Adobe Firefly, DALL-E 3, and Stable Diffusion (through ComfyUI C2PA support) can now sign their outputs with an assertion that marks the content as AI-generated.
 
-At Sniffer, when we encounter a C2PA manifest, we parse every assertion in the manifest:
+At Traceveil, when we encounter a C2PA manifest, we parse every assertion in the manifest:
 
 - `c2pa.ai_generative_training` — whether the model was trained on AI data
 - `c2pa.ai_generated` — whether the image is fully or partially AI-generated  
@@ -53,7 +53,7 @@ A manifest that shows `c2pa.ai_generated: true`, signed by a recognised AI platf
 
 Most images circulating online don't have C2PA manifests. For these, detection becomes a forensic problem.
 
-At Sniffer, we run a multi-signal pipeline on every image:
+At Traceveil, we run a multi-signal pipeline on every image:
 
 1. **Error Level Analysis (ELA)** — detects JPEG re-compression artifacts that reveal edited regions
 2. **Discrete Cosine Transform (DCT)** grids — exposes inconsistent compression blocks from splicing
@@ -74,7 +74,7 @@ Here's the practical implication for different stakeholders:
 
 **Courts and regulators** are beginning to treat C2PA manifests as admissible evidence of content origin — particularly relevant in CSAM cases, defamation suits, and election integrity investigations.
 
-**Creators** can protect their work. If you register an image hash on Sniffer's registry before someone reposts it with a fake C2PA manifest, the original provenance is on record.
+**Creators** can protect their work. If you register an image hash on Traceveil's registry before someone reposts it with a fake C2PA manifest, the original provenance is on record.
 
 ## The Limitations to Know
 
@@ -91,10 +91,10 @@ The C2PA ecosystem is growing rapidly. Google has begun surfacing Content Creden
 
 Within two to three years, unsigned media will likely carry a default suspicion level in automated screening systems — the absence of provenance becoming meaningful in itself.
 
-Sniffer's analysis engine treats C2PA as the highest-confidence signal in our pipeline. When a manifest is present and verifiable, it anchors the entire forensic assessment. When it's absent, the forensic tools do their best — but the certainty ceiling is lower.
+Traceveil's analysis engine treats C2PA as the highest-confidence signal in our pipeline. When a manifest is present and verifiable, it anchors the entire forensic assessment. When it's absent, the forensic tools do their best — but the certainty ceiling is lower.
 
 The standard isn't perfect yet. But for the first time, the infrastructure for media trust exists. Building on it is the work ahead.
 
 ---
 
-*Misbah leads product and analysis at Sniffer. If you're a journalist or platform engineer working on content authentication, [get in touch](/verify).*
+*Misbah leads product and analysis at Traceveil. If you're a journalist or platform engineer working on content authentication, [get in touch](/verify).*

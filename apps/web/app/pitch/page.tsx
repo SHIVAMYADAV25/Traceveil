@@ -1,16 +1,16 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Sniffer — Startup Pitch",
+  title: "Traceveil — Startup Pitch",
   description:
-    "Sniffer: Forensic trace-and-takedown for non-consensual intimate image abuse. Free for survivors, SaaS for professionals.",
+    "Traceveil: Forensic trace-and-takedown for non-consensual intimate image abuse. Free for survivors, SaaS for professionals.",
 };
 
 const FEEDBACK_LOG = [
   {
     user: "Farhan R., Beta Tester",
     feedback: "I just tried it with that viral surfing video everyone's sharing. It scanned and showed 4 different sites where the same video was posted. Pretty wild. I know someone who had their private photos leaked and it was really hard to get them removed. This would have helped. Sending them the link. You should mention that in your pitch.",
-    after: "Added this testimonial to the pitch deck. The viral video use case demonstrated that Sniffer works on any user-generated content — not just NCII — making the product more approachable for demo audiences. Word-of-mouth referral path validated: user → victim.",
+    after: "Added this testimonial to the pitch deck. The viral video use case demonstrated that Traceveil works on any user-generated content — not just NCII — making the product more approachable for demo audiences. Word-of-mouth referral path validated: user → victim.",
   },
 ];
 
@@ -146,7 +146,7 @@ export default function PitchPage() {
               </h1>
               <p className="text-[16px] leading-[1.75] text-[#6b7280]">
                 Every day, intimate images are shared without consent. The rich get lawyers. Everyone else suffers alone.
-                Sniffer is a forensic trace-and-takedown tool that scans 91 domains across 16 networks, finds every copy of
+                Traceveil is a forensic trace-and-takedown tool that scans 91 domains across 16 networks, finds every copy of
                 a leaked image, and generates platform-ready takedown packets — in under 60 seconds. Free for survivors.
                 SaaS for the professionals who help them.
               </p>
@@ -213,7 +213,7 @@ export default function PitchPage() {
             <span className="text-[10px] font-mono uppercase tracking-widest text-[#a8a29e]">Business Model</span>
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal leading-tight tracking-tight text-[#0a0a0a] mb-3 mt-4">Freemium for survivors, SaaS for professionals.</h2>
-          <p className="text-[14px] text-[#6b7280] mb-8 leading-relaxed">Sniffer never charges a victim. We charge the professionals who use our automation to handle 50+ cases a month — because their time is worth more than ₹499.</p>
+          <p className="text-[14px] text-[#6b7280] mb-8 leading-relaxed">Traceveil never charges a victim. We charge the professionals who use our automation to handle 50+ cases a month — because their time is worth more than ₹499.</p>
 
           {/* Pricing Tiers */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16">
@@ -274,7 +274,7 @@ export default function PitchPage() {
           <div className="mb-12">
             <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-[#a8a29e] mb-3">Unit Economics</p>
             <h3 className="font-serif text-xl sm:text-2xl font-normal leading-tight tracking-tight text-[#0a0a0a] mb-2">1,000 active users. Here&apos;s the math.</h3>
-            <p className="text-[13px] text-[#6b7280] mb-8">SaaS is about margins, not vanity metrics. Sniffer runs on commodity infra with no per-user cost — so the marginal profit per paying user is nearly 100%.</p>
+            <p className="text-[13px] text-[#6b7280] mb-8">SaaS is about margins, not vanity metrics. Traceveil runs on commodity infra with no per-user cost — so the marginal profit per paying user is nearly 100%.</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="rounded-2xl border border-[#e8e4de] bg-white overflow-hidden">
                 <div className="border-b border-[#e8e4de] px-6 py-4 flex items-center justify-between">
@@ -330,7 +330,7 @@ export default function PitchPage() {
           <div className="mb-12">
             <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-[#a8a29e] mb-3">Competitive Landscape</p>
             <h3 className="font-serif text-xl sm:text-2xl font-normal leading-tight tracking-tight text-[#0a0a0a] mb-2">No one does scan + takedown in one flow.</h3>
-            <p className="text-[13px] text-[#6b7280] mb-8">Existing solutions are either manual (expensive lawyers), partial (Meta-only), or offshore (no India presence). Sniffer is the only tool that scans 91 domains and generates takedown packets in under 60 seconds.</p>
+            <p className="text-[13px] text-[#6b7280] mb-8">Existing solutions are either manual (expensive lawyers), partial (Meta-only), or offshore (no India presence). Traceveil is the only tool that scans 91 domains and generates takedown packets in under 60 seconds.</p>
             <div className="overflow-x-auto rounded-2xl border border-[#e8e4de] bg-white">
               <table className="w-full">
                 <thead>
@@ -341,7 +341,7 @@ export default function PitchPage() {
                     <th className="text-left px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-[#a8a29e]">Scanning</th>
                     <th className="text-left px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-[#a8a29e]">Takedown</th>
                     <th className="text-left px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-[#a8a29e]">India?</th>
-                    <th className="text-left px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-emerald-600">Sniffer</th>
+                    <th className="text-left px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-emerald-600">Traceveil</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e8e4de]">
@@ -391,7 +391,7 @@ export default function PitchPage() {
             </span>
             <span className="text-[10px] font-mono uppercase tracking-widest text-[#a8a29e]">Technical Moat</span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal leading-tight tracking-tight text-[#0a0a0a] mb-3 mt-4">Why a competitor cannot clone Sniffer in 2 days.</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal leading-tight tracking-tight text-[#0a0a0a] mb-3 mt-4">Why a competitor cannot clone Traceveil in 2 days.</h2>
           <p className="text-[14px] text-[#6b7280] mb-10 leading-relaxed">Perceptual image matching at scale requires curated domain data, tuned thresholds, and pipeline engineering — not an API wrapper.</p>
 
           <div className="rounded-2xl border border-[#e8e4de] bg-white overflow-hidden mb-10">
@@ -400,8 +400,8 @@ export default function PitchPage() {
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/sniffer-arch.png"
-              alt="Sniffer system architecture diagram showing client, Caddy proxy, Next.js frontend, FastAPI backend with 3-tier pipeline, and MongoDB Atlas"
+              src="/traceveil-arch.png"
+              alt="Traceveil system architecture diagram showing client, Caddy proxy, Next.js frontend, FastAPI backend with 3-tier pipeline, and MongoDB Atlas"
               className="w-full h-auto"
             />
           </div>
@@ -602,7 +602,7 @@ export default function PitchPage() {
       <footer className="border-t border-[#e8e4de] bg-[#0a0a0a] px-4 sm:px-8 py-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <p className="font-mono text-[10px] tracking-[0.22em] text-[#4b4742] uppercase">
-            Sniffer · Impic Labs · 2026 · HACKVERSE Submission
+            Traceveil · Impic Labs · 2026 · HACKVERSE Submission
           </p>
           <Link
             href="https://github.com/icancodefyi/sniffer-forensics"

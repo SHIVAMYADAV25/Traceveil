@@ -1,5 +1,5 @@
 {
-  "name": "@sniffer/community",
+  "name": "@traceveil/community",
   "version": "1.0.0",
   "private": true,
   "description": "Traceveil Community service: anonymous group rooms, reporting and moderation",

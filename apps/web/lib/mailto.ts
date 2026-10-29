@@ -7,7 +7,7 @@
 const MAX_MAILTO_URL_LENGTH = 1200;
 
 const PASTE_HINT_BODY =
-  "The full removal request was copied to your clipboard.\n\nPaste it into the message body (Ctrl+V or Cmd+V).\n\n— Sniffer";
+  "The full removal request was copied to your clipboard.\n\nPaste it into the message body (Ctrl+V or Cmd+V).\n\n— Traceveil";
 
 export function buildMailtoHref(to: string, subject: string, body: string): string {
   return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

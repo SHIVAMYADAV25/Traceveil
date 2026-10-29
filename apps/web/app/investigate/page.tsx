@@ -95,7 +95,7 @@ function InvestigateContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Results | null>(null);
-  // Evidence from linked Sniffer report
+  // Evidence from linked Traceveil report
   const [caseRefAttached, setCaseRefAttached] = useState<string | null>(null);
   const [reportCaseId, setReportCaseId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -173,7 +173,7 @@ function InvestigateContent() {
           href="/"
           className="font-mono text-[13px] text-[#0a0a0a] tracking-widest uppercase hover:opacity-70 transition-opacity"
         >
-          Sniffer
+          Traceveil
         </Link>
         <span className="text-[#d4cfc9]">/</span>
         {reportCaseId ? (
@@ -222,7 +222,7 @@ function InvestigateContent() {
           <p className="text-[13.5px] text-[#6b7280] leading-relaxed max-w-prose">
             {reportCaseId
               ? "Your case evidence is attached. Use this step to identify the right platform contact and validate where to submit your request."
-              : "Paste a URL or domain where your content is being shared without consent. Sniffer will map the likely platform and available contact routes."
+              : "Paste a URL or domain where your content is being shared without consent. Traceveil will map the likely platform and available contact routes."
             }
           </p>
           {/* Evidence badge when coming from a report */}
@@ -498,7 +498,7 @@ function InvestigateContent() {
               Paste the URL where your content appears
             </p>
             <p className="text-[12px] text-[#9ca3af] max-w-xs mx-auto">
-              Sniffer will map infrastructure and route metadata so you can continue to Step 3 for final takedown action.
+              Traceveil will map infrastructure and route metadata so you can continue to Step 3 for final takedown action.
             </p>
           </div>
         )}

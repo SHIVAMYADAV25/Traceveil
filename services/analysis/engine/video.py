@@ -32,8 +32,8 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
-MAX_VIDEO_BYTES = _env_int("SNIFFER_MAX_VIDEO_MB", 100) * 1024 * 1024
-MAX_DURATION_SECONDS = _env_int("SNIFFER_MAX_VIDEO_SECONDS", 600)
+MAX_VIDEO_BYTES = _env_int("TRACEVEIL_MAX_VIDEO_MB", 100) * 1024 * 1024
+MAX_DURATION_SECONDS = _env_int("TRACEVEIL_MAX_VIDEO_SECONDS", 600)
 MAX_KEYFRAMES = 16
 CANDIDATE_SAMPLES = 40          # frames sampled before diversity selection
 MIN_FRAME_DIVERSITY = 5         # min pHash distance between two kept keyframes
@@ -74,7 +74,7 @@ async def spool_upload(
 ) -> str:
     """Stream an upload to a private temp file, never holding it in memory.
     Raises VideoTooLarge as soon as `limit` bytes are exceeded. Returns the path."""
-    fd, path = tempfile.mkstemp(prefix="sniffer-video-", suffix=suffix)  # mode 0600
+    fd, path = tempfile.mkstemp(prefix="traceveil-video-", suffix=suffix)  # mode 0600
     total = 0
     try:
         with os.fdopen(fd, "wb") as out:

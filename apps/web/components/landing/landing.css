@@ -1,0 +1,229 @@
+/* ==========================================================================
+   Traceveil landing page ( "/" )
+   --------------------------------------------------------------------------
+   All selectors are namespaced with `tv-` and scoped under `.tv-p` so they
+   cannot leak into the rest of the app (which uses Tailwind + globals.css).
+
+   Contents
+     1. Design tokens
+     2. Base / typography
+     3. Layout (container, section, grid, row)
+     4. Components (pill, chip, card, tick, numbered step, details)
+     5. Page chrome (nav, brand, footer)
+     6. Section-specific helpers
+     7. Responsive
+   ========================================================================== */
+
+/* 1. Design tokens ------------------------------------------------------- */
+.tv-p {
+  --tv-bg: #fdfaf4;          /* page background (warm cream) */
+  --tv-band: #f6f1e7;        /* full-bleed tinted strip */
+  --tv-ink: #1f2430;         /* text + dark buttons */
+  --tv-muted: #565b66;       /* secondary text */
+  --tv-line: #eadfd2;        /* borders */
+  --tv-coral: #b8472b;       /* accent text, links */
+  --tv-coral-logo: #e4937a;  /* logo shield */
+  --tv-green: #7a9b7e;       /* tick bullets */
+  --tv-chip-bg: #fce9dc;
+  --tv-chip-ink: #8a3a22;
+  --tv-blue-ink: #2e4a7a;
+  /* pastel card tones */
+  --tv-pink: #fbe3dd;
+  --tv-mint: #e8efe0;
+  --tv-blue: #e4eaf4;
+  --tv-orange: #fdebd9;
+}
+
+/* 2. Base / typography --------------------------------------------------- */
+.tv-p {
+  background: var(--tv-bg);
+  min-height: 100vh;
+  font-family: var(--font-poppins), "Poppins", system-ui, sans-serif;
+  color: var(--tv-ink);
+  line-height: 1.6;
+}
+.tv-p * { box-sizing: border-box; }
+.tv-p h1, .tv-p h2, .tv-p h3, .tv-p p { margin: 0; }
+.tv-p h1 { font-size: 54px; line-height: 1.15; font-weight: 300; }
+.tv-p h2 { font-size: 36px; line-height: 1.2; font-weight: 300; }
+.tv-p h3 { font-size: 19px; font-weight: 500; }
+.tv-p b { font-weight: 600; }
+.tv-co { color: var(--tv-coral); }
+.tv-mu { color: var(--tv-muted); font-size: 16px; }
+.tv-center { text-align: center; }
+.tv-img { width: 100%; height: auto; display: block; }
+.tv-p a.tv-lk { color: var(--tv-coral); font-weight: 500; text-decoration: none; }
+.tv-p a.tv-lk.tv-lk--blue { color: var(--tv-blue-ink); }
+
+/* Lead paragraphs (vertical rhythm under headings) */
+.tv-p .tv-lead { margin: 16px 0 24px; }
+.tv-p .tv-lead--hero { margin: 20px 0 28px; max-width: 480px; }
+.tv-p .tv-lead--about { margin: 18px 0; }
+.tv-p .tv-lead--tight { margin: 16px 0 18px; }
+.tv-p .tv-lead--cta { margin: 14px 0 22px; }
+/* Lead used by SectionHeading (centred sections) */
+.tv-p .tv-sub { text-align: center; margin: 14px 0 36px; }
+.tv-p .tv-sub--narrow { margin: 14px auto 36px; max-width: 620px; }
+
+/* Tight spacing when a heading directly follows a chip */
+.tv-p .tv-chip + h1 { margin-top: 18px; }
+.tv-p .tv-chip + h2 { margin-top: 14px; }
+.tv-p .tv-chip + h3 { margin-top: 12px; }
+
+/* 3. Layout -------------------------------------------------------------- */
+.tv-w { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+.tv-sec { padding: 55px 0; }
+.tv-sec--hero { padding-top: 96px; }
+.tv-sec--spaced { padding-top: 120px; }
+/* Full-bleed tinted strip: overrides the .tv-w width cap on purpose */
+.tv-sec.tv-sec--band {
+  max-width: none;
+  background: var(--tv-band);
+  padding: 200px 0;
+}
+.tv-g { display: grid; gap: 20px; }
+.tv-g2 { grid-template-columns: repeat(2, 1fr); }
+.tv-g3 { grid-template-columns: repeat(3, 1fr); }
+.tv-g4 { grid-template-columns: repeat(4, 1fr); }
+.tv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+/* 4. Components ---------------------------------------------------------- */
+/* Pill button */
+.tv-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1.5px solid var(--tv-ink);
+  color: var(--tv-ink);
+}
+.tv-pill.tv-dk { background: var(--tv-ink); color: #fff; }
+.tv-pill.tv-lt { background: transparent; color: var(--tv-ink); }
+.tv-pill.tv-pill--sm { min-height: 42px; }
+
+/* Chip */
+.tv-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--tv-chip-bg);
+  color: var(--tv-chip-ink);
+}
+.tv-chip.tv-chip--white { background: #fff; }
+.tv-chip.tv-chip--blue { background: #fff; color: var(--tv-blue-ink); }
+.tv-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Card */
+.tv-card {
+  border-radius: 24px;
+  padding: 28px;
+  border: 1px solid var(--tv-line);
+  background: #fff;
+}
+.tv-card--lg { padding: 40px 48px; }
+.tv-card--xl { padding: 48px; }
+.tv-card.tv-card--link { text-decoration: none; color: inherit; }
+.tv-pk { background: var(--tv-pink);   border-color: var(--tv-pink); }
+.tv-mn { background: var(--tv-mint);   border-color: var(--tv-mint); }
+.tv-bl { background: var(--tv-blue);   border-color: var(--tv-blue); }
+.tv-or { background: var(--tv-orange); border-color: var(--tv-orange); }
+.tv-p .tv-card-text { font-size: 14px; margin-top: 8px; }
+.tv-p .tv-card-text--flush { margin-top: 0; }
+.tv-p .tv-card-text--sm { margin-top: 6px; }
+.tv-p .tv-card-text--org { margin: 8px 0; }
+
+/* Numbered step */
+.tv-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--tv-ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+/* Tick list item */
+.tv-tick { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.tv-tick i {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--tv-green);
+  color: #fff;
+  font-style: normal;
+  text-align: center;
+  line-height: 24px;
+  font-size: 13px;
+}
+
+/* FAQ (native <details>) */
+.tv-p details {
+  border: 1px solid var(--tv-line);
+  border-radius: 18px;
+  background: #fff;
+  padding: 16px 22px;
+}
+.tv-p summary { cursor: pointer; font-weight: 500; list-style: none; }
+.tv-p details p { margin-top: 10px; color: var(--tv-muted); font-size: 15px; }
+
+/* 5. Page chrome --------------------------------------------------------- */
+.tv-nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.tv-nav a.tv-l { color: var(--tv-ink); text-decoration: none; font-size: 15px; margin-right: 26px; }
+.tv-brand { display: flex; align-items: center; gap: 10px; }
+.tv-p .tv-brand__name { font-size: 22px; font-weight: 500; }
+
+.tv-footer { border-top: 1px solid var(--tv-line); padding: 32px 0; }
+.tv-footer__inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--tv-muted);
+}
+.tv-footer a { color: inherit; }
+.tv-p .tv-footer__brand { color: var(--tv-ink); font-weight: 500; }
+
+/* 6. Section-specific helpers -------------------------------------------- */
+.tv-hero-links { margin-top: 146px; }
+.tv-community-cards { margin-top: 40px; }
+.tv-faq { margin-top: 32px; align-items: start; }
+.tv-w.tv-minors { padding: 0 28px 56px; }
+.tv-minors__card {
+  padding: 28px 32px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.tv-p .tv-minors__text { font-size: 15px; margin-top: 6px; }
+
+/* 7. Responsive ---------------------------------------------------------- */
+@media (max-width: 860px) {
+  .tv-g2, .tv-g3, .tv-g4, .tv-row { grid-template-columns: 1fr; }
+  .tv-p h1 { font-size: 38px; }
+  .tv-nav .tv-l { display: none; }
+  .tv-sec { padding: 56px 0; }
+  /* re-assert modifiers that the generic .tv-sec rule above would reset */
+  .tv-sec--hero { padding-top: 96px; }
+  .tv-sec--spaced { padding-top: 120px; }
+  .tv-sec.tv-sec--band { padding: 200px 0; }
+}

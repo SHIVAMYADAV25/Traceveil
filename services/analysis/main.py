@@ -11,15 +11,15 @@ from routers import cases, analysis, registry, dashboard
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Sniffer Analysis Service starting up...")
+    print("Traceveil Analysis Service starting up...")
     analysis.startup_maintenance()   # fail interrupted scans, purge expired records
     cases.startup_maintenance()
     yield
-    print("Sniffer Analysis Service shutting down...")
+    print("Traceveil Analysis Service shutting down...")
 
 
 app = FastAPI(
-    title="Sniffer Analysis API",
+    title="Traceveil Analysis API",
     description="Digital Media Authenticity Verification — Analysis Engine",
     version="1.0.0",
     lifespan=lifespan,
@@ -41,7 +41,7 @@ app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"]
 
 @app.get("/")
 def root():
-    return {"service": "Sniffer Analysis API", "status": "running", "version": "1.0.0"}
+    return {"service": "Traceveil Analysis API", "status": "running", "version": "1.0.0"}
 
 
 @app.get("/health")

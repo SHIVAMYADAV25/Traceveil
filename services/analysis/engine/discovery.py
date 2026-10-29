@@ -84,10 +84,10 @@ def _env_int(name: str, default: int) -> int:
 
 
 # ── Limits (all overridable via environment) ──────────────────────────────
-MAX_PAGES_PER_DOMAIN = _env_int("SNIFFER_MAX_PAGES_PER_DOMAIN", 15)
-MAX_ASSETS_PER_PAGE = _env_int("SNIFFER_MAX_ASSETS_PER_PAGE", 32)
-MAX_TOTAL_CANDIDATES = _env_int("SNIFFER_MAX_TOTAL_CANDIDATES", 8000)
-SCAN_TIMEOUT_SECONDS = _env_int("SNIFFER_SCAN_TIMEOUT_SECONDS", 600)
+MAX_PAGES_PER_DOMAIN = _env_int("TRACEVEIL_MAX_PAGES_PER_DOMAIN", 15)
+MAX_ASSETS_PER_PAGE = _env_int("TRACEVEIL_MAX_ASSETS_PER_PAGE", 32)
+MAX_TOTAL_CANDIDATES = _env_int("TRACEVEIL_MAX_TOTAL_CANDIDATES", 8000)
+SCAN_TIMEOUT_SECONDS = _env_int("TRACEVEIL_SCAN_TIMEOUT_SECONDS", 600)
 MAX_IMAGE_BYTES = 3 * 1024 * 1024
 MAX_HTML_BYTES = 3 * 1024 * 1024
 MAX_SITEMAP_BYTES = 2 * 1024 * 1024
@@ -97,9 +97,9 @@ CPU_WORKERS = 4
 
 # Demo mode is opt-in per request (run_discovery_scan(demo=True)) AND only ever
 # applies to the bundled sample images in demo_images/. Any other image always
-# gets a real scan, even if a demo flag is sent. SNIFFER_DEMO_MODE=1 turns the
+# gets a real scan, even if a demo flag is sent. TRACEVEIL_DEMO_MODE=1 turns the
 # demo on for sample images without the per-request flag (local demos only).
-DEMO_DISCOVERY_MODE = os.getenv("SNIFFER_DEMO_MODE", "0") == "1"
+DEMO_DISCOVERY_MODE = os.getenv("TRACEVEIL_DEMO_MODE", "0") == "1"
 DEMO_IMAGES_DIR = Path(__file__).resolve().parents[1] / "demo_images"
 
 

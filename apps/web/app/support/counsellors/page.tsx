@@ -6,7 +6,7 @@ import { ExternalIcon } from "@/components/support/Icons";
 import { byRole, SERVICES } from "@/content/support/services";
 import { FIRST_SESSION, PROFESSIONALS, QUESTIONS_TO_ASK } from "@/content/support/guides";
 
-export const metadata = { title: "Counsellors — Support — Sniffer" };
+export const metadata = { title: "Counsellors — Support — Traceveil" };
 
 export default function CounsellorsPage() {
   const all = byRole("counselling");

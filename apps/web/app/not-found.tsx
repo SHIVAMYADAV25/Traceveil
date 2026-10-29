@@ -7,7 +7,7 @@ export default function NotFound() {
       {/* Minimal nav */}
       <header className="border-b border-[#e8e4de] bg-white px-4 sm:px-8 py-4 flex items-center gap-3">
         <Link href="/" className="flex items-center gap-2 hover:opacity-75 transition-opacity">
-          {/* <Image src="/logo.png" alt="Sniffer" width={24} height={24} /> */}
+          {/* <Image src="/logo.png" alt="Traceveil" width={24} height={24} /> */}
           <span className="font-semibold text-[18px] tracking-tight text-[#0a0a0a]">Traceveil</span>
         </Link>
       </header>
@@ -27,7 +27,7 @@ export default function NotFound() {
             <div className="flex items-start justify-between mb-8">
               <div>
                 <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-[#a8a29e] mb-1">
-                  Sniffer · Forensic Case Report
+                  Traceveil · Forensic Case Report
                 </p>
                 <p className="font-mono text-[17px] font-bold text-[#0a0a0a] tracking-tight">
                   SNF‑2026‑0000‑404
@@ -119,7 +119,7 @@ export default function NotFound() {
         </div>
 
         <p className="font-mono text-[10.5px] text-[#c4bdb5]">
-          SNIFFER · IMPIC LABS · 2026
+          TRACEVEIL · IMPIC LABS · 2026
         </p>
       </main>
     </div>
