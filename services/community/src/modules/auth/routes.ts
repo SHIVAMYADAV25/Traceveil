@@ -17,7 +17,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     reply.setCookie(SESSION_COOKIE, token, {
       httpOnly: true,
       secure: ctx.config.cookieSecure,
-      sameSite: "lax",
+      sameSite: ctx.config.cookieSameSite,
       path: "/",
       maxAge: ctx.config.sessionDays * 24 * 60 * 60,
     });
@@ -53,7 +53,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
   app.post("/auth/logout", async (req, reply) => {
     await service.logout(ctx, req.sessionTokenHash);
     if (req.actor) ctx.realtime.disconnectAccount(req.actor.accountId);
-    reply.clearCookie(SESSION_COOKIE, { path: "/" });
+    reply.clearCookie(SESSION_COOKIE, { path: "/", secure: ctx.config.cookieSecure, sameSite: ctx.config.cookieSameSite, httpOnly: true });
     return { ok: true };
   });
 
@@ -78,7 +78,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
   app.delete("/me", { preHandler: requireAuth }, async (req, reply) => {
     deleteAccountBody.parse(req.body);
     await service.deleteAccount(ctx, actorOf(req));
-    reply.clearCookie(SESSION_COOKIE, { path: "/" });
+    reply.clearCookie(SESSION_COOKIE, { path: "/", secure: ctx.config.cookieSecure, sameSite: ctx.config.cookieSameSite, httpOnly: true });
     return { ok: true };
   });
 }
