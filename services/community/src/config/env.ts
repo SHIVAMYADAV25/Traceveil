@@ -8,6 +8,9 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   ALLOWED_ORIGINS: z.string().default("http://localhost:3000"),
   COOKIE_SECURE: bool.default(false),
+  // "lax" when web and community share a registrable domain; "none" when they are on different sites
+  // (e.g. *.vercel.app + *.onrender.com). "none" requires COOKIE_SECURE=true.
+  COOKIE_SAMESITE: z.enum(["lax", "strict", "none"]).default("lax"),
   TRUST_PROXY: bool.default(false),
   COMMUNITY_OPEN: bool.default(false),
   SESSION_DAYS: z.coerce.number().int().min(1).max(90).default(14),
@@ -22,6 +25,7 @@ export interface Config {
   databaseUrl: string;
   allowedOrigins: string[];
   cookieSecure: boolean;
+  cookieSameSite: "lax" | "strict" | "none";
   trustProxy: boolean;
   communityOpen: boolean;
   sessionDays: number;
@@ -41,6 +45,9 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): Config {
   if (e.NODE_ENV === "production" && !e.COOKIE_SECURE) {
     throw new Error("Invalid configuration:\n  COOKIE_SECURE must be true in production");
   }
+  if (e.COOKIE_SAMESITE === "none" && !e.COOKIE_SECURE) {
+    throw new Error("Invalid configuration:\n  COOKIE_SAMESITE=none requires COOKIE_SECURE=true");
+  }
   return {
     env: e.NODE_ENV,
     port: e.COMMUNITY_PORT,
@@ -49,6 +56,7 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): Config {
       .map((o) => o.trim())
       .filter(Boolean),
     cookieSecure: e.COOKIE_SECURE,
+    cookieSameSite: e.COOKIE_SAMESITE,
     trustProxy: e.TRUST_PROXY,
     communityOpen: e.COMMUNITY_OPEN,
     sessionDays: e.SESSION_DAYS,

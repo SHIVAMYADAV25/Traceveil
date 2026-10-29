@@ -1,0 +1,91 @@
+# Render Blueprint: creates all 4 backend services on the free plan.
+# Render dashboard -> New -> Blueprint -> pick this repo. Fill the "sync: false" values when asked.
+# Free web services sleep after ~15 min idle (first request after that takes ~30-60 s).
+services:
+  - type: web
+    name: traceveil-analysis
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: services/analysis
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ALLOWED_ORIGINS        # your Vercel URL(s), comma separated, no trailing slash
+        sync: false
+      - key: HF_TOKEN               # huggingface.co -> Settings -> Access Tokens (Read)
+        sync: false
+      - key: TRACEVEIL_MAX_CONCURRENT_SCANS
+        value: "1"                  # free plan has 512 MB RAM
+      - key: TRACEVEIL_MAX_CONCURRENT_VIDEO_SCANS
+        value: "1"
+
+  - type: web
+    name: traceveil-intelligence
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: services/intelligence
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: traceveil-takedown
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: services/takedown
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: traceveil-community
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: services/community
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: NODE_ENV
+        value: production
+      - key: COMMUNITY_PORT          # Render injects PORT; the service reads COMMUNITY_PORT
+        value: "10000"
+      - key: DATABASE_URL            # Neon connection string
+        sync: false
+      - key: ALLOWED_ORIGINS         # exact web origin(s), e.g. https://traceveil.vercel.app
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE         # "none" if web and community are on different sites (vercel.app + onrender.com); "lax" with a shared custom domain
+        value: none
+      - key: TRUST_PROXY
+        value: "true"
+      - key: COMMUNITY_OPEN
+        value: "true"
+      - key: SESSION_DAYS
+        value: "14"
+      - key: RETENTION_DAYS
+        value: "30"
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: REGISTER_LIMIT_PER_HOUR
+        value: "5"

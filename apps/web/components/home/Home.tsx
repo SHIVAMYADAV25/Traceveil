@@ -16,7 +16,7 @@ export default function Home() {
 <main className="tv-p">
 <div className="tv-w tv-nav">
 <div style={{display:'flex',alignItems:'center',gap:'10px'}}><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 4 8v7c0 6 4.5 10 11 12 6.5-2 11-6 11-12V8z" fill="#E4937A"/><path d="M10 15l4 4 7-8" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round"/></svg><b style={{fontSize:'22px',fontWeight:'500'}}>traceveil</b></div>
-<div><a className="tv-l" href="#what">What it is</a><a className="tv-l" href="#who">Who it’s for</a><a className="tv-l" href="#how">How it works</a><a className="tv-l" href="http://localhost:3000/support">Support</a><a className="tv-l" href="http://localhost:3000/community">Community</a><a className="tv-l" href="#faq">FAQ</a><a className="tv-pill tv-dk" href="/leak?demo=1" style={{minHeight:'42px'}}>Analyze an Image →</a></div>
+<div><a className="tv-l" href="#what">What it is</a><a className="tv-l" href="#who">Who it’s for</a><a className="tv-l" href="#how">How it works</a><a className="tv-l" href="/support">Support</a><a className="tv-l" href="/community">Community</a><a className="tv-l" href="#faq">FAQ</a><a className="tv-pill tv-dk" href="/leak?demo=1" style={{minHeight:'42px'}}>Analyze an Image →</a></div>
 </div>
 
 <section className="tv-w tv-sec" style={{paddingTop:'96px'}}>

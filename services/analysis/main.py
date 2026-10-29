@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import hashlib
+import os
 import io
 import time
 from typing import Optional
@@ -18,6 +19,13 @@ async def lifespan(app: FastAPI):
     print("Traceveil Analysis Service shutting down...")
 
 
+# Comma-separated list, e.g. "https://traceveil.vercel.app,https://traceveil.example.com"
+ALLOWED_ORIGINS = [
+    o.strip()
+    for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+    if o.strip()
+]
+
 app = FastAPI(
     title="Traceveil Analysis API",
     description="Digital Media Authenticity Verification — Analysis Engine",
@@ -27,7 +35,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://sniffer.impiclabs.com","https://sniffer-analysis.vercel.app"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
